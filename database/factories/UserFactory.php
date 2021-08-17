@@ -42,4 +42,15 @@ class UserFactory extends Factory
             ];
         });
     }
+
+    /**
+     * Indicate the model's user role
+     */
+    public function role($role) {
+        return $this->state( function (array $attributes) use ($role) {
+            return [
+                'role' => $role
+            ];
+        });
+    }
 }

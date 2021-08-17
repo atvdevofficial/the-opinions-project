@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -29,6 +30,8 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -37,7 +40,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime:Y-m-d H:i:s',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
@@ -47,5 +52,12 @@ class User extends Authenticatable
         if($value != null && $value != '') {
             $this->attributes['password'] = Hash::make($value);
         }
+    }
+
+    /**
+     * Get owned profile
+     */
+    public function profile() {
+        return $this->hasOne(Profile::class);
     }
 }
