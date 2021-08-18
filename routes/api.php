@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\OpinionController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\ProfileOpinionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::apiResource('profiles', ProfileController::class);
+
+Route::apiResource('profiles.opinions', ProfileOpinionController::class)->shallow()->only(['index', 'store']);
+Route::apiResource('opinions', OpinionController::class)->only(['show', 'update', 'destroy']);

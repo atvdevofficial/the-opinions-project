@@ -11,6 +11,8 @@ class Profile extends Model
 
     /**
      * Mass assignable attributes
+     *
+     * @var array
      */
     protected $fillable = [
         'user_id',
@@ -18,7 +20,9 @@ class Profile extends Model
     ];
 
     /**
-     * Attributes that are hidden in arrays
+     * Attributes that are hidden in arrays\
+     *
+     * @var array
      */
     protected $hidden = [
         'user_id',
@@ -41,5 +45,12 @@ class Profile extends Model
      */
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get owned opinions
+     */
+    public function opinions() {
+        return $this->hasMany(Opinion::class);
     }
 }
