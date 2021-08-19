@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Profile;
+namespace App\Http\Requests\Critique;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class ProfileDestroyRequest extends FormRequest
+class CritiqueUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,6 +20,14 @@ class ProfileDestroyRequest extends FormRequest
         if ($authenticatedUserRole == 'ADMINISTRATOR')
             return true;
 
+        if ($authenticatedUserRole == 'CRITIQUE') {
+            $authenticatedCritique = $authenticatedUser->critique;
+            $routeCritique = $this->route('critique');
+
+            if ($routeCritique->id == $authenticatedCritique->id)
+                return true;
+        }
+
         return false;
     }
 
@@ -30,8 +38,12 @@ class ProfileDestroyRequest extends FormRequest
      */
     public function rules()
     {
+        $routeCritique = $this->route('critique');
+
         return [
-            //
+            'email' => ['required', 'unique:users,email,' . $routeCritique->user->id],
+            'password' => ['required', 'string'],
+            'name' => ['required', 'string'],
         ];
     }
 }

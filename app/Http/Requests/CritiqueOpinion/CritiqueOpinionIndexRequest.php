@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Profile;
+namespace App\Http\Requests\CritiqueOpinion;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class ProfileUpdateRequest extends FormRequest
+class CritiqueOpinionIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,14 +17,11 @@ class ProfileUpdateRequest extends FormRequest
         $authenticatedUser = Auth::user();
         $authenticatedUserRole = $authenticatedUser->role;
 
-        if ($authenticatedUserRole == 'ADMINISTRATOR')
-            return true;
-
         if ($authenticatedUserRole == 'CRITIQUE') {
-            $authenticatedProfile = $authenticatedUser->profile;
-            $routeProfile = $this->route('profile');
+            $authenticatedCritique = $authenticatedUser->Critique;
+            $routeCritique = $this->route('critique');
 
-            if ($routeProfile->id == $authenticatedProfile->id)
+            if ($authenticatedCritique->id == $routeCritique->id)
                 return true;
         }
 
@@ -38,12 +35,8 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $routeProfile = $this->route('profile');
-
         return [
-            'email' => ['required', 'unique:users,email,' . $routeProfile->user->id],
-            'password' => ['required', 'string'],
-            'name' => ['required', 'string'],
+            //
         ];
     }
 }

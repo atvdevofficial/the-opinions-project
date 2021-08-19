@@ -15,12 +15,12 @@ class CreateOpinionsTable extends Migration
     {
         Schema::create('opinions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('profile_id');
+            $table->unsignedBigInteger('critique_id');
             $table->longText('text');
             $table->boolean('is_public');
             $table->timestamps();
 
-            $table->foreign('profile_id')->references('id')->on('profiles')->onDelete('cascade');
+            $table->foreign('critique_id')->references('id')->on('critiques')->onDelete('cascade');
         });
     }
 

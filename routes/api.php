@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\OpinionController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProfileOpinionController;
+use App\Http\Controllers\CritiqueController;
+use App\Http\Controllers\CritiqueOpinionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('profiles', ProfileController::class);
+Route::apiResource('critiques', CritiqueController::class);
 
-Route::apiResource('profiles.opinions', ProfileOpinionController::class)->shallow()->only(['index', 'store']);
+Route::apiResource('critiques.opinions', CritiqueOpinionController::class)->shallow()->only(['index', 'store']);
 Route::apiResource('opinions', OpinionController::class)->only(['show', 'update', 'destroy']);

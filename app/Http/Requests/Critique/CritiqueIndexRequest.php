@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Profile;
+namespace App\Http\Requests\Critique;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class ProfileIndexRequest extends FormRequest
+class CritiqueIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

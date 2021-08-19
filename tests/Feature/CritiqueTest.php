@@ -6,34 +6,34 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ProfileTest extends TestCase
+class CritiqueTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    public function testAdminShowProfileList() {
+    public function testAdminShowCritiqueList() {
         // Administrator Account
         $administrator = \App\Models\User::factory()->role('ADMINISTRATOR')->create();
 
-        // Critique Profiles
-        \App\Models\Profile::factory()->count(3)->state([
+        // Critique Critiques
+        \App\Models\Critique::factory()->count(3)->state([
             'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
         ])->create();
 
         // Response
         $this->actingAs($administrator, 'api')
-        ->getJson(route('profiles.index'))
+        ->getJson(route('critiques.index'))
         ->assertStatus(200)
         ->assertJsonStructure([[
             'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
         ]]);
     }
 
-    public function testAdminCreateProfile() {
+    public function testAdminCreateCritique() {
         // Administrator Account
         $administrator = \App\Models\User::factory()->role('ADMINISTRATOR')->create();
 
-        // Critique Profile
-        $profileData = [
+        // Critique Critique
+        $critiqueData = [
             'email' => 'sample@sample.com',
             'password' => 'password',
             'name' => $this->faker->name
@@ -41,43 +41,43 @@ class ProfileTest extends TestCase
 
         // Response
         $this->actingAs($administrator, 'api')
-        ->postJson(route('profiles.store', $profileData))
+        ->postJson(route('critiques.store', $critiqueData))
         ->assertStatus(201)
         ->assertJsonStructure([
             'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
         ]);
     }
 
-    public function testAdminShowProfile() {
+    public function testAdminShowCritique() {
         // Administrator Account
         $administrator = \App\Models\User::factory()->role('ADMINISTRATOR')->create();
 
-        // Critique Profile
-        $profile = \App\Models\Profile::factory()->state([
+        // Critique Critique
+        $critique = \App\Models\Critique::factory()->state([
             'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
         ])->create();
 
         // Response
         $this->actingAs($administrator, 'api')
-        ->getJson(route('profiles.show', ['profile' => $profile->id]))
+        ->getJson(route('critiques.show', ['critique' => $critique->id]))
         ->assertStatus(200)
         ->assertJsonStructure([
             'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
         ]);
     }
 
-    public function testAdminUpdateProfile() {
+    public function testAdminUpdateCritique() {
         // Administrator Account
         $administrator = \App\Models\User::factory()->role('ADMINISTRATOR')->create();
 
-        // Critique Profile
-        $profile = \App\Models\Profile::factory()->state([
+        // Critique Critique
+        $critique = \App\Models\Critique::factory()->state([
             'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
         ])->create();
 
-        // Updated Critique Profile
-        $profileData = [
-            'profile' => $profile->id,
+        // Updated Critique Critique
+        $critiqueData = [
+            'critique' => $critique->id,
 
             'email' => 'sample@sample.com',
             'password' => 'password',
@@ -86,50 +86,50 @@ class ProfileTest extends TestCase
 
         // Response
         $this->actingAs($administrator, 'api')
-        ->putJson(route('profiles.update', $profileData))
+        ->putJson(route('critiques.update', $critiqueData))
         ->assertStatus(200)
         ->assertJsonStructure([
             'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
         ]);
     }
 
-    public function testAdminDeleteProfile() {
+    public function testAdminDeleteCritique() {
         // Administrator Account
         $administrator = \App\Models\User::factory()->role('ADMINISTRATOR')->create();
 
-        // Critique Profile
-        $profile = \App\Models\Profile::factory()->state([
+        // Critique Critique
+        $critique = \App\Models\Critique::factory()->state([
             'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
         ])->create();
 
         // Response
         $this->actingAs($administrator, 'api')
-        ->getJson(route('profiles.destroy', ['profile' => $profile->id]))
+        ->getJson(route('critiques.destroy', ['critique' => $critique->id]))
         ->assertStatus(200);
     }
 
-    public function testCritiqueShowProfile() {
-        // Critique User & Profile
-        $critique = \App\Models\User::factory()->role('CRITIQUE')->create();
-        $profile = \App\Models\Profile::factory()->state(['user_id' => $critique->id])->create();
+    public function testCritiqueShowCritique() {
+        // Critique User & Critique
+        $critiqueUser = \App\Models\User::factory()->role('CRITIQUE')->create();
+        $critique = \App\Models\Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
         // Response
-        $this->actingAs($critique, 'api')
-        ->getJson(route('profiles.show', ['profile' => $profile->id]))
+        $this->actingAs($critiqueUser, 'api')
+        ->getJson(route('critiques.show', ['critique' => $critique->id]))
         ->assertStatus(200)
         ->assertJsonStructure([
             'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
         ]);
     }
 
-    public function testCritiqueUpdateProfile() {
-        // Critique User & Profile
-        $critique = \App\Models\User::factory()->role('CRITIQUE')->create();
-        $profile = \App\Models\Profile::factory()->state(['user_id' => $critique->id])->create();
+    public function testCritiqueUpdateCritique() {
+        // Critique User & Critique
+        $critiqueUser = \App\Models\User::factory()->role('CRITIQUE')->create();
+        $critique = \App\Models\Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
-        // Updated Critique Profile
-        $profileData = [
-            'profile' => $profile->id,
+        // Updated Critique Critique
+        $critiqueData = [
+            'critique' => $critique->id,
 
             'email' => 'sample@sample.com',
             'password' => 'password',
@@ -137,8 +137,8 @@ class ProfileTest extends TestCase
         ];
 
         // Response
-        $this->actingAs($critique, 'api')
-        ->putJson(route('profiles.update', $profileData))
+        $this->actingAs($critiqueUser, 'api')
+        ->putJson(route('critiques.update', $critiqueData))
         ->assertStatus(200)
         ->assertJsonStructure([
             'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']

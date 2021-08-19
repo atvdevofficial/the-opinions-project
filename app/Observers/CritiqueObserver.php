@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-class ProfileObserver
+class CritiqueObserver
 {
     //
 }

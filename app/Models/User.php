@@ -55,9 +55,9 @@ class User extends Authenticatable
     }
 
     /**
-     * Get owned profile
+     * Get owned critique
      */
-    public function profile() {
-        return $this->hasOne(Profile::class);
+    public function critique() {
+        return $this->hasOne(Critique::class);
     }
 }

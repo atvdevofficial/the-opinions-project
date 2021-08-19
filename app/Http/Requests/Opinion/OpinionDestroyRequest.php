@@ -18,10 +18,10 @@ class OpinionDestroyRequest extends FormRequest
         $authenticatedUserRole = $authenticatedUser->role;
 
         if ($authenticatedUserRole == 'CRITIQUE') {
-            $authenticatedProfile = $authenticatedUser->profile;
+            $authenticatedCritique = $authenticatedUser->critique;
             $routeOpinion = $this->route('opinion');
 
-            if ($routeOpinion->profile->id == $authenticatedProfile->id)
+            if ($routeOpinion->critique->id == $authenticatedCritique->id)
                 return true;
         }
 

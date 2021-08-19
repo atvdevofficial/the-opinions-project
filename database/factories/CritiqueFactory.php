@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Profile;
+use App\Models\Critique;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProfileFactory extends Factory
+class CritiqueFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Profile::class;
+    protected $model = Critique::class;
 
     /**
      * Define the model's default state.

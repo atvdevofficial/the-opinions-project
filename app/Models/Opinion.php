@@ -15,7 +15,7 @@ class Opinion extends Model
      * @var array
      */
     protected $fillable = [
-        'profile_id',
+        'critique_id',
         'text',
         'is_public'
     ];
@@ -24,7 +24,7 @@ class Opinion extends Model
      * Attributes that are hidden
      */
     protected $hidden = [
-        'profile_id',
+        'critique_id',
     ];
 
     /**
@@ -38,9 +38,9 @@ class Opinion extends Model
     ];
 
     /**
-     * Get owning profile
+     * Get owning critique
      */
-    public function profile() {
-        return $this->belongsTo(Profile::class);
+    public function critique() {
+        return $this->belongsTo(Critique::class);
     }
 }

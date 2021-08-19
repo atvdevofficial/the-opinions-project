@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\ProfileOpinion;
+namespace App\Http\Requests\CritiqueOpinion;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class ProfileOpinionStoreRequest extends FormRequest
+class CritiqueOpinionStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,10 +18,10 @@ class ProfileOpinionStoreRequest extends FormRequest
         $authenticatedUserRole = $authenticatedUser->role;
 
         if ($authenticatedUserRole == 'CRITIQUE') {
-            $authenticatedProfile = $authenticatedUser->profile;
-            $routeProfile = $this->route('profile');
+            $authenticatedCritique = $authenticatedUser->Critique;
+            $routeCritique = $this->route('critique');
 
-            if ($authenticatedProfile->id == $routeProfile->id)
+            if ($authenticatedCritique->id == $routeCritique->id)
                 return true;
         }
 

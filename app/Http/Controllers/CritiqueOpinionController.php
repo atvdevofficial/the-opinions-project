@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileOpinion\ProfileOpinionIndexRequest;
-use App\Http\Requests\ProfileOpinion\ProfileOpinionStoreRequest;
+use App\Http\Requests\CritiqueOpinion\CritiqueOpinionIndexRequest;
+use App\Http\Requests\CritiqueOpinion\CritiqueOpinionStoreRequest;
 use App\Http\Resources\OpinionResource;
-use App\Models\Profile;
+use App\Models\Critique;
 use Illuminate\Http\Request;
 
-class ProfileOpinionController extends Controller
+class CritiqueOpinionController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(ProfileOpinionIndexRequest $request, Profile $profile)
+    public function index(CritiqueOpinionIndexRequest $request, Critique $critique)
     {
-        $opinions = $profile->opinions;
+        $opinions = $critique->opinions;
 
         return OpinionResource::collection($opinions);
     }
@@ -28,9 +28,9 @@ class ProfileOpinionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProfileOpinionStoreRequest $request, Profile $profile)
+    public function store(CritiqueOpinionStoreRequest $request, Critique $critique)
     {
-        $opinion = $profile->opinions()->create($request->validated());
+        $opinion = $critique->opinions()->create($request->validated());
 
         return new OpinionResource($opinion);
     }
