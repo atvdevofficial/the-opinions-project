@@ -43,4 +43,11 @@ class Opinion extends Model
     public function critique() {
         return $this->belongsTo(Critique::class);
     }
+
+    /**
+     * Topics that belongs to opinion
+     */
+    public function topics() {
+        return $this->belongsToMany(Topic::class);
+    }
 }

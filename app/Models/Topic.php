@@ -23,4 +23,11 @@ class Topic extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    /**
+     * Opinions that belongs to opinion
+     */
+    public function opinions() {
+        return $this->belongsToMany(Opinion::class);
+    }
 }

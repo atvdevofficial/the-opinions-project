@@ -37,7 +37,10 @@ class OpinionUpdateRequest extends FormRequest
     {
         return [
             'text' => ['required', 'string', 'max:500'],
-            'is_public' => ['required', 'boolean']
+            'is_public' => ['required', 'boolean'],
+
+            'topics' => ['required', 'array', 'min:1'],
+            'topics.*' => ['required', 'exists:topics,id']
         ];
     }
 }

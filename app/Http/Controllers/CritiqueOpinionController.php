@@ -31,6 +31,7 @@ class CritiqueOpinionController extends Controller
     public function store(CritiqueOpinionStoreRequest $request, Critique $critique)
     {
         $opinion = $critique->opinions()->create($request->validated());
+        $opinion->topics()->sync($request->validated()['topics']);
 
         return new OpinionResource($opinion);
     }

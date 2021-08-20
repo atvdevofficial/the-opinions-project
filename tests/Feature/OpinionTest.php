@@ -33,11 +33,16 @@ class OpinionTest extends TestCase
         $critiqueUser = \App\Models\User::factory()->role('CRITIQUE')->create();
         $critique = \App\Models\Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
+        // Topic
+        $topic = \App\Models\Topic::factory()->create();
+
         // Opinion data
         $opinionData = [
             'critique' => $critique->id,
             'text' => $this->faker->paragraph(),
-            'is_public' => true
+            'is_public' => true,
+
+            'topics' => [$topic->id,],
         ];
 
         // Response
@@ -72,11 +77,16 @@ class OpinionTest extends TestCase
         $critique = \App\Models\Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
         $opinion = \App\Models\Opinion::factory()->state(['critique_id' => $critique->id])->create();
 
+        // Topic
+        $topic = \App\Models\Topic::factory()->create();
+
         // Opinion data
         $opinionData = [
             'opinion' => $opinion->id,
             'text' => $this->faker->paragraph(),
-            'is_public' => true
+            'is_public' => true,
+
+            'topics' => [$topic->id,],
         ];
 
         // Response

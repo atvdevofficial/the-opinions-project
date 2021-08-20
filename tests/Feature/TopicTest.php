@@ -31,9 +31,6 @@ class TopicTest extends TestCase
         // Administrator Account
         $administrator = \App\Models\User::factory()->role('ADMINISTRATOR')->create();
 
-        // Topic
-        $topic = \App\Models\Topic::factory()->create();
-
         // Update Topic Data
         $topicData = [
             'text' => $this->faker->word,

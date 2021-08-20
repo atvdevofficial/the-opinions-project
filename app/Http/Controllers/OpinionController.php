@@ -32,6 +32,7 @@ class OpinionController extends Controller
     public function update(OpinionUpdateRequest $request, Opinion $opinion)
     {
         $opinion->update($request->validated());
+        $opinion->topics()->sync($request->validated()['topics']);
 
         return new OpinionResource($opinion);
     }
