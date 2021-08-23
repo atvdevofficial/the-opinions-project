@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Registration
+// Reset Password
+// Forgot / Change Password
+
 Route::apiResource('critiques', CritiqueController::class);
 
 Route::apiResource('critiques.opinions', CritiqueOpinionController::class)
