@@ -60,13 +60,20 @@ class Critique extends Model
      * Get followers (critiques)
      */
     public function followers() {
-        return $this->belongsToMany(Critique::class, 'follow_critique', 'followed_id', 'follower_id')->withTimestamps();
+        return $this->belongsToMany(Critique::class, 'follow_critique', 'followed_id', 'follower_id');
     }
 
     /**
-     * Get following (critiques)
+     * Get followed critiques
      */
     public function followings() {
-        return $this->belongsToMany(Critique::class, 'follow_critique', 'follower_id', 'followed_id')->withTimestamps();
+        return $this->belongsToMany(Critique::class, 'follow_critique', 'follower_id', 'followed_id');
+    }
+
+    /**
+     * Get followed topics
+     */
+    public function followedTopics() {
+        return $this->belongsToMany(Topic::class, 'critique_topic', 'critique_id', 'topic_id');
     }
 }

@@ -17,7 +17,6 @@ class CreateFollowCritiqueTable extends Migration
             $table->id();
             $table->unsignedBigInteger('follower_id');
             $table->unsignedBigInteger('followed_id');
-            $table->timestamps();
 
             $table->foreign('follower_id')->references('id')->on('critiques')->onDelete('cascade');
             $table->foreign('followed_id')->references('id')->on('critiques')->onDelete('cascade');

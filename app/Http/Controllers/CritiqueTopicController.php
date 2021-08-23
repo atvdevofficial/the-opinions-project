@@ -1,30 +1,28 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Http\Requests\FollowCritique\FollowCritiqueFollowRequest;
-use App\Http\Requests\FollowCritique\FollowCritiqueIndexRequest;
-use App\Http\Requests\FollowCritique\FollowCritiqueUnfollowRequest;
+use App\Http\Requests\CritiqueTopic\CritiqueTopicFollowRequest;
+use App\Http\Requests\CritiqueTopic\CritiqueTopicIndexRequest;
+use App\Http\Requests\CritiqueTopic\CritiqueTopicUnfollowRequest;
+use App\Http\Resources\CritiqueResource;
 use App\Models\Critique;
+use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class FollowCritiqueController extends Controller
+class CritiqueTopicController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(FollowCritiqueIndexRequest $request)
+    public function index(CritiqueTopicIndexRequest $request)
     {
         $authenticatedUser = Auth::user();
         $authenticatedCritique = $authenticatedUser->critique;
 
-        return response([
-            'followers' => $authenticatedCritique->followers,
-            'followings' => $authenticatedCritique->followings,
-        ]);
+        return CritiqueResource::collection($authenticatedCritique->followedTopics);
     }
 
     /**
@@ -33,12 +31,12 @@ class FollowCritiqueController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function follow(FollowCritiqueFollowRequest $request, Critique $critique)
+    public function follow(CritiqueTopicFollowRequest $request, Topic $topic)
     {
         $authenticatedUser = Auth::user();
         $authenticatedCritique = $authenticatedUser->critique;
 
-        $authenticatedCritique->followings()->syncWithoutDetaching([$critique->id]);
+        $authenticatedCritique->followedTopics()->syncWithoutDetaching([$topic->id]);
 
         return response(['message' => 'Critique Followed']);
     }
@@ -49,12 +47,12 @@ class FollowCritiqueController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function unfollow(FollowCritiqueUnfollowRequest $request, Critique $critique)
+    public function unfollow(CritiqueTopicUnfollowRequest $request, Topic $topic)
     {
         $authenticatedUser = Auth::user();
         $authenticatedCritique = $authenticatedUser->critique;
 
-        $authenticatedCritique->followings()->detach([$critique->id]);
+        $authenticatedCritique->followedTopics()->detach([$topic->id]);
 
         return response(['message' => 'Critique Unfollowed']);
     }

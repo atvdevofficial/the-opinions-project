@@ -25,9 +25,25 @@ class Topic extends Model
     ];
 
     /**
+     * Attributes that are hidden in arrays\
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'pivot',
+    ];
+
+    /**
      * Opinions that belongs to opinion
      */
     public function opinions() {
         return $this->belongsToMany(Opinion::class);
+    }
+
+    /**
+     * Get crituques that follow topic
+     */
+    public function followedTopics() {
+        return $this->belongsToMany(Critique::class, 'critique_topic', 'topic_id', 'critique_id');
     }
 }

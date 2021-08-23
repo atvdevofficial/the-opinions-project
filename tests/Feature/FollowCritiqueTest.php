@@ -32,7 +32,7 @@ class FollowCritiqueTest extends TestCase
 
         // Response
         $this->actingAs($critiqueUser, 'api')
-        ->getJson(route('follows.index', ['critique' => $critique->id]))
+        ->getJson(route('follows.critiques.index'))
         ->assertStatus(200)
         ->assertJsonStructure([
             'followers' => [['id', 'name']],
@@ -56,7 +56,7 @@ class FollowCritiqueTest extends TestCase
 
         // Response
         $this->actingAs($critiqueUser, 'api')
-        ->putJson(route('follows.follow', ['critique' => $toFollowCritique->id]))
+        ->putJson(route('follows.critiques.follow', ['critique' => $toFollowCritique->id]))
         ->assertStatus(200);
 
         // Query
@@ -81,7 +81,7 @@ class FollowCritiqueTest extends TestCase
 
         // Response
         $this->actingAs($critiqueUser, 'api')
-        ->putJson(route('follows.unfollow', ['critique' => $followedCritique->id]))
+        ->putJson(route('follows.critiques.unfollow', ['critique' => $followedCritique->id]))
         ->assertStatus(200);
 
         // Query
