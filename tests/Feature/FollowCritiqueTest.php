@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Critique;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -13,20 +15,20 @@ class FollowCritiqueTest extends TestCase
 
     public function testCritiqueShowFollowList() {
         // Critique User & Critique
-        $critiqueUser = \App\Models\User::factory()->role('CRITIQUE')->create();
-        $critique = \App\Models\Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
+        $critiqueUser = User::factory()->role('CRITIQUE')->create();
+        $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
         // Followings
         $critique->followings()->attach(
-            \App\Models\Critique::factory()->count(1)->state([
-                'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
+            Critique::factory()->count(1)->state([
+                'user_id' => User::factory()->role('CRITIQUE')->create()
             ])->create()->pluck('id')
         );
 
         // Followers
         $critique->followers()->attach(
-            \App\Models\Critique::factory()->count(1)->state([
-                'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
+            Critique::factory()->count(1)->state([
+                'user_id' => User::factory()->role('CRITIQUE')->create()
             ])->create()->pluck('id')
         );
 
@@ -38,53 +40,84 @@ class FollowCritiqueTest extends TestCase
             'followers' => [['id', 'name']],
             'followings' => [['id', 'name']],
         ]);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(3, User::get());
+
+        // Check number of critiques
+        $this->assertCount(3, Critique::get());
+
+        // Check number of critique_topics
+        $this->assertCount(2, DB::table('follow_critique')->get());
     }
 
     public function testCritiqueFollow() {
         // Critique User & Critique
-        $critiqueUser = \App\Models\User::factory()->role('CRITIQUE')->create();
-        $critique = \App\Models\Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
+        $critiqueUser = User::factory()->role('CRITIQUE')->create();
+        $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
         // To Follow Critique
-        $toFollowCritique = \App\Models\Critique::factory()->state([
-            'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
+        $toFollowCritique = Critique::factory()->state([
+            'user_id' => User::factory()->role('CRITIQUE')->create()
         ])->create();
-
-        // Query
-        $hasFollowed = DB::table('follow_critique')->whereFollowerId($critique->id)->whereFollowedId($toFollowCritique->id)->exists();
-        $this->assertFalse($hasFollowed);
 
         // Response
         $this->actingAs($critiqueUser, 'api')
         ->putJson(route('follows.critiques.follow', ['critique' => $toFollowCritique->id]))
         ->assertStatus(200);
 
-        // Query
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(2, User::get());
+
+        // Check number of critiques
+        $this->assertCount(2, Critique::get());
+
+        // Check number of critique_topics
+        $this->assertCount(1, DB::table('follow_critique')->get());
+
+        // Check if critique has followed critique
         $hasFollowed = DB::table('follow_critique')->whereFollowerId($critique->id)->whereFollowedId($toFollowCritique->id)->exists();
         $this->assertTrue($hasFollowed);
     }
 
     public function testCritiqueUnfollow() {
         // Critique User & Critique
-        $critiqueUser = \App\Models\User::factory()->role('CRITIQUE')->create();
-        $critique = \App\Models\Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
+        $critiqueUser = User::factory()->role('CRITIQUE')->create();
+        $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
         // To Follow Critique
-        $followedCritique = \App\Models\Critique::factory()->state([
-            'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
+        $followedCritique = Critique::factory()->state([
+            'user_id' => User::factory()->role('CRITIQUE')->create()
         ])->create();
         $critique->followings()->attach($followedCritique->id);
-
-        // Query
-        $hasFollowed = DB::table('follow_critique')->whereFollowerId($critique->id)->whereFollowedId($followedCritique->id)->exists();
-        $this->assertTrue($hasFollowed);
 
         // Response
         $this->actingAs($critiqueUser, 'api')
         ->putJson(route('follows.critiques.unfollow', ['critique' => $followedCritique->id]))
         ->assertStatus(200);
 
-        // Query
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(2, User::get());
+
+        // Check number of critiques
+        $this->assertCount(2, Critique::get());
+
+        // Check number of critique_topics
+        $this->assertCount(0, DB::table('follow_critique')->get());
+
+        // Check if critique has unfollowed critique
         $hasFollowed = DB::table('follow_critique')->whereFollowerId($critique->id)->whereFollowedId($followedCritique->id)->exists();
         $this->assertFalse($hasFollowed);
     }

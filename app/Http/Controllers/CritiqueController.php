@@ -74,6 +74,7 @@ class CritiqueController extends Controller
      */
     public function destroy(CritiqueDestroyRequest $request, Critique $critique)
     {
+        $critique->user()->delete();
         $critique->delete();
 
         return null;
