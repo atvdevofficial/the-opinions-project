@@ -23,5 +23,10 @@
         "vue": "^2.6.12",
         "vue-loader": "^15.9.8",
         "vue-template-compiler": "^2.6.12"
+    },
+    "dependencies": {
+        "boxicons": "^2.0.9",
+        "vue-router": "^3.5.2",
+        "vuesax": "^4.0.1-alpha.25"
     }
 }
