@@ -2094,6 +2094,179 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -38315,7 +38488,469 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    [_c("v-btn", { attrs: { elevation: "2" } }, [_vm._v("Hello World")])],
+    [
+      _c(
+        "v-app-bar",
+        { attrs: { dense: "", color: "#FFD561", elevation: "0" } },
+        [
+          _c("v-toolbar-title", { staticClass: "font-weight-black" }, [
+            _vm._v("Opinions")
+          ]),
+          _vm._v(" "),
+          _c("v-spacer"),
+          _vm._v(" "),
+          _c(
+            "v-btn",
+            { attrs: { icon: "" } },
+            [_c("box-icon", { attrs: { name: "chat" } })],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-main",
+        [
+          _c(
+            "v-container",
+            { attrs: { "min-width": "1366px" } },
+            [
+              _c(
+                "v-row",
+                [
+                  _c(
+                    "v-col",
+                    { attrs: { cols: "12", sm: "2" } },
+                    [
+                      _c(
+                        "v-card",
+                        { attrs: { rounded: "lg", elevation: "0" } },
+                        [
+                          _c(
+                            "v-card-title",
+                            [
+                              _c(
+                                "v-row",
+                                {
+                                  attrs: { align: "center", justify: "center" }
+                                },
+                                [
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "4" } },
+                                    [
+                                      _c(
+                                        "v-avatar",
+                                        {
+                                          attrs: {
+                                            color: "#FFEAB1",
+                                            size: "75"
+                                          }
+                                        },
+                                        [
+                                          _c("box-icon", {
+                                            attrs: { name: "user", size: "md" }
+                                          })
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-col", { attrs: { cols: "8" } }, [
+                                    _c("div", { staticClass: "text-center" }, [
+                                      _vm._v("John Mac Doe")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "caption text-center" },
+                                      [_vm._v("The Business Analyst")]
+                                    )
+                                  ])
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-text",
+                            [
+                              _c(
+                                "v-row",
+                                {
+                                  attrs: { align: "center", justify: "center" }
+                                },
+                                [
+                                  _c("v-col", { attrs: { cols: "4" } }, [
+                                    _c("div", { staticClass: "text-center" }, [
+                                      _vm._v("900K")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "caption text-center font-italic"
+                                      },
+                                      [_vm._v("Likes")]
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("v-col", { attrs: { cols: "4" } }, [
+                                    _c("div", { staticClass: "text-center" }, [
+                                      _vm._v("900K")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "caption text-center font-italic"
+                                      },
+                                      [_vm._v("Followers")]
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("v-col", { attrs: { cols: "4" } }, [
+                                    _c("div", { staticClass: "text-center" }, [
+                                      _vm._v("900K")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "caption text-center font-italic"
+                                      },
+                                      [_vm._v("Following")]
+                                    )
+                                  ])
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c("v-divider", { staticClass: "mt-6" })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-actions",
+                            [
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "font-weight-black",
+                                  attrs: {
+                                    block: "",
+                                    rounded: "",
+                                    depressed: "",
+                                    color: "#FFD561"
+                                  }
+                                },
+                                [_vm._v("Share an Opinion")]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-col",
+                    { attrs: { cols: "12", sm: "8" } },
+                    [
+                      _c(
+                        "v-row",
+                        _vm._l([1, 2, 3, 4, 5], function(index) {
+                          return _c(
+                            "v-col",
+                            { key: index, attrs: { cols: "12" } },
+                            [
+                              _c(
+                                "v-card",
+                                { attrs: { elevation: "0" } },
+                                [
+                                  _c(
+                                    "v-card-title",
+                                    [
+                                      _c(
+                                        "v-row",
+                                        {
+                                          attrs: {
+                                            align: "center",
+                                            justify: "center"
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "v-col",
+                                            {
+                                              staticClass: "text-center",
+                                              attrs: { cols: "1" }
+                                            },
+                                            [
+                                              _c(
+                                                "v-avatar",
+                                                {
+                                                  attrs: {
+                                                    color: "#FFEAB1",
+                                                    size: "50"
+                                                  }
+                                                },
+                                                [
+                                                  _c("box-icon", {
+                                                    attrs: {
+                                                      name: "user",
+                                                      size: "sm"
+                                                    }
+                                                  })
+                                                ],
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-col",
+                                            { attrs: { cols: "10" } },
+                                            [
+                                              _c("div", [
+                                                _vm._v("John Mac Doe")
+                                              ]),
+                                              _vm._v(" "),
+                                              _c(
+                                                "div",
+                                                {
+                                                  staticClass:
+                                                    "caption font-italic"
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    "\n                        The Business Analyst\n                      "
+                                                  )
+                                                ]
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-col",
+                                            { attrs: { cols: "1" } },
+                                            [
+                                              _c(
+                                                "div",
+                                                { staticClass: "caption" },
+                                                [_vm._v("10 mins ago")]
+                                              )
+                                            ]
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-card-text", [
+                                    _c("div", [
+                                      _vm._v(
+                                        "\n                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.\n                    Porro, qui itaque. Aspernatur, voluptas autem repellendus\n                    eos beatae consectetur fugit consequuntur optio dolore\n                    debitis fugiat eius molestiae. Optio qui facere expedita\n                    a, eveniet esse illum inventore ipsa quod dolorum modi\n                    voluptatem deserunt quo aut deleniti quae consequatur ab\n                    totam. Eos voluptas molestiae qui iure eveniet modi cumque\n                    nam id nesciunt, odio consequuntur magni. Quod, accusamus\n                    sit! Id a in officiis ipsam, quidem, accusamus dolore,\n                    quia delectus sed sapiente corporis itaque ad nam. Magni\n                    voluptate facilis consequuntur deserunt alias corrupti\n                    totam reiciendis minima necessitatibus, excepturi ex\n                    labore aspernatur dignissimos atque esse quibusdam.\n                  "
+                                      )
+                                    ])
+                                  ]),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-card-actions",
+                                    [
+                                      _c(
+                                        "div",
+                                        [
+                                          _c(
+                                            "v-chip",
+                                            {
+                                              staticClass: "mr-2",
+                                              attrs: {
+                                                small: "",
+                                                color: "#FFD561"
+                                              }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                      Not Financial Advise\n                    "
+                                              )
+                                            ]
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c("v-spacer"),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-chip",
+                                        {
+                                          staticClass: "mr-2 font-weight-bold",
+                                          attrs: { small: "", color: "#FFD561" }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                    90\n                  "
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "px-8 font-weight-bold",
+                                          attrs: {
+                                            small: "",
+                                            rounded: "",
+                                            depressed: "",
+                                            color: "#EEEEEE"
+                                          }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                    Like\n                    "
+                                          )
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        }),
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-col",
+                    { attrs: { cols: "12", sm: "2" } },
+                    [
+                      _c(
+                        "v-card",
+                        { attrs: { rounded: "lg", elevation: "0" } },
+                        [
+                          _c(
+                            "v-card-title",
+                            { staticClass: "font-weight-bold" },
+                            [
+                              _vm._v(
+                                "\n              Top / Trending Topics\n            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-text",
+                            [
+                              _c(
+                                "v-list",
+                                [
+                                  _c(
+                                    "v-list-item",
+                                    { attrs: { "two-line": "" } },
+                                    [
+                                      _c(
+                                        "v-list-item-content",
+                                        [
+                                          _c("v-list-item-title", [
+                                            _vm._v("Election2040")
+                                          ]),
+                                          _vm._v(" "),
+                                          _c("v-list-item-subtitle", [
+                                            _vm._v("1.1M Opinions")
+                                          ])
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-list-item",
+                                    { attrs: { "two-line": "" } },
+                                    [
+                                      _c(
+                                        "v-list-item-content",
+                                        [
+                                          _c("v-list-item-title", [
+                                            _vm._v("Pandemic")
+                                          ]),
+                                          _vm._v(" "),
+                                          _c("v-list-item-subtitle", [
+                                            _vm._v("900K Opinions")
+                                          ])
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-list-item",
+                                    { attrs: { "two-line": "" } },
+                                    [
+                                      _c(
+                                        "v-list-item-content",
+                                        [
+                                          _c("v-list-item-title", [
+                                            _vm._v("Climate Change")
+                                          ]),
+                                          _vm._v(" "),
+                                          _c("v-list-item-subtitle", [
+                                            _vm._v("500K Opinions")
+                                          ])
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
+    ],
     1
   )
 }
