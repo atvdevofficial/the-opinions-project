@@ -26,10 +26,6 @@ window.Vue = require('vue').default;
  */
 import 'boxicons'
 
-import Vuesax from 'vuesax'
-import 'vuesax/dist/vuesax.css'
-Vue.use(Vuesax, {});
-
 import router from './router'
 
 const app = new Vue({
