@@ -12,7 +12,7 @@
 
     <!-- Start of Body -->
     <v-main>
-      <v-container min-width="1366px">
+      <v-container min-width="1366px" class="ma-0 pa-4">
         <v-row>
           <!-- Start of Profile Card -->
           <v-col cols="12" sm="2">
@@ -53,14 +53,53 @@
 
               <!-- Actions -->
               <v-card-actions>
-                <v-btn
-                  block
-                  rounded
-                  depressed
-                  color="#FFD561"
-                  class="font-weight-black"
-                  >Share an Opinion</v-btn
-                >
+                <v-dialog persistent v-model="dialog" max-width="600px">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      block
+                      rounded
+                      depressed
+                      color="#FFD561"
+                      class="font-weight-black"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      Share an Opinion
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title>
+                      <span class="subtitle-1">Share your opinion now</span>
+                    </v-card-title>
+
+                    <v-card-text>
+                      <v-container>
+                        <v-textarea
+                          counter
+                          auto-grow
+                          autofocus
+                          color="#FFD561"
+                        ></v-textarea>
+                      </v-container>
+                    </v-card-text>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="default" text @click="dialog = false">
+                        Cancel
+                      </v-btn>
+                      <v-btn
+                        rounded
+                        depressed
+                        color="#FFD561"
+                        class="font-weight-black px-8"
+                        @click="dialog = false"
+                      >
+                        Share
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -69,7 +108,7 @@
           <v-col cols="12" sm="8">
             <!-- <v-sheet min-height="100vh" rounded="lg"> </v-sheet> -->
             <v-row>
-              <v-col cols="12" v-for="(index) in [1,2,3,4,5]" :key="index">
+              <v-col cols="12" v-for="index in [1, 2, 3, 4, 5]" :key="index">
                 <v-card elevation="0">
                   <!-- Image, Name, and Timestamps -->
                   <v-card-title>
@@ -127,10 +166,9 @@
                       depressed
                       color="#EEEEEE"
                       class="px-8 font-weight-bold"
-                      >
-                      Like
-                      </v-btn
                     >
+                      Like
+                    </v-btn>
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -181,7 +219,7 @@
 export default {
   data() {
     return {
-      active: null,
+      dialog: null,
     };
   },
   mounted() {

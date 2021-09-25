@@ -2267,10 +2267,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      active: null
+      dialog: null
     };
   },
   mounted: function mounted() {
@@ -38514,7 +38552,7 @@ var render = function() {
         [
           _c(
             "v-container",
-            { attrs: { "min-width": "1366px" } },
+            { staticClass: "ma-0 pa-4", attrs: { "min-width": "1366px" } },
             [
               _c(
                 "v-row",
@@ -38643,17 +38681,146 @@ var render = function() {
                             "v-card-actions",
                             [
                               _c(
-                                "v-btn",
+                                "v-dialog",
                                 {
-                                  staticClass: "font-weight-black",
                                   attrs: {
-                                    block: "",
-                                    rounded: "",
-                                    depressed: "",
-                                    color: "#FFD561"
+                                    persistent: "",
+                                    "max-width": "600px"
+                                  },
+                                  scopedSlots: _vm._u([
+                                    {
+                                      key: "activator",
+                                      fn: function(ref) {
+                                        var on = ref.on
+                                        var attrs = ref.attrs
+                                        return [
+                                          _c(
+                                            "v-btn",
+                                            _vm._g(
+                                              _vm._b(
+                                                {
+                                                  staticClass:
+                                                    "font-weight-black",
+                                                  attrs: {
+                                                    block: "",
+                                                    rounded: "",
+                                                    depressed: "",
+                                                    color: "#FFD561"
+                                                  }
+                                                },
+                                                "v-btn",
+                                                attrs,
+                                                false
+                                              ),
+                                              on
+                                            ),
+                                            [
+                                              _vm._v(
+                                                "\n                    Share an Opinion\n                  "
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      }
+                                    }
+                                  ]),
+                                  model: {
+                                    value: _vm.dialog,
+                                    callback: function($$v) {
+                                      _vm.dialog = $$v
+                                    },
+                                    expression: "dialog"
                                   }
                                 },
-                                [_vm._v("Share an Opinion")]
+                                [
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-card",
+                                    [
+                                      _c("v-card-title", [
+                                        _c(
+                                          "span",
+                                          { staticClass: "subtitle-1" },
+                                          [_vm._v("Share your opinion now")]
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-card-text",
+                                        [
+                                          _c(
+                                            "v-container",
+                                            [
+                                              _c("v-textarea", {
+                                                attrs: {
+                                                  counter: "",
+                                                  "auto-grow": "",
+                                                  autofocus: "",
+                                                  color: "#FFD561"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-card-actions",
+                                        [
+                                          _c("v-spacer"),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              attrs: {
+                                                color: "default",
+                                                text: ""
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  _vm.dialog = false
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                      Cancel\n                    "
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              staticClass:
+                                                "font-weight-black px-8",
+                                              attrs: {
+                                                rounded: "",
+                                                depressed: "",
+                                                color: "#FFD561"
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  _vm.dialog = false
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                      Share\n                    "
+                                              )
+                                            ]
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
                               )
                             ],
                             1
@@ -38823,7 +38990,7 @@ var render = function() {
                                         },
                                         [
                                           _vm._v(
-                                            "\n                    Like\n                    "
+                                            "\n                    Like\n                  "
                                           )
                                         ]
                                       )
