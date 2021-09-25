@@ -11,13 +11,17 @@
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
         <div id="app">
-            <router-view></router-view>
+            <app></app>
         </div>
+
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}"></script>
     </body>

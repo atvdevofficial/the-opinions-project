@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span class="brand-name">Opinions</span>
+    <v-btn elevation="2">Hello World</v-btn>
   </div>
 </template>
 
@@ -16,14 +16,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap");
-
-.brand-name {
-  color: #000;
-  font-family: "Open Sans";
-  font-weight: 800;
-  letter-spacing: -50;
-}
-</style>
