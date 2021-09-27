@@ -12,10 +12,10 @@
 
     <!-- Start of Body -->
     <v-main>
-      <v-container min-width="1366px" class="ma-0 pa-4">
+      <v-container min-width="1366px">
         <v-row>
           <!-- Start of Profile Card -->
-          <v-col cols="12" sm="2">
+          <v-col cols="12" md="4" lg="3" xl="2" class="d-none d-md-flex">
             <v-card rounded="lg" elevation="0">
               <!-- Image and Name -->
               <v-card-title>
@@ -80,6 +80,43 @@
                           autofocus
                           color="#FFD561"
                         ></v-textarea>
+                        <v-autocomplete
+                          multiple
+                          :items="items"
+                          item-text="text"
+                          item-value="id"
+                        >
+                          <template v-slot:item="data">
+                              <v-list-item-content>
+                                <v-list-item-title
+                                  v-html="data.item.text"
+                                ></v-list-item-title>
+                              </v-list-item-content>
+                          </template>
+                        </v-autocomplete>
+                        <!-- <v-select
+                          multiple
+                          chips
+                          counter
+                          :items="items"
+                          color="#FFD561"
+                          label="Topic"
+                          v-model="selectedTopics"
+                        >
+                          <template #item="{ item, attrs, on }">
+                            <v-list-item
+                              color="#FFD561"
+                              v-bind="attrs"
+                              v-on="on"
+                              v-ripple="{ class: `custom-select-bg` }"
+                            >
+                              {{ item.text }}
+                            </v-list-item>
+                          </template>
+                          <template #selection="{ item }">
+                            <v-chip color="#FFD561">{{ item.text }}</v-chip>
+                          </template>
+                        </v-select> -->
                       </v-container>
                     </v-card-text>
 
@@ -105,47 +142,43 @@
           </v-col>
           <!-- End of Profile Card -->
 
-          <v-col cols="12" sm="8">
-            <!-- <v-sheet min-height="100vh" rounded="lg"> </v-sheet> -->
+          <!-- Start of Feed -->
+          <v-col cols="12" md="8" lg="9" xl="8">
             <v-row>
               <v-col cols="12" v-for="index in [1, 2, 3, 4, 5]" :key="index">
                 <v-card elevation="0">
                   <!-- Image, Name, and Timestamps -->
                   <v-card-title>
-                    <v-row align="center" justify="center">
-                      <v-col cols="1" class="text-center">
-                        <v-avatar color="#FFEAB1" size="50">
-                          <box-icon name="user" size="sm"></box-icon>
-                        </v-avatar>
-                      </v-col>
-                      <v-col cols="10">
-                        <div>John Mac Doe</div>
-                        <div class="caption font-italic">
-                          The Business Analyst
-                        </div>
-                      </v-col>
-                      <v-col cols="1">
+                    <v-list-item class="grow pl-0">
+                      <v-list-item-avatar color="#FFEAB1">
+                        <box-icon name="user" size="sm"></box-icon>
+                      </v-list-item-avatar>
+
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          <div>John Mac Doe</div>
+                          <div class="caption font-italic">
+                            The Business Analyst
+                          </div>
+                        </v-list-item-title>
+                      </v-list-item-content>
+
+                      <v-row align="center" justify="end">
                         <div class="caption">10 mins ago</div>
-                      </v-col>
-                    </v-row>
+                      </v-row>
+                    </v-list-item>
                   </v-card-title>
 
                   <!-- Metrics -->
                   <v-card-text>
                     <div>
-                      Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                      Porro, qui itaque. Aspernatur, voluptas autem repellendus
-                      eos beatae consectetur fugit consequuntur optio dolore
-                      debitis fugiat eius molestiae. Optio qui facere expedita
-                      a, eveniet esse illum inventore ipsa quod dolorum modi
-                      voluptatem deserunt quo aut deleniti quae consequatur ab
-                      totam. Eos voluptas molestiae qui iure eveniet modi cumque
-                      nam id nesciunt, odio consequuntur magni. Quod, accusamus
-                      sit! Id a in officiis ipsam, quidem, accusamus dolore,
-                      quia delectus sed sapiente corporis itaque ad nam. Magni
-                      voluptate facilis consequuntur deserunt alias corrupti
-                      totam reiciendis minima necessitatibus, excepturi ex
-                      labore aspernatur dignissimos atque esse quibusdam.
+                      Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                      Neque aut nesciunt magni explicabo fugit saepe recusandae
+                      consectetur quas molestias ipsum fugiat modi aliquid nam
+                      laboriosam enim veritatis earum, officia sint
+                      exercitationem quod eius debitis esse? Vel, dolores quia!
+                      Ipsum nam saepe consequatur nemo recusandae quaerat rem
+                      voluptatibus fuga. Aut, deserunt.
                     </div>
                   </v-card-text>
 
@@ -174,8 +207,10 @@
               </v-col>
             </v-row>
           </v-col>
+          <!-- End of Feed -->
 
-          <v-col cols="12" sm="2">
+          <!-- Start of Top / Trending Topics -->
+          <v-col cols="12" xl="2" class="d-none d-lg-flex">
             <v-card rounded="lg" elevation="0">
               <v-card-title class="font-weight-bold">
                 Top / Trending Topics
@@ -208,6 +243,7 @@
               </v-card-text>
             </v-card>
           </v-col>
+          <!-- End of Top / Trending Topics -->
         </v-row>
       </v-container>
     </v-main>
@@ -220,10 +256,29 @@ export default {
   data() {
     return {
       dialog: null,
+      items: [
+        { id: 1, text: "Not Financial Advise" },
+        { id: 2, text: "Financial Advise" },
+        { id: 3, text: "Cryto Currency" },
+        { id: 4, text: "Stock Market" },
+      ],
+      selectedTopics: null,
     };
   },
   mounted() {
     console.log("Component mounted.");
   },
+  methods: {
+    addSelectedItem(e) {
+      console.log(e);
+    },
+  },
 };
 </script>
+
+<style lang="scss">
+.v-application .custom-select-bg {
+  color: #ffd561 !important;
+  caret-color: #ffd561 !important;
+}
+</style>
