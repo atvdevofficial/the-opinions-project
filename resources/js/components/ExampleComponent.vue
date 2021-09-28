@@ -26,8 +26,8 @@
                     </v-avatar>
                   </v-col>
                   <v-col cols="8">
-                    <div class="text-center">John Mac Doe</div>
-                    <div class="caption text-center">The Business Analyst</div>
+                    <div class="text-center">Elen Mac Doe</div>
+                    <!-- <div class="caption text-center">The Business Analyst</div> -->
                   </v-col>
                 </v-row>
               </v-card-title>
@@ -139,10 +139,10 @@
 
                       <v-list-item-content>
                         <v-list-item-title>
-                          <div>John Mac Doe</div>
-                          <div class="caption font-italic">
+                          <div>Elen Mac Doe</div>
+                          <!-- <div class="caption font-italic">
                             The Business Analyst
-                          </div>
+                          </div> -->
                         </v-list-item-title>
                       </v-list-item-content>
 

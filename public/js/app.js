@@ -38722,14 +38722,8 @@ var render = function() {
                                   _vm._v(" "),
                                   _c("v-col", { attrs: { cols: "8" } }, [
                                     _c("div", { staticClass: "text-center" }, [
-                                      _vm._v("John Mac Doe")
-                                    ]),
-                                    _vm._v(" "),
-                                    _c(
-                                      "div",
-                                      { staticClass: "caption text-center" },
-                                      [_vm._v("The Business Analyst")]
-                                    )
+                                      _vm._v("Elen Mac Doe")
+                                    ])
                                   ])
                                 ],
                                 1
@@ -39055,21 +39049,8 @@ var render = function() {
                                             [
                                               _c("v-list-item-title", [
                                                 _c("div", [
-                                                  _vm._v("John Mac Doe")
-                                                ]),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "div",
-                                                  {
-                                                    staticClass:
-                                                      "caption font-italic"
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      "\n                          The Business Analyst\n                        "
-                                                    )
-                                                  ]
-                                                )
+                                                  _vm._v("Elen Mac Doe")
+                                                ])
                                               ])
                                             ],
                                             1
