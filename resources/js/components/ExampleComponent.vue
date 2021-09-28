@@ -8,7 +8,7 @@
         <box-icon name="chat"></box-icon>
       </v-btn>
       <v-btn icon class="d-flex d-md-none" @click="profileDialog = true">
-        <box-icon name='user-circle'></box-icon>
+        <box-icon name="user-circle"></box-icon>
       </v-btn>
     </v-app-bar>
     <!-- End of Toolbar -->
@@ -83,10 +83,15 @@
                               <v-text-field placeholder="Name"></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                              <v-text-field placeholder="Username"></v-text-field>
+                              <v-text-field
+                                placeholder="Username"
+                              ></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                              <v-text-field placeholder="Password" type="password"></v-text-field>
+                              <v-text-field
+                                placeholder="Password"
+                                type="password"
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                         </v-card-text>
@@ -212,9 +217,7 @@
                       <v-list-item-content>
                         <v-list-item-title>
                           <div>Elen Mac Doe</div>
-                          <div class="caption font-italic">
-                            elenmacdoe
-                          </div>
+                          <div class="caption font-italic">elenmacdoe</div>
                         </v-list-item-title>
                       </v-list-item-content>
 
@@ -308,6 +311,7 @@
 
 <script>
 export default {
+  name: "ExampleComponent",
   data() {
     return {
       profileDialog: null,
