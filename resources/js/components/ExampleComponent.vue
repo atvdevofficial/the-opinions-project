@@ -7,6 +7,9 @@
       <v-btn icon>
         <box-icon name="chat"></box-icon>
       </v-btn>
+      <v-btn icon class="d-flex d-md-none" @click="profileDialog = true">
+        <box-icon name='user-circle'></box-icon>
+      </v-btn>
     </v-app-bar>
     <!-- End of Toolbar -->
 
@@ -27,14 +30,14 @@
                   </v-col>
                   <v-col cols="8">
                     <div class="text-center">Elen Mac Doe</div>
-                    <!-- <div class="caption text-center">The Business Analyst</div> -->
+                    <div class="caption text-center">elenmacdoe</div>
                   </v-col>
                 </v-row>
               </v-card-title>
 
               <!-- Metrics -->
               <v-card-text>
-                <v-row align="center" justify="center">
+                <v-row dense align="center" justify="center">
                   <v-col cols="4">
                     <div class="text-center">900K</div>
                     <div class="caption text-center font-italic">Likes</div>
@@ -47,13 +50,76 @@
                     <div class="text-center">900K</div>
                     <div class="caption text-center font-italic">Following</div>
                   </v-col>
+                  <v-col cols="12" class="mt-2">
+                    <v-dialog
+                      persistent
+                      v-model="profileDialog"
+                      max-width="400px"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          x-small
+                          text
+                          block
+                          rounded
+                          depressed
+                          color="default"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Update Profile
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <v-card-title></v-card-title>
+                        <v-card-text>
+                          <v-row dense align="center" justify="center">
+                            <v-col cols="12" class="text-center">
+                              <v-avatar color="#FFEAB1" size="100">
+                                <box-icon name="user" size="md"></box-icon>
+                              </v-avatar>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-text-field placeholder="Name"></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-text-field placeholder="Username"></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                              <v-text-field placeholder="Password" type="password"></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            text
+                            color="default"
+                            @click="profileDialog = false"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            rounded
+                            depressed
+                            color="#FFD561"
+                            class="font-weight-black px-8"
+                            @click="profileDialog = false"
+                          >
+                            Update
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-col>
                 </v-row>
-                <v-divider class="mt-6"></v-divider>
+                <v-divider class="mt-2"></v-divider>
               </v-card-text>
 
               <!-- Actions -->
               <v-card-actions>
-                <v-dialog persistent v-model="dialog" max-width="600px">
+                <v-dialog persistent v-model="opinionDialog" max-width="600px">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
                       block
@@ -80,12 +146,14 @@
                           autofocus
                           color="#FFD561"
                           :rules="formRules"
+                          placeholder="Your opinion goes here"
                         ></v-textarea>
                         <v-autocomplete
                           multiple
-                          :items="items"
                           item-text="text"
                           item-value="id"
+                          :items="items"
+                          placeholder="Select your topic of choice"
                         >
                           <template v-slot:item="data">
                             <v-list-item-content>
@@ -105,7 +173,11 @@
 
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="default" text @click="dialog = false">
+                      <v-btn
+                        color="default"
+                        text
+                        @click="opinionDialog = false"
+                      >
                         Cancel
                       </v-btn>
                       <v-btn
@@ -113,7 +185,7 @@
                         depressed
                         color="#FFD561"
                         class="font-weight-black px-8"
-                        @click="dialog = false"
+                        @click="opinionDialog = false"
                       >
                         Share
                       </v-btn>
@@ -140,9 +212,9 @@
                       <v-list-item-content>
                         <v-list-item-title>
                           <div>Elen Mac Doe</div>
-                          <!-- <div class="caption font-italic">
-                            The Business Analyst
-                          </div> -->
+                          <div class="caption font-italic">
+                            elenmacdoe
+                          </div>
                         </v-list-item-title>
                       </v-list-item-content>
 
@@ -238,7 +310,8 @@
 export default {
   data() {
     return {
-      dialog: null,
+      profileDialog: null,
+      opinionDialog: null,
       items: [
         { id: 1, text: "Not Financial Advise" },
         { id: 2, text: "Financial Advise" },
@@ -247,9 +320,11 @@ export default {
       ],
       selectedTopics: null,
       formRules: [
-          (v) => !!v || 'Please share your opinion',
-          (v) => (v && v.length <= 255) || 'Share your opinion in less than 255 characters'
-      ]
+        (v) => !!v || "Please share your opinion",
+        (v) =>
+          (v && v.length <= 255) ||
+          "Share your opinion in less than 255 characters",
+      ],
     };
   },
   mounted() {

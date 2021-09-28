@@ -2324,10 +2324,83 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      dialog: null,
+      profileDialog: null,
+      opinionDialog: null,
       items: [{
         id: 1,
         text: "Not Financial Advise"
@@ -2343,9 +2416,9 @@ __webpack_require__.r(__webpack_exports__);
       }],
       selectedTopics: null,
       formRules: [function (v) {
-        return !!v || 'Please share your opinion';
+        return !!v || "Please share your opinion";
       }, function (v) {
-        return v && v.length <= 255 || 'Share your opinion in less than 255 characters';
+        return v && v.length <= 255 || "Share your opinion in less than 255 characters";
       }]
     };
   },
@@ -38662,6 +38735,21 @@ var render = function() {
             { attrs: { icon: "" } },
             [_c("box-icon", { attrs: { name: "chat" } })],
             1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-btn",
+            {
+              staticClass: "d-flex d-md-none",
+              attrs: { icon: "" },
+              on: {
+                click: function($event) {
+                  _vm.profileDialog = true
+                }
+              }
+            },
+            [_c("box-icon", { attrs: { name: "user-circle" } })],
+            1
           )
         ],
         1
@@ -38723,7 +38811,13 @@ var render = function() {
                                   _c("v-col", { attrs: { cols: "8" } }, [
                                     _c("div", { staticClass: "text-center" }, [
                                       _vm._v("Elen Mac Doe")
-                                    ])
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "caption text-center" },
+                                      [_vm._v("elenmacdoe")]
+                                    )
                                   ])
                                 ],
                                 1
@@ -38738,7 +38832,11 @@ var render = function() {
                               _c(
                                 "v-row",
                                 {
-                                  attrs: { align: "center", justify: "center" }
+                                  attrs: {
+                                    dense: "",
+                                    align: "center",
+                                    justify: "center"
+                                  }
                                 },
                                 [
                                   _c("v-col", { attrs: { cols: "4" } }, [
@@ -38784,12 +38882,241 @@ var render = function() {
                                       },
                                       [_vm._v("Following")]
                                     )
-                                  ])
+                                  ]),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    {
+                                      staticClass: "mt-2",
+                                      attrs: { cols: "12" }
+                                    },
+                                    [
+                                      _c(
+                                        "v-dialog",
+                                        {
+                                          attrs: {
+                                            persistent: "",
+                                            "max-width": "400px"
+                                          },
+                                          scopedSlots: _vm._u([
+                                            {
+                                              key: "activator",
+                                              fn: function(ref) {
+                                                var on = ref.on
+                                                var attrs = ref.attrs
+                                                return [
+                                                  _c(
+                                                    "v-btn",
+                                                    _vm._g(
+                                                      _vm._b(
+                                                        {
+                                                          attrs: {
+                                                            "x-small": "",
+                                                            text: "",
+                                                            block: "",
+                                                            rounded: "",
+                                                            depressed: "",
+                                                            color: "default"
+                                                          }
+                                                        },
+                                                        "v-btn",
+                                                        attrs,
+                                                        false
+                                                      ),
+                                                      on
+                                                    ),
+                                                    [
+                                                      _vm._v(
+                                                        "\n                        Update Profile\n                      "
+                                                      )
+                                                    ]
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ]),
+                                          model: {
+                                            value: _vm.profileDialog,
+                                            callback: function($$v) {
+                                              _vm.profileDialog = $$v
+                                            },
+                                            expression: "profileDialog"
+                                          }
+                                        },
+                                        [
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-card",
+                                            [
+                                              _c("v-card-title"),
+                                              _vm._v(" "),
+                                              _c(
+                                                "v-card-text",
+                                                [
+                                                  _c(
+                                                    "v-row",
+                                                    {
+                                                      attrs: {
+                                                        dense: "",
+                                                        align: "center",
+                                                        justify: "center"
+                                                      }
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "v-col",
+                                                        {
+                                                          staticClass:
+                                                            "text-center",
+                                                          attrs: { cols: "12" }
+                                                        },
+                                                        [
+                                                          _c(
+                                                            "v-avatar",
+                                                            {
+                                                              attrs: {
+                                                                color:
+                                                                  "#FFEAB1",
+                                                                size: "100"
+                                                              }
+                                                            },
+                                                            [
+                                                              _c("box-icon", {
+                                                                attrs: {
+                                                                  name: "user",
+                                                                  size: "md"
+                                                                }
+                                                              })
+                                                            ],
+                                                            1
+                                                          )
+                                                        ],
+                                                        1
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "v-col",
+                                                        {
+                                                          attrs: { cols: "12" }
+                                                        },
+                                                        [
+                                                          _c("v-text-field", {
+                                                            attrs: {
+                                                              placeholder:
+                                                                "Name"
+                                                            }
+                                                          })
+                                                        ],
+                                                        1
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "v-col",
+                                                        {
+                                                          attrs: { cols: "12" }
+                                                        },
+                                                        [
+                                                          _c("v-text-field", {
+                                                            attrs: {
+                                                              placeholder:
+                                                                "Username"
+                                                            }
+                                                          })
+                                                        ],
+                                                        1
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "v-col",
+                                                        {
+                                                          attrs: { cols: "12" }
+                                                        },
+                                                        [
+                                                          _c("v-text-field", {
+                                                            attrs: {
+                                                              placeholder:
+                                                                "Password",
+                                                              type: "password"
+                                                            }
+                                                          })
+                                                        ],
+                                                        1
+                                                      )
+                                                    ],
+                                                    1
+                                                  )
+                                                ],
+                                                1
+                                              ),
+                                              _vm._v(" "),
+                                              _c(
+                                                "v-card-actions",
+                                                [
+                                                  _c("v-spacer"),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "v-btn",
+                                                    {
+                                                      attrs: {
+                                                        text: "",
+                                                        color: "default"
+                                                      },
+                                                      on: {
+                                                        click: function(
+                                                          $event
+                                                        ) {
+                                                          _vm.profileDialog = false
+                                                        }
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        "\n                          Cancel\n                        "
+                                                      )
+                                                    ]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "v-btn",
+                                                    {
+                                                      staticClass:
+                                                        "font-weight-black px-8",
+                                                      attrs: {
+                                                        rounded: "",
+                                                        depressed: "",
+                                                        color: "#FFD561"
+                                                      },
+                                                      on: {
+                                                        click: function(
+                                                          $event
+                                                        ) {
+                                                          _vm.profileDialog = false
+                                                        }
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        "\n                          Update\n                        "
+                                                      )
+                                                    ]
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
                                 ],
                                 1
                               ),
                               _vm._v(" "),
-                              _c("v-divider", { staticClass: "mt-6" })
+                              _c("v-divider", { staticClass: "mt-2" })
                             ],
                             1
                           ),
@@ -38842,11 +39169,11 @@ var render = function() {
                                     }
                                   ]),
                                   model: {
-                                    value: _vm.dialog,
+                                    value: _vm.opinionDialog,
                                     callback: function($$v) {
-                                      _vm.dialog = $$v
+                                      _vm.opinionDialog = $$v
                                     },
-                                    expression: "dialog"
+                                    expression: "opinionDialog"
                                   }
                                 },
                                 [
@@ -38874,16 +39201,20 @@ var render = function() {
                                                   "auto-grow": "",
                                                   autofocus: "",
                                                   color: "#FFD561",
-                                                  rules: _vm.formRules
+                                                  rules: _vm.formRules,
+                                                  placeholder:
+                                                    "Your opinion goes here"
                                                 }
                                               }),
                                               _vm._v(" "),
                                               _c("v-autocomplete", {
                                                 attrs: {
                                                   multiple: "",
-                                                  items: _vm.items,
                                                   "item-text": "text",
-                                                  "item-value": "id"
+                                                  "item-value": "id",
+                                                  items: _vm.items,
+                                                  placeholder:
+                                                    "Select your topic of choice"
                                                 },
                                                 scopedSlots: _vm._u([
                                                   {
@@ -38956,7 +39287,7 @@ var render = function() {
                                               },
                                               on: {
                                                 click: function($event) {
-                                                  _vm.dialog = false
+                                                  _vm.opinionDialog = false
                                                 }
                                               }
                                             },
@@ -38979,7 +39310,7 @@ var render = function() {
                                               },
                                               on: {
                                                 click: function($event) {
-                                                  _vm.dialog = false
+                                                  _vm.opinionDialog = false
                                                 }
                                               }
                                             },
@@ -39050,7 +39381,20 @@ var render = function() {
                                               _c("v-list-item-title", [
                                                 _c("div", [
                                                   _vm._v("Elen Mac Doe")
-                                                ])
+                                                ]),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticClass:
+                                                      "caption font-italic"
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      "\n                          elenmacdoe\n                        "
+                                                    )
+                                                  ]
+                                                )
                                               ])
                                             ],
                                             1
