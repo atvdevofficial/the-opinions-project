@@ -87,11 +87,11 @@
                           item-value="id"
                         >
                           <template v-slot:item="data">
-                              <v-list-item-content>
-                                <v-list-item-title
-                                  v-html="data.item.text"
-                                ></v-list-item-title>
-                              </v-list-item-content>
+                            <v-list-item-content>
+                              <v-list-item-title
+                                v-html="data.item.text"
+                              ></v-list-item-title>
+                            </v-list-item-content>
                           </template>
                         </v-autocomplete>
                         <!-- <v-select
@@ -163,9 +163,9 @@
                         </v-list-item-title>
                       </v-list-item-content>
 
-                      <v-row align="center" justify="end">
-                        <div class="caption">10 mins ago</div>
-                      </v-row>
+                      <v-list-item-action>
+                        <v-list-item-action-text>10 m</v-list-item-action-text>
+                      </v-list-item-action>
                     </v-list-item>
                   </v-card-title>
 

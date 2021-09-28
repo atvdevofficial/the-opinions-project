@@ -39056,20 +39056,13 @@ var render = function() {
                                           ),
                                           _vm._v(" "),
                                           _c(
-                                            "v-row",
-                                            {
-                                              attrs: {
-                                                align: "center",
-                                                justify: "end"
-                                              }
-                                            },
+                                            "v-list-item-action",
                                             [
-                                              _c(
-                                                "div",
-                                                { staticClass: "caption" },
-                                                [_vm._v("10 mins ago")]
-                                              )
-                                            ]
+                                              _c("v-list-item-action-text", [
+                                                _vm._v("10 m")
+                                              ])
+                                            ],
+                                            1
                                           )
                                         ],
                                         1
