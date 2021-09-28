@@ -79,6 +79,7 @@
                           auto-grow
                           autofocus
                           color="#FFD561"
+                          :rules="formRules"
                         ></v-textarea>
                         <v-autocomplete
                           multiple
@@ -90,33 +91,15 @@
                             <v-list-item-content>
                               <v-list-item-title
                                 v-html="data.item.text"
+                                class="black--text"
                               ></v-list-item-title>
                             </v-list-item-content>
                           </template>
-                        </v-autocomplete>
-                        <!-- <v-select
-                          multiple
-                          chips
-                          counter
-                          :items="items"
-                          color="#FFD561"
-                          label="Topic"
-                          v-model="selectedTopics"
-                        >
-                          <template #item="{ item, attrs, on }">
-                            <v-list-item
-                              color="#FFD561"
-                              v-bind="attrs"
-                              v-on="on"
-                              v-ripple="{ class: `custom-select-bg` }"
-                            >
-                              {{ item.text }}
-                            </v-list-item>
-                          </template>
+
                           <template #selection="{ item }">
                             <v-chip color="#FFD561">{{ item.text }}</v-chip>
                           </template>
-                        </v-select> -->
+                        </v-autocomplete>
                       </v-container>
                     </v-card-text>
 
@@ -263,6 +246,10 @@ export default {
         { id: 4, text: "Stock Market" },
       ],
       selectedTopics: null,
+      formRules: [
+          (v) => !!v || 'Please share your opinion',
+          (v) => (v && v.length <= 255) || 'Share your opinion in less than 255 characters'
+      ]
     };
   },
   mounted() {

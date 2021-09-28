@@ -2324,23 +2324,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2358,7 +2341,12 @@ __webpack_require__.r(__webpack_exports__);
         id: 4,
         text: "Stock Market"
       }],
-      selectedTopics: null
+      selectedTopics: null,
+      formRules: [function (v) {
+        return !!v || 'Please share your opinion';
+      }, function (v) {
+        return v && v.length <= 255 || 'Share your opinion in less than 255 characters';
+      }]
     };
   },
   mounted: function mounted() {
@@ -2469,7 +2457,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 vue__WEBPACK_IMPORTED_MODULE_1__["default"].use((vuetify__WEBPACK_IMPORTED_MODULE_2___default()));
-var opts = {};
+var opts = {
+  theme: {
+    themes: {
+      light: {
+        primary: '#FFD561'
+      }
+    }
+  }
+};
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new (vuetify__WEBPACK_IMPORTED_MODULE_2___default())(opts));
 
 /***/ }),
@@ -38883,7 +38879,8 @@ var render = function() {
                                                   counter: "",
                                                   "auto-grow": "",
                                                   autofocus: "",
-                                                  color: "#FFD561"
+                                                  color: "#FFD561",
+                                                  rules: _vm.formRules
                                                 }
                                               }),
                                               _vm._v(" "),
@@ -38905,6 +38902,8 @@ var render = function() {
                                                             _c(
                                                               "v-list-item-title",
                                                               {
+                                                                staticClass:
+                                                                  "black--text",
                                                                 domProps: {
                                                                   innerHTML: _vm._s(
                                                                     data.item
@@ -38915,6 +38914,27 @@ var render = function() {
                                                             )
                                                           ],
                                                           1
+                                                        )
+                                                      ]
+                                                    }
+                                                  },
+                                                  {
+                                                    key: "selection",
+                                                    fn: function(ref) {
+                                                      var item = ref.item
+                                                      return [
+                                                        _c(
+                                                          "v-chip",
+                                                          {
+                                                            attrs: {
+                                                              color: "#FFD561"
+                                                            }
+                                                          },
+                                                          [
+                                                            _vm._v(
+                                                              _vm._s(item.text)
+                                                            )
+                                                          ]
                                                         )
                                                       ]
                                                     }
