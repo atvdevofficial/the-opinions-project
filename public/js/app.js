@@ -2147,10 +2147,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ChatListComponent",
   data: function data() {
-    return {};
+    return {
+      items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    };
   }
 });
 
@@ -7246,7 +7277,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".wrap-text[data-v-80d584ac] {\n  -webkit-line-clamp: unset !important;\n}\n.reminder[data-v-80d584ac] {\n  background-color: #FFEAB1;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".wrap-text[data-v-80d584ac] {\n  -webkit-line-clamp: unset !important;\n}\n.reminder[data-v-80d584ac] {\n  background-color: #ffeab1;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -39135,6 +39166,13 @@ var render = function() {
         { staticClass: "grow" },
         [
           _c(
+            "v-list-item-avatar",
+            { attrs: { color: "#FFEAB1" } },
+            [_c("box-icon", { attrs: { name: "user", size: "sm" } })],
+            1
+          ),
+          _vm._v(" "),
+          _c(
             "v-list-item-content",
             [
               _c("v-list-item-title", [
@@ -39144,25 +39182,6 @@ var render = function() {
                   _vm._v("elenmacdoe")
                 ])
               ])
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-list-item-action",
-            [
-              _c(
-                "v-list-item-action-text",
-                [
-                  _c(
-                    "v-avatar",
-                    { attrs: { color: "#FFEAB1", size: "40" } },
-                    [_c("box-icon", { attrs: { name: "user", size: "sm" } })],
-                    1
-                  )
-                ],
-                1
-              )
             ],
             1
           )
@@ -39176,22 +39195,67 @@ var render = function() {
         [_vm._v("\n    Messages are automatically deleted after 24 hours\n  ")]
       ),
       _vm._v(" "),
-      _c("v-main"),
+      _c(
+        "v-main",
+        { staticClass: "pa-0" },
+        [
+          _c(
+            "v-list",
+            { attrs: { "two-line": "" } },
+            _vm._l([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function(index) {
+              return _c(
+                "v-list-item",
+                { key: index },
+                [
+                  _c(
+                    "v-list-item-content",
+                    { staticClass: "caption" },
+                    [
+                      _vm._v(
+                        "\n          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem\n          doloremque natus voluptatum adipisci nihil magnam aspernatur earum\n          consequatur quas cumque!\n          "
+                      ),
+                      _c(
+                        "v-list-item-subtitle",
+                        { staticClass: "mt-2 caption font-italic" },
+                        [
+                          _vm._v(
+                            "\n            - You | 09/28/2021 14:00\n          "
+                          )
+                        ]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            }),
+            1
+          )
+        ],
+        1
+      ),
       _vm._v(" "),
       _c(
         "v-footer",
-        { attrs: { app: "", color: "transparent", height: "72", inset: "" } },
+        { attrs: { app: "", color: "#ffeab1", "min-height": "72" } },
         [
-          _c("v-text-field", {
+          _c("v-textarea", {
             attrs: {
-              "background-color": "grey lighten-1",
               dense: "",
               flat: "",
               "hide-details": "",
-              rounded: "",
-              solo: ""
+              solo: "",
+              rows: "2"
             }
-          })
+          }),
+          _vm._v(" "),
+          _c(
+            "v-btn",
+            { staticClass: "ml-4", attrs: { text: "", icon: "" } },
+            [_c("box-icon", { attrs: { type: "solid", name: "up-arrow" } })],
+            1
+          )
         ],
         1
       )

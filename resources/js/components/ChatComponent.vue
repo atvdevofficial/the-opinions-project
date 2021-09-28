@@ -14,6 +14,10 @@
     <!-- End of App Bar -->
 
     <v-list-item class="grow">
+      <v-list-item-avatar color="#FFEAB1">
+        <box-icon name="user" size="sm"></box-icon>
+      </v-list-item-avatar>
+
       <v-list-item-content>
         <v-list-item-title>
           <div>Elen Mac Doe</div>
@@ -21,13 +25,13 @@
         </v-list-item-title>
       </v-list-item-content>
 
-      <v-list-item-action>
+      <!-- <v-list-item-action>
         <v-list-item-action-text>
           <v-avatar color="#FFEAB1" size="40">
             <box-icon name="user" size="sm"></box-icon>
           </v-avatar>
         </v-list-item-action-text>
-      </v-list-item-action>
+      </v-list-item-action> -->
     </v-list-item>
 
     <div class="pa-1 caption font-italic text-center reminder">
@@ -40,19 +44,44 @@
     </v-row> -->
 
     <!-- Start of Body -->
-    <v-main>
-      <!--  -->
+    <v-main class="pa-0">
+      <!-- <v-virtual-scroll :items="items" :item-height="200" height="300">
+        <template v-slot:default="{ item }">
+          <v-list-item>
+            <v-list-item-content class="caption">
+              {{ item }} Lorem, ipsum dolor sit amet consectetur adipisicing elit. Minima, rerum provident repellendus amet deleniti totam nesciunt animi nemo incidunt corporis eos! A beatae voluptatem sunt asperiores, ipsa veritatis unde dolorum possimus. Perspiciatis, neque, sit saepe veritatis rerum voluptatum molestias minima enim eum maiores error. Blanditiis sit voluptatem cupiditate maiores ratione.
+              <v-list-item-subtitle class="mt-2 caption font-italic">
+                - You | 09/28/2021 14:00
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+      </v-virtual-scroll> -->
+      <v-list two-line>
+        <v-list-item
+          v-for="index in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+          :key="index"
+        >
+          <v-list-item-content class="caption">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem
+            doloremque natus voluptatum adipisci nihil magnam aspernatur earum
+            consequatur quas cumque!
+            <v-list-item-subtitle class="mt-2 caption font-italic">
+              - You | 09/28/2021 14:00
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </v-main>
 
-    <v-footer app color="transparent" height="72" inset>
-      <v-text-field
-        background-color="grey lighten-1"
-        dense
-        flat
-        hide-details
-        rounded
-        solo
-      ></v-text-field>
+    <v-footer app color="#ffeab1" min-height="72">
+      <v-textarea dense flat hide-details solo rows="2"></v-textarea>
+      <!-- <v-btn depressed color="primary" class="ml-4 pa-0">
+        <box-icon name='send' type='solid' ></box-icon>
+      </v-btn> -->
+      <v-btn class="ml-4" text icon>
+        <box-icon type="solid" name="up-arrow"></box-icon>
+      </v-btn>
     </v-footer>
   </div>
 </template>
@@ -61,7 +90,9 @@
 export default {
   name: "ChatListComponent",
   data() {
-    return {};
+    return {
+      items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    };
   },
 };
 </script>
@@ -71,6 +102,6 @@ export default {
   -webkit-line-clamp: unset !important;
 }
 .reminder {
-    background-color: #FFEAB1;
+  background-color: #ffeab1;
 }
 </style>
