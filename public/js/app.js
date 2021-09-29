@@ -2591,6 +2591,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ExampleComponent",
   data: function data() {
@@ -40442,6 +40469,113 @@ var render = function() {
                                                       _c(
                                                         "v-col",
                                                         {
+                                                          staticClass:
+                                                            "mt-2 d-md-none",
+                                                          attrs: { cols: "4" }
+                                                        },
+                                                        [
+                                                          _c(
+                                                            "div",
+                                                            {
+                                                              staticClass:
+                                                                "text-center"
+                                                            },
+                                                            [_vm._v("900K")]
+                                                          ),
+                                                          _vm._v(" "),
+                                                          _c(
+                                                            "div",
+                                                            {
+                                                              staticClass:
+                                                                "caption text-center font-italic"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                "\n                              Likes\n                            "
+                                                              )
+                                                            ]
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "v-col",
+                                                        {
+                                                          staticClass:
+                                                            "mt-2 d-md-none",
+                                                          attrs: { cols: "4" }
+                                                        },
+                                                        [
+                                                          _c(
+                                                            "div",
+                                                            {
+                                                              staticClass:
+                                                                "text-center"
+                                                            },
+                                                            [_vm._v("900K")]
+                                                          ),
+                                                          _vm._v(" "),
+                                                          _c(
+                                                            "div",
+                                                            {
+                                                              staticClass:
+                                                                "caption text-center font-italic"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                "\n                              Followers\n                            "
+                                                              )
+                                                            ]
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "v-col",
+                                                        {
+                                                          staticClass:
+                                                            "mt-2 d-md-none",
+                                                          attrs: { cols: "4" }
+                                                        },
+                                                        [
+                                                          _c(
+                                                            "div",
+                                                            {
+                                                              staticClass:
+                                                                "text-center"
+                                                            },
+                                                            [_vm._v("900K")]
+                                                          ),
+                                                          _vm._v(" "),
+                                                          _c(
+                                                            "div",
+                                                            {
+                                                              staticClass:
+                                                                "caption text-center font-italic"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                "\n                              Following\n                            "
+                                                              )
+                                                            ]
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "v-col",
+                                                        {
+                                                          staticClass:
+                                                            "mt-4 d-md-none",
+                                                          attrs: { cols: "12" }
+                                                        },
+                                                        [_c("v-divider")],
+                                                        1
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "v-col",
+                                                        {
                                                           attrs: { cols: "12" }
                                                         },
                                                         [
@@ -40696,7 +40830,10 @@ var render = function() {
                                                         _c(
                                                           "v-chip",
                                                           {
+                                                            staticClass:
+                                                              "caption",
                                                             attrs: {
+                                                              small: "",
                                                               color: "#FFD561"
                                                             }
                                                           },
@@ -41043,6 +41180,36 @@ var render = function() {
                 1
               )
             ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-footer",
+        {
+          staticClass: "d-md-none",
+          attrs: { app: "", color: "transparent", "min-height": "100" }
+        },
+        [
+          _c(
+            "v-btn",
+            {
+              attrs: {
+                absolute: "",
+                right: "",
+                fab: "",
+                elevation: "2",
+                color: "primary"
+              },
+              on: {
+                click: function($event) {
+                  _vm.opinionDialog = true
+                }
+              }
+            },
+            [_c("box-icon", { attrs: { name: "plus" } })],
             1
           )
         ],

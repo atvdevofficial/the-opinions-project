@@ -79,6 +79,27 @@
                                 <box-icon name="user" size="md"></box-icon>
                               </v-avatar>
                             </v-col>
+                            <v-col cols="4" class="mt-2 d-md-none">
+                              <div class="text-center">900K</div>
+                              <div class="caption text-center font-italic">
+                                Likes
+                              </div>
+                            </v-col>
+                            <v-col cols="4" class="mt-2 d-md-none">
+                              <div class="text-center">900K</div>
+                              <div class="caption text-center font-italic">
+                                Followers
+                              </div>
+                            </v-col>
+                            <v-col cols="4" class="mt-2 d-md-none">
+                              <div class="text-center">900K</div>
+                              <div class="caption text-center font-italic">
+                                Following
+                              </div>
+                            </v-col>
+                            <v-col cols="12" class="mt-4 d-md-none">
+                              <v-divider></v-divider>
+                            </v-col>
                             <v-col cols="12">
                               <v-text-field placeholder="Name"></v-text-field>
                             </v-col>
@@ -170,7 +191,7 @@
                           </template>
 
                           <template #selection="{ item }">
-                            <v-chip color="#FFD561">{{ item.text }}</v-chip>
+                            <v-chip small color="#FFD561" class="caption">{{ item.text }}</v-chip>
                           </template>
                         </v-autocomplete>
                       </v-container>
@@ -306,6 +327,12 @@
       </v-container>
     </v-main>
     <!-- End of Body -->
+
+    <v-footer app color="transparent" min-height="100" class="d-md-none">
+      <v-btn absolute right fab elevation="2" color="primary" @click="opinionDialog = true">
+        <box-icon name="plus"></box-icon>
+      </v-btn>
+    </v-footer>
   </div>
 </template>
 
