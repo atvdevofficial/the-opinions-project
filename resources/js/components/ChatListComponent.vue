@@ -2,14 +2,10 @@
   <div>
     <!-- Start of Toolbar -->
     <v-app-bar dense color="#FFD561" elevation="0">
-      <v-toolbar-title class="font-weight-black">Opinions</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon>
-        <box-icon name="chat"></box-icon>
-      </v-btn>
-      <v-btn icon class="d-flex d-md-none" @click="profileDialog = true">
-        <box-icon name="user-circle"></box-icon>
-      </v-btn>
+         <v-app-bar-nav-icon to="/sample">
+        <box-icon name="arrow-back"></box-icon>
+      </v-app-bar-nav-icon>
+      <v-toolbar-title class="font-weight-black">Chat</v-toolbar-title>
     </v-app-bar>
     <!-- End of Toolbar -->
 

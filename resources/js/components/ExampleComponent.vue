@@ -4,7 +4,7 @@
     <v-app-bar dense color="#FFD561" elevation="0">
       <v-toolbar-title class="font-weight-black">Opinions</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
+      <v-btn icon to="/chat-list">
         <box-icon name="chat"></box-icon>
       </v-btn>
       <v-btn icon class="d-flex d-md-none" @click="profileDialog = true">
