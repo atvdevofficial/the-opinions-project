@@ -338,7 +338,7 @@
 
 <script>
 export default {
-  name: "ExampleComponent",
+  name: "FeedComponent",
   data() {
     return {
       profileDialog: null,

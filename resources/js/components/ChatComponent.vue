@@ -62,7 +62,7 @@
 
 <script>
 export default {
-  name: "ChatListComponent",
+  name: "ChatComponent",
   data() {
     return {
       message: null,

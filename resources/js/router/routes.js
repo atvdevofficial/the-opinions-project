@@ -1,12 +1,19 @@
-import ExampleComponent from '../components/ExampleComponent.vue'
+import LoginComponent from '../components/LoginComponent.vue'
+
+import FeedComponent from '../components/FeedComponent.vue'
 import ChatListComponent from '../components/ChatListComponent.vue'
 import ChatComponent from '../components/ChatComponent.vue'
 
 const routes = [
     {
-        path: '/sample',
-        name: 'example',
-        component: ExampleComponent
+        path: '/login',
+        name: 'login',
+        component: LoginComponent
+    },
+    {
+        path: '/feed',
+        name: 'feed',
+        component: FeedComponent
     },
     {
         path: '/chat-list',

@@ -2,7 +2,7 @@
   <div>
     <!-- Start of Toolbar -->
     <v-app-bar dense color="#FFD561" elevation="0">
-         <v-app-bar-nav-icon to="/sample">
+         <v-app-bar-nav-icon to="/feed">
         <box-icon name="arrow-back"></box-icon>
       </v-app-bar-nav-icon>
       <v-toolbar-title class="font-weight-black">Chat</v-toolbar-title>
