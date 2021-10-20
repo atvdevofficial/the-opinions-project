@@ -22,7 +22,8 @@ class CritiqueFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name()
+            'name' => $this->faker->name(),
+            'username' => $this->faker->unique()->word(),
         ];
     }
 }

@@ -33,7 +33,9 @@ class CritiqueStoreRequest extends FormRequest
         return [
             'email' => ['required', 'unique:users,email'],
             'password' => ['required', 'string'],
+
             'name' => ['required', 'string'],
+            'username' => ['required', 'string', 'unique:critiques,username'],
         ];
     }
 }

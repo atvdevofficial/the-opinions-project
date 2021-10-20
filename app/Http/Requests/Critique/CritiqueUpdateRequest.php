@@ -43,7 +43,9 @@ class CritiqueUpdateRequest extends FormRequest
         return [
             'email' => ['required', 'unique:users,email,' . $routeCritique->user->id],
             'password' => ['required', 'string'],
+
             'name' => ['required', 'string'],
+            'username' => ['required', 'string', 'unique:critiques,username,' . $routeCritique->id],
         ];
     }
 }

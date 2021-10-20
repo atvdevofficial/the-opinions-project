@@ -56,7 +56,8 @@ class CritiqueTest extends TestCase
         $critiqueData = [
             'email' => 'sample@sample.com',
             'password' => 'password',
-            'name' => $this->faker->name
+            'name' => $this->faker->name,
+            'username' => $this->faker->unique()->word
         ];
 
         // Sanctum
@@ -66,7 +67,8 @@ class CritiqueTest extends TestCase
         $this->postJson(route('critiques.store', $critiqueData))
             ->assertStatus(201)
             ->assertJsonStructure([
-                'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
+                'id', 'name', 'username',
+                'user' => ['id', 'email', 'email_verified_at', 'role']
             ]);
 
         /**
@@ -133,7 +135,8 @@ class CritiqueTest extends TestCase
 
             'email' => 'sample@sample.com',
             'password' => 'password',
-            'name' => $this->faker->name
+            'name' => $this->faker->name,
+            'username' => $this->faker->unique()->word
         ];
 
         // Sanctum
@@ -143,7 +146,8 @@ class CritiqueTest extends TestCase
         $this->putJson(route('critiques.update', $critiqueData))
             ->assertStatus(200)
             ->assertJsonStructure([
-                'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
+                'id', 'name', 'username',
+                'user' => ['id', 'email', 'email_verified_at', 'role']
             ]);
 
         /**
@@ -233,7 +237,8 @@ class CritiqueTest extends TestCase
 
             'email' => 'sample@sample.com',
             'password' => 'password',
-            'name' => $this->faker->name
+            'name' => $this->faker->name,
+            'username' => $this->faker->unique()->word
         ];
 
         // Sanctum
@@ -243,7 +248,8 @@ class CritiqueTest extends TestCase
         $this->putJson(route('critiques.update', $critiqueData))
             ->assertStatus(200)
             ->assertJsonStructure([
-                'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
+                'id', 'name', 'username',
+                'user' => ['id', 'email', 'email_verified_at', 'role']
             ]);
 
         /**
