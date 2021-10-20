@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\OpinionController;
 use App\Http\Controllers\CritiqueController;
 use App\Http\Controllers\CritiqueOpinionController;
@@ -23,11 +24,16 @@ Route::group(['middleware' => 'throttle:120'], function () {
     // Registration
     // Reset Password
     // Forgot / Change Password
+    Route::post('/login', [AuthenticationController::class, 'login'])
+        ->name('login');
 
     /**
      * Authenticated Routes
      */
     Route::group(['middleware' => ['auth:sanctum']], function () {
+        Route::post('/logout', [AuthenticationController::class, 'logout'])
+            ->name('logout');
+
         Route::apiResource('critiques', CritiqueController::class);
 
         Route::apiResource('critiques.opinions', CritiqueOpinionController::class)
