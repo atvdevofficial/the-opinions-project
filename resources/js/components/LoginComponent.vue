@@ -3,7 +3,10 @@
     <v-row align="center" justify="center" style="height: 100vh">
       <v-col cols="12" sm="6" lg="4">
         <v-card elevation="0">
-          <v-card-title class="font-italic title"> It's time to let the world know about your opinions, share it now!</v-card-title>
+          <v-card-title class="font-italic title">
+            It's time to let the world know about your opinions, share it
+            now!</v-card-title
+          >
 
           <v-card-text>
             <v-text-field placeholder="Username"></v-text-field>
@@ -57,7 +60,7 @@ export default {
   },
   methods: {
     login() {
-        this.$router.push('/feed');
+      this.$router.push({ name: "feed" });
     },
   },
 };

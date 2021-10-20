@@ -4,12 +4,24 @@
     <v-app-bar dense color="#FFD561" elevation="0">
       <v-toolbar-title class="font-weight-black">Opinions</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon to="/chat-list">
+
+      <!-- Chat button -->
+      <v-btn icon @click="$router.push({ name: 'chatList' })">
         <box-icon name="chat"></box-icon>
       </v-btn>
+
+      <!-- Profile dialog button on ly visible to below medium screens -->
       <v-btn icon class="d-flex d-md-none" @click="profileDialog = true">
         <box-icon name="user-circle"></box-icon>
       </v-btn>
+
+      <!-- Logout button -->
+      <div class="d-none d-md-flex">
+        <logout-dialog
+          :showDialog="logoutDialog"
+          @close="logoutDialogClose"
+        ></logout-dialog>
+      </div>
     </v-app-bar>
     <!-- End of Toolbar -->
 
@@ -72,7 +84,7 @@
     </v-main>
     <!-- End of Body -->
 
-    <!-- Fab button -->
+    <!-- Fab button for opinion dialog -->
     <v-footer app color="transparent" min-height="100" class="d-md-none">
       <v-btn
         absolute
@@ -91,6 +103,7 @@
 <script>
 import ProfileCardDialog from "./subcomponents/ProfileCardDialog.vue";
 import OpinionDialog from "./subcomponents/OpinionDialog.vue";
+import LogoutDialog from "./subcomponents/LogoutDialog.vue";
 import OpinionCard from "./subcomponents/OpinionCard.vue";
 import TopTrendingTopics from "./subcomponents/TopTrendingTopics.vue";
 
@@ -99,6 +112,7 @@ export default {
   components: {
     ProfileCardDialog,
     OpinionDialog,
+    LogoutDialog,
     OpinionCard,
     TopTrendingTopics,
   },
@@ -106,6 +120,7 @@ export default {
     return {
       profileDialog: false,
       opinionDialog: false,
+      logoutDialog: false,
 
       opinions: [
         {
@@ -138,6 +153,10 @@ export default {
 
     opinionDialogClose(value) {
       this.opinionDialog = value;
+    },
+
+    logoutDialogClose(value) {
+      this.logoutDialog = value;
     },
   },
 };

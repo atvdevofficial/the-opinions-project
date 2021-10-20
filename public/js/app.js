@@ -2282,8 +2282,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _subcomponents_ProfileCardDialog_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./subcomponents/ProfileCardDialog.vue */ "./resources/js/components/subcomponents/ProfileCardDialog.vue");
 /* harmony import */ var _subcomponents_OpinionDialog_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./subcomponents/OpinionDialog.vue */ "./resources/js/components/subcomponents/OpinionDialog.vue");
-/* harmony import */ var _subcomponents_OpinionCard_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./subcomponents/OpinionCard.vue */ "./resources/js/components/subcomponents/OpinionCard.vue");
-/* harmony import */ var _subcomponents_TopTrendingTopics_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./subcomponents/TopTrendingTopics.vue */ "./resources/js/components/subcomponents/TopTrendingTopics.vue");
+/* harmony import */ var _subcomponents_LogoutDialog_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./subcomponents/LogoutDialog.vue */ "./resources/js/components/subcomponents/LogoutDialog.vue");
+/* harmony import */ var _subcomponents_OpinionCard_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./subcomponents/OpinionCard.vue */ "./resources/js/components/subcomponents/OpinionCard.vue");
+/* harmony import */ var _subcomponents_TopTrendingTopics_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./subcomponents/TopTrendingTopics.vue */ "./resources/js/components/subcomponents/TopTrendingTopics.vue");
 //
 //
 //
@@ -2374,6 +2375,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -2383,13 +2397,15 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     ProfileCardDialog: _subcomponents_ProfileCardDialog_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     OpinionDialog: _subcomponents_OpinionDialog_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-    OpinionCard: _subcomponents_OpinionCard_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
-    TopTrendingTopics: _subcomponents_TopTrendingTopics_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+    LogoutDialog: _subcomponents_LogoutDialog_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    OpinionCard: _subcomponents_OpinionCard_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    TopTrendingTopics: _subcomponents_TopTrendingTopics_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   data: function data() {
     return {
       profileDialog: false,
       opinionDialog: false,
+      logoutDialog: false,
       opinions: [{
         name: "Profile Name",
         username: "Profile Username",
@@ -2416,6 +2432,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     opinionDialogClose: function opinionDialogClose(value) {
       this.opinionDialog = value;
+    },
+    logoutDialogClose: function logoutDialogClose(value) {
+      this.logoutDialog = value;
     }
   }
 });
@@ -2482,6 +2501,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "LoginComponent",
   data: function data() {
@@ -2491,7 +2513,92 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     login: function login() {
-      this.$router.push('/feed');
+      this.$router.push({
+        name: "feed"
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "LogoutDialog",
+  props: {
+    showDialog: {
+      type: Boolean,
+      "default": false
+    }
+  },
+  data: function data() {
+    return {
+      logoutDialog: false
+    };
+  },
+  watch: {
+    showDialog: function showDialog() {
+      this.logoutDialog = this.showDialog;
+    }
+  },
+  methods: {
+    closeDialog: function closeDialog() {
+      this.logoutDialog = false;
+      this.$emit("close", this.logoutDialog);
+    },
+    logout: function logout() {
+      this.$router.push({
+        name: "login"
+      });
     }
   }
 });
@@ -2751,6 +2858,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _LogoutDialog_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LogoutDialog.vue */ "./resources/js/components/subcomponents/LogoutDialog.vue");
 //
 //
 //
@@ -2873,8 +2981,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ProfileCardDialog",
+  components: {
+    LogoutDialog: _LogoutDialog_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -2884,6 +3005,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       profileDialog: false,
+      logoutDialog: false,
       profile: {
         name: "Profile Name",
         username: "Profile Username",
@@ -2923,6 +3045,9 @@ __webpack_require__.r(__webpack_exports__);
     closeDialog: function closeDialog() {
       this.profileDialog = false;
       this.$emit("close", this.profileDialog);
+    },
+    logoutDialogClose: function logoutDialogClose(value) {
+      this.logoutDialog = value;
     }
   }
 });
@@ -3157,7 +3282,7 @@ var routes = [{
   component: _components_ChatListComponent_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
 }, {
   path: '/chat/username',
-  name: 'chatList',
+  name: 'chat',
   component: _components_ChatComponent_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
 }];
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (routes);
@@ -40038,6 +40163,45 @@ component.options.__file = "resources/js/components/LoginComponent.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/subcomponents/LogoutDialog.vue":
+/*!****************************************************************!*\
+  !*** ./resources/js/components/subcomponents/LogoutDialog.vue ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _LogoutDialog_vue_vue_type_template_id_48352694___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LogoutDialog.vue?vue&type=template&id=48352694& */ "./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=template&id=48352694&");
+/* harmony import */ var _LogoutDialog_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LogoutDialog.vue?vue&type=script&lang=js& */ "./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _LogoutDialog_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _LogoutDialog_vue_vue_type_template_id_48352694___WEBPACK_IMPORTED_MODULE_0__.render,
+  _LogoutDialog_vue_vue_type_template_id_48352694___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/subcomponents/LogoutDialog.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/subcomponents/OpinionCard.vue":
 /*!***************************************************************!*\
   !*** ./resources/js/components/subcomponents/OpinionCard.vue ***!
@@ -40274,6 +40438,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LogoutDialog_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LogoutDialog.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LogoutDialog_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/subcomponents/OpinionCard.vue?vue&type=script&lang=js&":
 /*!****************************************************************************************!*\
   !*** ./resources/js/components/subcomponents/OpinionCard.vue?vue&type=script&lang=js& ***!
@@ -40449,6 +40629,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=template&id=48352694&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=template&id=48352694& ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LogoutDialog_vue_vue_type_template_id_48352694___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LogoutDialog_vue_vue_type_template_id_48352694___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LogoutDialog_vue_vue_type_template_id_48352694___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LogoutDialog.vue?vue&type=template&id=48352694& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=template&id=48352694&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/subcomponents/OpinionCard.vue?vue&type=template&id=ab123bc4&":
 /*!**********************************************************************************************!*\
   !*** ./resources/js/components/subcomponents/OpinionCard.vue?vue&type=template&id=ab123bc4& ***!
@@ -40567,7 +40764,13 @@ var render = function() {
         [
           _c(
             "v-app-bar-nav-icon",
-            { attrs: { to: "/chat-list" } },
+            {
+              on: {
+                click: function($event) {
+                  return _vm.$router.push({ name: "chatList" })
+                }
+              }
+            },
             [_c("box-icon", { attrs: { name: "arrow-back" } })],
             1
           ),
@@ -40720,7 +40923,13 @@ var render = function() {
         [
           _c(
             "v-app-bar-nav-icon",
-            { attrs: { to: "/feed" } },
+            {
+              on: {
+                click: function($event) {
+                  return _vm.$router.push({ name: "feed" })
+                }
+              }
+            },
             [_c("box-icon", { attrs: { name: "arrow-back" } })],
             1
           ),
@@ -40833,7 +41042,14 @@ var render = function() {
           _vm._v(" "),
           _c(
             "v-btn",
-            { attrs: { icon: "", to: "/chat-list" } },
+            {
+              attrs: { icon: "" },
+              on: {
+                click: function($event) {
+                  return _vm.$router.push({ name: "chatList" })
+                }
+              }
+            },
             [_c("box-icon", { attrs: { name: "chat" } })],
             1
           ),
@@ -40850,6 +41066,18 @@ var render = function() {
               }
             },
             [_c("box-icon", { attrs: { name: "user-circle" } })],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "d-none d-md-flex" },
+            [
+              _c("logout-dialog", {
+                attrs: { showDialog: _vm.logoutDialog },
+                on: { close: _vm.logoutDialogClose }
+              })
+            ],
             1
           )
         ],
@@ -41034,7 +41262,7 @@ var render = function() {
                 [
                   _c("v-card-title", { staticClass: "font-italic title" }, [
                     _vm._v(
-                      " It's time to let the world know about your opinions, share it now!"
+                      "\n          It's time to let the world know about your opinions, share it\n          now!"
                     )
                   ]),
                   _vm._v(" "),
@@ -41115,6 +41343,113 @@ var render = function() {
                   )
                 ],
                 1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=template&id=48352694&":
+/*!**************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/subcomponents/LogoutDialog.vue?vue&type=template&id=48352694& ***!
+  \**************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "v-dialog",
+    {
+      attrs: { persistent: "", "max-width": "350px" },
+      scopedSlots: _vm._u([
+        {
+          key: "activator",
+          fn: function(ref) {
+            var on = ref.on
+            var attrs = ref.attrs
+            return [
+              _c(
+                "v-btn",
+                _vm._g(
+                  _vm._b({ attrs: { icon: "" } }, "v-btn", attrs, false),
+                  on
+                ),
+                [_c("box-icon", { attrs: { name: "log-out-circle" } })],
+                1
+              )
+            ]
+          }
+        }
+      ]),
+      model: {
+        value: _vm.logoutDialog,
+        callback: function($$v) {
+          _vm.logoutDialog = $$v
+        },
+        expression: "logoutDialog"
+      }
+    },
+    [
+      _vm._v(" "),
+      _c(
+        "v-card",
+        [
+          _c("v-card-title"),
+          _vm._v(" "),
+          _c(
+            "v-card-text",
+            [
+              _c("v-container", { staticClass: "text-center" }, [
+                _vm._v(
+                  "\n        You are about to be logged out. Please confirm.\n      "
+                )
+              ])
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-card-actions",
+            [
+              _c("v-spacer"),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  attrs: { color: "default", text: "" },
+                  on: { click: _vm.closeDialog }
+                },
+                [_vm._v(" Cancel ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  staticClass: "font-weight-black px-8",
+                  attrs: { rounded: "", depressed: "", color: "#FFD561" },
+                  on: { click: _vm.logout }
+                },
+                [_vm._v("\n        Confirm\n      ")]
               )
             ],
             1
@@ -41692,6 +42027,18 @@ var render = function() {
                           _c(
                             "v-card-actions",
                             [
+                              _c(
+                                "div",
+                                { staticClass: "d-flex d-md-none" },
+                                [
+                                  _c("logout-dialog", {
+                                    attrs: { showDialog: _vm.logoutDialog },
+                                    on: { close: _vm.logoutDialogClose }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
                               _c("v-spacer"),
                               _vm._v(" "),
                               _c(

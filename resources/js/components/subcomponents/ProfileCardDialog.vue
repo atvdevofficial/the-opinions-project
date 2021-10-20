@@ -96,6 +96,15 @@
 
               <!-- Dialog Actions -->
               <v-card-actions>
+                <!-- Logout dialog -->
+                <div class="d-flex d-md-none">
+                  <logout-dialog
+                    :showDialog="logoutDialog"
+                    @close="logoutDialogClose"
+                  ></logout-dialog>
+                </div>
+
+                <!-- Spacer -->
                 <v-spacer></v-spacer>
                 <!-- Dialog cancel button -->
                 <v-btn text color="default" @click="closeDialog">
@@ -121,8 +130,13 @@
 </template>
 
 <script>
+import LogoutDialog from "./LogoutDialog.vue";
+
 export default {
   name: "ProfileCardDialog",
+  components: {
+    LogoutDialog,
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -132,6 +146,7 @@ export default {
   data() {
     return {
       profileDialog: false,
+      logoutDialog: false,
 
       profile: {
         name: "Profile Name",
@@ -165,6 +180,10 @@ export default {
     closeDialog() {
       this.profileDialog = false;
       this.$emit("close", this.profileDialog);
+    },
+
+    logoutDialogClose(value) {
+      this.logoutDialog = value;
     },
   },
 };

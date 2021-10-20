@@ -2,7 +2,7 @@
   <div>
     <!-- Start of App Bar -->
     <v-app-bar app dense color="#FFD561" elevation="0">
-      <v-app-bar-nav-icon to="/chat-list">
+      <v-app-bar-nav-icon @click="$router.push({ name: 'chatList' })">
         <box-icon name="arrow-back"></box-icon>
       </v-app-bar-nav-icon>
       <v-toolbar-title class="pa-0">
