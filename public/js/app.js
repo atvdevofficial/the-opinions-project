@@ -2369,6 +2369,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -2408,6 +2413,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     profileDialogClose: function profileDialogClose(value) {
       this.profileDialog = value;
+    },
+    opinionDialogClose: function opinionDialogClose(value) {
+      this.opinionDialog = value;
     }
   }
 });
@@ -2688,6 +2696,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "OpinionDialog",
+  props: {
+    showDialog: {
+      type: Boolean,
+      "default": false
+    }
+  },
   data: function data() {
     return {
       opinionDialog: false,
@@ -2710,6 +2724,17 @@ __webpack_require__.r(__webpack_exports__);
         return v && v.length <= 255 || "Share your opinion in less than 255 characters";
       }]
     };
+  },
+  watch: {
+    showDialog: function showDialog() {
+      this.opinionDialog = this.showDialog;
+    }
+  },
+  methods: {
+    closeDialog: function closeDialog() {
+      this.opinionDialog = false;
+      this.$emit("close", this.opinionDialog);
+    }
   }
 });
 
@@ -40864,7 +40889,12 @@ var render = function() {
                               _c(
                                 "div",
                                 { staticClass: "px-4" },
-                                [_c("opinion-dialog")],
+                                [
+                                  _c("opinion-dialog", {
+                                    attrs: { showDialog: _vm.opinionDialog },
+                                    on: { close: _vm.opinionDialogClose }
+                                  })
+                                ],
                                 1
                               )
                             ],
@@ -41371,11 +41401,7 @@ var render = function() {
                 "v-btn",
                 {
                   attrs: { color: "default", text: "" },
-                  on: {
-                    click: function($event) {
-                      _vm.opinionDialog = false
-                    }
-                  }
+                  on: { click: _vm.closeDialog }
                 },
                 [_vm._v("\n        Cancel\n      ")]
               ),
@@ -41385,11 +41411,7 @@ var render = function() {
                 {
                   staticClass: "font-weight-black px-8",
                   attrs: { rounded: "", depressed: "", color: "#FFD561" },
-                  on: {
-                    click: function($event) {
-                      _vm.opinionDialog = false
-                    }
-                  }
+                  on: { click: _vm.closeDialog }
                 },
                 [_vm._v("\n        Share\n      ")]
               )

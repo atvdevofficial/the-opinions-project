@@ -27,9 +27,13 @@
                   :showDialog="profileDialog"
                   @close="profileDialogClose"
                 ></profile-card-dialog>
+
                 <!-- Opinion Dialog -->
                 <div class="px-4">
-                  <opinion-dialog></opinion-dialog>
+                  <opinion-dialog
+                    :showDialog="opinionDialog"
+                    @close="opinionDialogClose"
+                  ></opinion-dialog>
                 </div>
               </v-card-text>
             </v-card>
@@ -68,6 +72,7 @@
     </v-main>
     <!-- End of Body -->
 
+    <!-- Fab button -->
     <v-footer app color="transparent" min-height="100" class="d-md-none">
       <v-btn
         absolute
@@ -129,6 +134,10 @@ export default {
 
     profileDialogClose(value) {
       this.profileDialog = value;
+    },
+
+    opinionDialogClose(value) {
+      this.opinionDialog = value;
     },
   },
 };

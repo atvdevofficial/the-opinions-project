@@ -62,7 +62,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <!-- Cancel button -->
-        <v-btn color="default" text @click="opinionDialog = false">
+        <v-btn color="default" text @click="closeDialog">
           Cancel
         </v-btn>
 
@@ -72,7 +72,7 @@
           depressed
           color="#FFD561"
           class="font-weight-black px-8"
-          @click="opinionDialog = false"
+          @click="closeDialog"
         >
           Share
         </v-btn>
@@ -84,6 +84,12 @@
 <script>
 export default {
   name: "OpinionDialog",
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       opinionDialog: false,
@@ -102,6 +108,17 @@ export default {
           "Share your opinion in less than 255 characters",
       ],
     };
+  },
+  watch: {
+    showDialog: function () {
+      this.opinionDialog = this.showDialog;
+    },
+  },
+  methods: {
+    closeDialog() {
+      this.opinionDialog = false;
+      this.$emit("close", this.opinionDialog);
+    },
   },
 };
 </script>r
