@@ -3,12 +3,12 @@
     <!-- Image and Name -->
     <v-card-title>
       <v-row align="center" justify="center">
-        <v-col cols="4">
+        <v-col cols="12" class="text-center">
           <v-avatar color="#FFEAB1" size="75">
             <box-icon name="user" size="md"></box-icon>
           </v-avatar>
         </v-col>
-        <v-col cols="8">
+        <v-col cols="12">
           <div class="text-center">{{ profile.name }}</div>
           <div class="caption text-center">{{ profile.username }}</div>
         </v-col>
@@ -79,16 +79,39 @@
                     <v-divider></v-divider>
                   </v-col>
 
-                  <!-- Form textfields -->
-                  <v-col
-                    cols="12"
-                    v-for="(formTextField, index) in formTextFields"
-                    :key="index + 'ftf'"
-                  >
+                  <!-- Name text field -->
+                  <v-col cols="12">
                     <v-text-field
-                      :placeholder="formTextField.placeholder"
-                      :type="formTextField.type"
-                      :v-model="formTextField.model"
+                      placeholder="Name"
+                      type="text"
+                      v-model="editedProfile.name"
+                    ></v-text-field>
+                  </v-col>
+
+                  <!-- Username text field -->
+                  <v-col cols="12">
+                    <v-text-field
+                      placeholder="Username"
+                      type="text"
+                      v-model="editedProfile.username"
+                    ></v-text-field>
+                  </v-col>
+
+                  <!-- Email text field -->
+                  <v-col cols="12">
+                    <v-text-field
+                      placeholder="Email"
+                      type="email"
+                      v-model="editedProfile.email"
+                    ></v-text-field>
+                  </v-col>
+
+                  <!-- Password text field -->
+                  <v-col cols="12">
+                    <v-text-field
+                      placeholder="Password"
+                      type="password"
+                      v-model="editedProfile.password"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -107,7 +130,7 @@
                 <!-- Spacer -->
                 <v-spacer></v-spacer>
                 <!-- Dialog cancel button -->
-                <v-btn text color="default" @click="closeDialog">
+                <v-btn text color="default" @click="profileDialogClose">
                   Cancel
                 </v-btn>
                 <!-- Dialog update button -->
@@ -116,7 +139,8 @@
                   depressed
                   color="#FFD561"
                   class="font-weight-black px-8"
-                  @click="closeDialog"
+                  @click="updateCritiqueProfile"
+                  :loading="isUpdatingProfile"
                 >
                   Update
                 </v-btn>
@@ -145,24 +169,24 @@ export default {
   },
   data() {
     return {
+      isUpdatingProfile: false,
       profileDialog: false,
       logoutDialog: false,
 
       profile: {
         name: "Profile Name",
         username: "Profile Username",
+        email: "Profile Email",
         password: null,
       },
 
-      formTextFields: [
-        { placeholder: "Name", type: "text", model: "profile.name" },
-        { placeholder: "Username", type: "text", model: "profile.username" },
-        {
-          placeholder: "Password",
-          type: "password",
-          model: "profile.password",
-        },
-      ],
+      // Used for profile editing purposes
+      editedProfile: {
+        name: "Profile Name",
+        username: "Profile Username",
+        email: "Profile Email",
+        password: null,
+      },
 
       profileMetrics: [
         { name: "Likes", value: 100 },
@@ -176,14 +200,84 @@ export default {
       this.profileDialog = this.showDialog;
     },
   },
+  mounted() {
+    this.retrieveCritiqueProfile();
+  },
   methods: {
-    closeDialog() {
+    // Handler for profile dialog close
+    profileDialogClose() {
       this.profileDialog = false;
+
+      // Emit an event named close together
+      // with profileDialog value
       this.$emit("close", this.profileDialog);
     },
 
+    // Handler for logout dialog close
     logoutDialogClose(value) {
       this.logoutDialog = value;
+    },
+
+    // Retrieve current authenticated critique profile
+    retrieveCritiqueProfile() {
+      // Retrieve current authenticated crituque id from session storage
+      var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+      axios
+        .get("/api/critiques/" + critiqueId)
+        .then((response) => {
+          let data = response.data;
+
+          // Extract needed critique profile info from response
+          this.profile = {
+            name: data.name,
+            username: data.username,
+            email: data.user.email,
+          };
+
+          // Set editedProfile equals to profile without link
+          this.editedProfile = Object.assign({}, this.profile);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        })
+        .finally((_) => {});
+    },
+
+    // Update current authenticated critique profile
+    updateCritiqueProfile() {
+      // Retrieve current authenticated crituque id from session storage
+      var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+      // set isUpdatingProfile to true
+      this.isUpdatingProfile = true;
+
+      axios
+        .put("/api/critiques/" + critiqueId, this.editedProfile)
+        .then((response) => {
+          let data = response.data;
+
+          // Extract needed updated critique profile info from response
+          this.profile = {
+            name: data.name,
+            username: data.username,
+            email: data.user.email,
+          };
+
+          // Set editedProfile equals to profile without link
+          this.editedProfile = Object.assign({}, this.profile);
+
+          // Close profile dialog
+          this.profileDialogClose();
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        })
+        .finally((_) => {
+          // Set isUpdatingProfile to false
+          // at the end of the request
+          this.isUpdatingProfile = false;
+        });
     },
   },
 };

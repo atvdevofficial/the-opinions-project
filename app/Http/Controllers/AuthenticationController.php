@@ -21,7 +21,11 @@ class AuthenticationController extends Controller
             if (Hash::check($validatedData['password'], $user->password)) {
                 $token = $user->createToken('AccessToken');
                 return response()->json([
-                    'token' => $token->plainTextToken, 'role' => $user->role
+                    'token' => $token->plainTextToken, 'role' => $user->role,
+                    'ids' => [
+                        'user' => $user->id,
+                        'critique' => $user->critique() ? $user->critique->id : null
+                    ]
                 ]);
             }
         }

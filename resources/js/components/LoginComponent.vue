@@ -98,6 +98,8 @@ export default {
 
             sessionStorage.setItem("authToken", responseData.token);
             sessionStorage.setItem("userRole", responseData.role);
+            sessionStorage.setItem("userId", responseData.ids.user);
+            sessionStorage.setItem("critiqueId", responseData.ids.critique);
 
             this.$router.push({ name: "feed" });
           })

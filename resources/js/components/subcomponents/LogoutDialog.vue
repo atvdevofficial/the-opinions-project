@@ -68,11 +68,10 @@ export default {
         .then((response) => {})
         .catch((error) => {})
         .finally((_) => {
+          // Clear session storage
+          sessionStorage.clear();
           this.$router.push({ name: "login" });
         });
-
-      // Clear session storage
-      sessionStorage.clear();
     },
   },
 };

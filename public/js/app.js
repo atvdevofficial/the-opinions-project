@@ -2547,6 +2547,8 @@ __webpack_require__.r(__webpack_exports__);
           var responseData = response.data;
           sessionStorage.setItem("authToken", responseData.token);
           sessionStorage.setItem("userRole", responseData.role);
+          sessionStorage.setItem("userId", responseData.ids.user);
+          sessionStorage.setItem("critiqueId", responseData.ids.critique);
 
           _this.$router.push({
             name: "feed"
@@ -2647,12 +2649,13 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.post("/api/logout").then(function (response) {})["catch"](function (error) {})["finally"](function (_) {
+        // Clear session storage
+        sessionStorage.clear();
+
         _this.$router.push({
           name: "login"
         });
-      }); // Clear session storage
-
-      sessionStorage.clear();
+      });
     }
   }
 });
@@ -3044,6 +3047,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ProfileCardDialog",
@@ -3058,26 +3085,22 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      isUpdatingProfile: false,
       profileDialog: false,
       logoutDialog: false,
       profile: {
         name: "Profile Name",
         username: "Profile Username",
+        email: "Profile Email",
         password: null
       },
-      formTextFields: [{
-        placeholder: "Name",
-        type: "text",
-        model: "profile.name"
-      }, {
-        placeholder: "Username",
-        type: "text",
-        model: "profile.username"
-      }, {
-        placeholder: "Password",
-        type: "password",
-        model: "profile.password"
-      }],
+      // Used for profile editing purposes
+      editedProfile: {
+        name: "Profile Name",
+        username: "Profile Username",
+        email: "Profile Email",
+        password: null
+      },
       profileMetrics: [{
         name: "Likes",
         value: 100
@@ -3095,13 +3118,70 @@ __webpack_require__.r(__webpack_exports__);
       this.profileDialog = this.showDialog;
     }
   },
+  mounted: function mounted() {
+    this.retrieveCritiqueProfile();
+  },
   methods: {
-    closeDialog: function closeDialog() {
-      this.profileDialog = false;
+    // Handler for profile dialog close
+    profileDialogClose: function profileDialogClose() {
+      this.profileDialog = false; // Emit an event named close together
+      // with profileDialog value
+
       this.$emit("close", this.profileDialog);
     },
+    // Handler for logout dialog close
     logoutDialogClose: function logoutDialogClose(value) {
       this.logoutDialog = value;
+    },
+    // Retrieve current authenticated critique profile
+    retrieveCritiqueProfile: function retrieveCritiqueProfile() {
+      var _sessionStorage$getIt,
+          _this = this;
+
+      // Retrieve current authenticated crituque id from session storage
+      var critiqueId = (_sessionStorage$getIt = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : null;
+      axios.get("/api/critiques/" + critiqueId).then(function (response) {
+        var data = response.data; // Extract needed critique profile info from response
+
+        _this.profile = {
+          name: data.name,
+          username: data.username,
+          email: data.user.email
+        }; // Set editedProfile equals to profile without link
+
+        _this.editedProfile = Object.assign({}, _this.profile);
+      })["catch"](function (error) {
+        console.log(error.response.data);
+      })["finally"](function (_) {});
+    },
+    // Update current authenticated critique profile
+    updateCritiqueProfile: function updateCritiqueProfile() {
+      var _sessionStorage$getIt2,
+          _this2 = this;
+
+      // Retrieve current authenticated crituque id from session storage
+      var critiqueId = (_sessionStorage$getIt2 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt2 !== void 0 ? _sessionStorage$getIt2 : null; // set isUpdatingProfile to true
+
+      this.isUpdatingProfile = true;
+      axios.put("/api/critiques/" + critiqueId, this.editedProfile).then(function (response) {
+        var data = response.data; // Extract needed updated critique profile info from response
+
+        _this2.profile = {
+          name: data.name,
+          username: data.username,
+          email: data.user.email
+        }; // Set editedProfile equals to profile without link
+
+        _this2.editedProfile = Object.assign({}, _this2.profile); // Close profile dialog
+
+        _this2.profileDialogClose();
+      })["catch"](function (error) {
+        console.log(error.response.data);
+      })["finally"](function (_) {
+        // Set isUpdatingProfile to false
+        // at the end of the request
+        _this2.isUpdatingProfile = false;
+      });
     }
   }
 });
@@ -3229,6 +3309,16 @@ try {
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+var token = document.head.querySelector('meta[name="csrf-token"]');
+if (token) window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;else console.error('CSRF token not found.'); // Add a request interceptor to axios
+
+axios.interceptors.request.use(function (config) {
+  var authToken = sessionStorage.getItem('authToken') || '';
+  if (authToken) config.headers['Authorization'] = "Bearer ".concat(authToken);
+  return config;
+}, function (error) {
+  return Promise.reject(error);
+});
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -3242,6 +3332,50 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/**
+ * Session to Local to Session Script
+ * transfers sessionStorage from one tab to another
+ */
+
+var sessionStorage_transfer = function sessionStorage_transfer(event) {
+  if (!event) {
+    event = window.event;
+  } // ie suq
+
+
+  if (!event.newValue) return; // do nothing if no value to work with
+
+  if (event.key == 'getSessionStorage') {
+    // another tab asked for the sessionStorage -> send it
+    localStorage.setItem('sessionStorage', JSON.stringify(sessionStorage)); // the other tab should now have it, so we're done with it.
+
+    localStorage.removeItem('sessionStorage'); // <- could do short timeout as well.
+  } else if (event.key == 'sessionStorage' && !sessionStorage.length) {
+    // another tab sent data <- get it
+    var data = JSON.parse(event.newValue);
+
+    for (var key in data) {
+      sessionStorage.setItem(key, data[key]);
+    }
+  }
+}; // listen for changes to localStorage
+
+
+if (window.addEventListener) {
+  window.addEventListener("storage", sessionStorage_transfer, false);
+} else {
+  window.attachEvent("onstorage", sessionStorage_transfer);
+}
+
+; // Ask other tabs for session storage (this is ONLY to trigger event)
+
+if (!sessionStorage.length) {
+  localStorage.setItem('getSessionStorage', 'foobar');
+  localStorage.removeItem('getSessionStorage', 'foobar');
+}
+
+;
 
 /***/ }),
 
@@ -41923,7 +42057,7 @@ var render = function() {
             [
               _c(
                 "v-col",
-                { attrs: { cols: "4" } },
+                { staticClass: "text-center", attrs: { cols: "12" } },
                 [
                   _c(
                     "v-avatar",
@@ -41935,7 +42069,7 @@ var render = function() {
                 1
               ),
               _vm._v(" "),
-              _c("v-col", { attrs: { cols: "8" } }, [
+              _c("v-col", { attrs: { cols: "12" } }, [
                 _c("div", { staticClass: "text-center" }, [
                   _vm._v(_vm._s(_vm.profile.name))
                 ]),
@@ -42121,29 +42255,105 @@ var render = function() {
                                     1
                                   ),
                                   _vm._v(" "),
-                                  _vm._l(_vm.formTextFields, function(
-                                    formTextField,
-                                    index
-                                  ) {
-                                    return _c(
-                                      "v-col",
-                                      {
-                                        key: index + "ftf",
-                                        attrs: { cols: "12" }
-                                      },
-                                      [
-                                        _c("v-text-field", {
-                                          attrs: {
-                                            placeholder:
-                                              formTextField.placeholder,
-                                            type: formTextField.type,
-                                            "v-model": formTextField.model
-                                          }
-                                        })
-                                      ],
-                                      1
-                                    )
-                                  })
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          placeholder: "Name",
+                                          type: "text"
+                                        },
+                                        model: {
+                                          value: _vm.editedProfile.name,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editedProfile,
+                                              "name",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editedProfile.name"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          placeholder: "Username",
+                                          type: "text"
+                                        },
+                                        model: {
+                                          value: _vm.editedProfile.username,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editedProfile,
+                                              "username",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editedProfile.username"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          placeholder: "Email",
+                                          type: "email"
+                                        },
+                                        model: {
+                                          value: _vm.editedProfile.email,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editedProfile,
+                                              "email",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editedProfile.email"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          placeholder: "Password",
+                                          type: "password"
+                                        },
+                                        model: {
+                                          value: _vm.editedProfile.password,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editedProfile,
+                                              "password",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editedProfile.password"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
                                 ],
                                 2
                               )
@@ -42172,7 +42382,7 @@ var render = function() {
                                 "v-btn",
                                 {
                                   attrs: { text: "", color: "default" },
-                                  on: { click: _vm.closeDialog }
+                                  on: { click: _vm.profileDialogClose }
                                 },
                                 [
                                   _vm._v(
@@ -42188,9 +42398,10 @@ var render = function() {
                                   attrs: {
                                     rounded: "",
                                     depressed: "",
-                                    color: "#FFD561"
+                                    color: "#FFD561",
+                                    loading: _vm.isUpdatingProfile
                                   },
-                                  on: { click: _vm.closeDialog }
+                                  on: { click: _vm.updateCritiqueProfile }
                                 },
                                 [
                                   _vm._v(
