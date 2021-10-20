@@ -7,6 +7,7 @@ use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class TopicTest extends TestCase
@@ -21,9 +22,11 @@ class TopicTest extends TestCase
         // Topics
         Topic::factory()->count(5)->create();
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->getJson(route('topics.index'))
+        $this->getJson(route('topics.index'))
             ->assertStatus(200)
             ->assertJsonStructure([[
                 'id', 'text',
@@ -51,9 +54,11 @@ class TopicTest extends TestCase
             'text' => $this->faker->word,
         ];
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->postJson(route('topics.store', $topicData))
+        $this->postJson(route('topics.store', $topicData))
             ->assertStatus(201)
             ->assertJsonStructure([
                 'id', 'text',
@@ -79,9 +84,11 @@ class TopicTest extends TestCase
         // Topics
         $topic = Topic::factory()->create();
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->getJson(route('topics.show', ['topic' => $topic->id]))
+        $this->getJson(route('topics.show', ['topic' => $topic->id]))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'id', 'text',
@@ -114,9 +121,11 @@ class TopicTest extends TestCase
             'text' => $this->faker->word,
         ];
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->putJson(route('topics.update', $topicData))
+        $this->putJson(route('topics.update', $topicData))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'id', 'text',
@@ -146,9 +155,11 @@ class TopicTest extends TestCase
         // Topic
         $topic = Topic::factory()->create();
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->deleteJson(route('topics.destroy', ['topic' => $topic->id]))
+        $this->deleteJson(route('topics.destroy', ['topic' => $topic->id]))
             ->assertStatus(200);
 
         /**
@@ -173,9 +184,11 @@ class TopicTest extends TestCase
         // Topics
         Topic::factory()->count(5)->create();
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-            ->getJson(route('topics.index'))
+        $this->getJson(route('topics.index'))
             ->assertStatus(200)
             ->assertJsonStructure([[
                 'id', 'text',
@@ -204,9 +217,11 @@ class TopicTest extends TestCase
         // Topic
         $topic = Topic::factory()->create();
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-            ->getJson(route('topics.show', ['topic' => $topic->id]))
+        $this->getJson(route('topics.show', ['topic' => $topic->id]))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'id', 'text',

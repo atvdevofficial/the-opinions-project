@@ -8,13 +8,15 @@ use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class OpinionTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    public function testCritiqueShowOpinionList() {
+    public function testCritiqueShowOpinionList()
+    {
         // Critique User, Critique, and Opinions
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
@@ -22,14 +24,16 @@ class OpinionTest extends TestCase
             'critique_id' => $critique->id
         ])->create();
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-        ->getJson(route('critiques.opinions.index', ['critique' => $critique->id]))
-        ->assertStatus(200)
-        ->assertJsonStructure([[
-            'id', 'text', 'is_public',
-            'created_at', 'updated_at',
-        ]]);
+        $this->getJson(route('critiques.opinions.index', ['critique' => $critique->id]))
+            ->assertStatus(200)
+            ->assertJsonStructure([[
+                'id', 'text', 'is_public',
+                'created_at', 'updated_at',
+            ]]);
 
         /**
          * Database checks
@@ -45,7 +49,8 @@ class OpinionTest extends TestCase
         $this->assertCount(5, Opinion::get());
     }
 
-    public function testCritiqueCreateOpinion() {
+    public function testCritiqueCreateOpinion()
+    {
         // Critique User & Critique
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
@@ -62,14 +67,16 @@ class OpinionTest extends TestCase
             'topics' => [$topic->id,],
         ];
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-        ->postJson(route('critiques.opinions.store', $opinionData))
-        ->assertStatus(201)
-        ->assertJsonStructure([
-            'id', 'text', 'is_public',
-            'created_at', 'updated_at',
-        ]);
+        $this->postJson(route('critiques.opinions.store', $opinionData))
+            ->assertStatus(201)
+            ->assertJsonStructure([
+                'id', 'text', 'is_public',
+                'created_at', 'updated_at',
+            ]);
 
         /**
          * Database checks
@@ -88,20 +95,23 @@ class OpinionTest extends TestCase
         $this->assertCount(1, Topic::get());
     }
 
-    public function testCritiqueShowOpinion() {
+    public function testCritiqueShowOpinion()
+    {
         // Critique User, Critique, and Opinion
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
         $opinion = Opinion::factory()->state(['critique_id' => $critique->id])->create();
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-        ->getJson(route('opinions.show', ['opinion' => $opinion->id]))
-        ->assertStatus(200)
-        ->assertJsonStructure([
-            'id', 'text', 'is_public',
-            'created_at', 'updated_at',
-        ]);
+        $this->getJson(route('opinions.show', ['opinion' => $opinion->id]))
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'id', 'text', 'is_public',
+                'created_at', 'updated_at',
+            ]);
 
         /**
          * Database checks
@@ -117,7 +127,8 @@ class OpinionTest extends TestCase
         $this->assertCount(1, Opinion::get());
     }
 
-    public function testCritiqueUpdateOpinion() {
+    public function testCritiqueUpdateOpinion()
+    {
         // Critique User, Critique, and Opinion
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
@@ -135,14 +146,16 @@ class OpinionTest extends TestCase
             'topics' => [$topic->id,],
         ];
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-        ->putJson(route('opinions.update', $opinionData))
-        ->assertStatus(200)
-        ->assertJsonStructure([
-            'id', 'text', 'is_public',
-            'created_at', 'updated_at',
-        ]);
+        $this->putJson(route('opinions.update', $opinionData))
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'id', 'text', 'is_public',
+                'created_at', 'updated_at',
+            ]);
 
         /**
          * Database checks
@@ -161,16 +174,19 @@ class OpinionTest extends TestCase
         $this->assertCount(1, Topic::get());
     }
 
-    public function  testCritiqueDeleteOpinion() {
+    public function  testCritiqueDeleteOpinion()
+    {
         // Critique User, Critique, and Opinion
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
         $opinion = Opinion::factory()->state(['critique_id' => $critique->id])->create();
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-        ->deleteJson(route('opinions.destroy', ['opinion' => $opinion->id]))
-        ->assertStatus(200);
+        $this->deleteJson(route('opinions.destroy', ['opinion' => $opinion->id]))
+            ->assertStatus(200);
 
         /**
          * Database checks

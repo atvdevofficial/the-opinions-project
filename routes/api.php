@@ -19,34 +19,41 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Registration
-// Reset Password
-// Forgot / Change Password
+Route::group(['middleware' => 'throttle:120'], function () {
+    // Registration
+    // Reset Password
+    // Forgot / Change Password
 
-Route::apiResource('critiques', CritiqueController::class);
+    /**
+     * Authenticated Routes
+     */
+    Route::group(['middleware' => ['auth:sanctum']], function () {
+        Route::apiResource('critiques', CritiqueController::class);
 
-Route::apiResource('critiques.opinions', CritiqueOpinionController::class)
-    ->shallow()->only(['index', 'store']);
+        Route::apiResource('critiques.opinions', CritiqueOpinionController::class)
+            ->shallow()->only(['index', 'store']);
 
-Route::apiResource('opinions', OpinionController::class)
-    ->only(['show', 'update', 'destroy']);
+        Route::apiResource('opinions', OpinionController::class)
+            ->only(['show', 'update', 'destroy']);
 
-Route::apiResource('topics', TopicController::class);
+        Route::apiResource('topics', TopicController::class);
 
-Route::get('critiques/follows/critiques', [FollowCritiqueController::class, 'index'])
-    ->name('follows.critiques.index');
+        Route::get('critiques/follows/critiques', [FollowCritiqueController::class, 'index'])
+            ->name('follows.critiques.index');
 
-Route::put('critiques/follows/critiques/{critique}/follow', [FollowCritiqueController::class, 'follow'])
-    ->name('follows.critiques.follow');
+        Route::put('critiques/follows/critiques/{critique}/follow', [FollowCritiqueController::class, 'follow'])
+            ->name('follows.critiques.follow');
 
-Route::put('critiques/follows/critiques/{critique}/unfollow', [FollowCritiqueController::class, 'unfollow'])
-    ->name('follows.critiques.unfollow');
+        Route::put('critiques/follows/critiques/{critique}/unfollow', [FollowCritiqueController::class, 'unfollow'])
+            ->name('follows.critiques.unfollow');
 
-Route::get('critiques/follows/topics', [CritiqueTopicController::class, 'index'])
-    ->name('follows.topics.index');
+        Route::get('critiques/follows/topics', [CritiqueTopicController::class, 'index'])
+            ->name('follows.topics.index');
 
-Route::put('critiques/follows/topics/{topic}/follow', [CritiqueTopicController::class, 'follow'])
-    ->name('follows.topics.follow');
+        Route::put('critiques/follows/topics/{topic}/follow', [CritiqueTopicController::class, 'follow'])
+            ->name('follows.topics.follow');
 
-Route::put('critiques/follows/topics/{topic}/unfollow', [CritiqueTopicController::class, 'unfollow'])
-    ->name('follows.topics.unfollow');
+        Route::put('critiques/follows/topics/{topic}/unfollow', [CritiqueTopicController::class, 'unfollow'])
+            ->name('follows.topics.unfollow');
+    });
+});

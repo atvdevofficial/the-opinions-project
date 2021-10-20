@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class CritiqueTest extends TestCase
@@ -25,9 +26,11 @@ class CritiqueTest extends TestCase
             ->count(3)
             ->create();
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->getJson(route('critiques.index'))
+        $this->getJson(route('critiques.index'))
             ->assertStatus(200)
             ->assertJsonStructure([[
                 'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
@@ -56,9 +59,11 @@ class CritiqueTest extends TestCase
             'name' => $this->faker->name
         ];
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->postJson(route('critiques.store', $critiqueData))
+        $this->postJson(route('critiques.store', $critiqueData))
             ->assertStatus(201)
             ->assertJsonStructure([
                 'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
@@ -88,9 +93,11 @@ class CritiqueTest extends TestCase
             )
             ->create();
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->getJson(route('critiques.show', ['critique' => $critique->id]))
+        $this->getJson(route('critiques.show', ['critique' => $critique->id]))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
@@ -129,9 +136,11 @@ class CritiqueTest extends TestCase
             'name' => $this->faker->name
         ];
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->putJson(route('critiques.update', $critiqueData))
+        $this->putJson(route('critiques.update', $critiqueData))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
@@ -167,9 +176,11 @@ class CritiqueTest extends TestCase
             )
             ->create();
 
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
         // Response
-        $this->actingAs($administrator, 'api')
-            ->deleteJson(route('critiques.destroy', ['critique' => $critique->id]))
+        $this->deleteJson(route('critiques.destroy', ['critique' => $critique->id]))
             ->assertStatus(200);
 
         /**
@@ -189,9 +200,11 @@ class CritiqueTest extends TestCase
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-            ->getJson(route('critiques.show', ['critique' => $critique->id]))
+        $this->getJson(route('critiques.show', ['critique' => $critique->id]))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']
@@ -223,9 +236,11 @@ class CritiqueTest extends TestCase
             'name' => $this->faker->name
         ];
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-            ->putJson(route('critiques.update', $critiqueData))
+        $this->putJson(route('critiques.update', $critiqueData))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'id', 'name', 'user' => ['id', 'email', 'email_verified_at', 'role']

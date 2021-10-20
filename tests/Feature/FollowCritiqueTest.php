@@ -7,13 +7,15 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class FollowCritiqueTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    public function testCritiqueShowFollowList() {
+    public function testCritiqueShowFollowList()
+    {
         // Critique User & Critique
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
@@ -32,14 +34,16 @@ class FollowCritiqueTest extends TestCase
             ])->create()->pluck('id')
         );
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-        ->getJson(route('follows.critiques.index'))
-        ->assertStatus(200)
-        ->assertJsonStructure([
-            'followers' => [['id', 'name']],
-            'followings' => [['id', 'name']],
-        ]);
+        $this->getJson(route('follows.critiques.index'))
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'followers' => [['id', 'name']],
+                'followings' => [['id', 'name']],
+            ]);
 
         /**
          * Database checks
@@ -55,7 +59,8 @@ class FollowCritiqueTest extends TestCase
         $this->assertCount(2, DB::table('follow_critique')->get());
     }
 
-    public function testCritiqueFollow() {
+    public function testCritiqueFollow()
+    {
         // Critique User & Critique
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
@@ -65,10 +70,12 @@ class FollowCritiqueTest extends TestCase
             'user_id' => User::factory()->role('CRITIQUE')->create()
         ])->create();
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-        ->putJson(route('follows.critiques.follow', ['critique' => $toFollowCritique->id]))
-        ->assertStatus(200);
+        $this->putJson(route('follows.critiques.follow', ['critique' => $toFollowCritique->id]))
+            ->assertStatus(200);
 
         /**
          * Database checks
@@ -88,7 +95,8 @@ class FollowCritiqueTest extends TestCase
         $this->assertTrue($hasFollowed);
     }
 
-    public function testCritiqueUnfollow() {
+    public function testCritiqueUnfollow()
+    {
         // Critique User & Critique
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
@@ -99,10 +107,12 @@ class FollowCritiqueTest extends TestCase
         ])->create();
         $critique->followings()->attach($followedCritique->id);
 
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
         // Response
-        $this->actingAs($critiqueUser, 'api')
-        ->putJson(route('follows.critiques.unfollow', ['critique' => $followedCritique->id]))
-        ->assertStatus(200);
+        $this->putJson(route('follows.critiques.unfollow', ['critique' => $followedCritique->id]))
+            ->assertStatus(200);
 
         /**
          * Database checks
