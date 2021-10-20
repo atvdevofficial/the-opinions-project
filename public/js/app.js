@@ -40911,7 +40911,7 @@ var render = function() {
                   _c(
                     "v-col",
                     {
-                      staticClass: "d-none d-lg-flex",
+                      staticClass: "d-none d-xl-flex",
                       attrs: { cols: "12", xl: "2" }
                     },
                     [_c("top-trending-topics")],

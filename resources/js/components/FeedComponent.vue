@@ -59,7 +59,7 @@
           <!-- End of Feed -->
 
           <!-- Start of Top / Trending Topics -->
-          <v-col cols="12" xl="2" class="d-none d-lg-flex">
+          <v-col cols="12" xl="2" class="d-none d-xl-flex">
             <top-trending-topics></top-trending-topics>
           </v-col>
           <!-- End of Top / Trending Topics -->
