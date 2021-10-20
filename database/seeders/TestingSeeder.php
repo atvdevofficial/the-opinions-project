@@ -15,7 +15,7 @@ class TestingSeeder extends Seeder
     {
         // Critiques
         $critique = \App\Models\Critique::factory()->state([
-            'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
+            'user_id' => \App\Models\User::factory()->role('CRITIQUE')->state(['email' => 'critiqueOne@opinions.com'])->create()
         ])->create();
 
         // Topics
@@ -26,7 +26,7 @@ class TestingSeeder extends Seeder
 
         // Followed Critiques
         $followedCritique = \App\Models\Critique::factory()->state([
-            'user_id' => \App\Models\User::factory()->role('CRITIQUE')->create()
+            'user_id' => \App\Models\User::factory()->role('CRITIQUE')->state(['email' => 'critiqueTwo@opinions.com'])->create()
         ])->create();
         $critique->followings()->attach($followedCritique->id);
 

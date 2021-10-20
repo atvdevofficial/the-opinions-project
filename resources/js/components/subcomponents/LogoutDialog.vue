@@ -63,7 +63,16 @@ export default {
     },
 
     logout() {
-      this.$router.push({ name: "login" });
+      axios
+        .post("/api/logout")
+        .then((response) => {})
+        .catch((error) => {})
+        .finally((_) => {
+          this.$router.push({ name: "login" });
+        });
+
+      // Clear session storage
+      sessionStorage.clear();
     },
   },
 };

@@ -10,4 +10,37 @@ const router = new VueRouter({
     routes: routes,
 })
 
+// User role route permissions
+const modules = {
+    login: true,
+    feed: true,
+    chatList: true,
+    chat: true
+}
+
+// Roles modules
+const roleModules = {
+    critique: {
+        ...modules,
+        default: 'feed',
+        login: false,
+    },
+    guest: {
+        ...modules,
+        default: 'login',
+        feed: false,
+        chatList: false,
+        chat: false
+    }
+}
+
+// router beforeEach
+router.beforeEach((to, from, next) => {
+    let userRole = sessionStorage.getItem('userRole') ?? 'guest';
+
+    if (!roleModules[userRole.toLocaleLowerCase()][to.name]) {
+        next({ name: roleModules[userRole.toLocaleLowerCase()]['default'] })
+    } else next()
+})
+
 export default router

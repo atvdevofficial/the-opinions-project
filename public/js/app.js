@@ -2504,18 +2504,66 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "LoginComponent",
   data: function data() {
     return {
-      invalidCombination: false
+      isLoggingIn: false,
+      invalidCombination: false,
+      emailRules: [function (v) {
+        return !!v || "Please enter your email";
+      }, function (v) {
+        return /.+@.+/.test(v) || "Email must be a valid one";
+      }],
+      userCredentials: {
+        email: null,
+        password: null
+      },
+      errorMessage: null
     };
   },
   methods: {
     login: function login() {
-      this.$router.push({
-        name: "feed"
-      });
+      var _this = this;
+
+      var formValid = this.$refs.formLogin.validate();
+
+      if (formValid) {
+        // Set isLoggingIn to true
+        this.isLoggingIn = true;
+        axios.post("/api/login", this.userCredentials).then(function (response) {
+          var responseData = response.data;
+          sessionStorage.setItem("authToken", responseData.token);
+          sessionStorage.setItem("userRole", responseData.role);
+
+          _this.$router.push({
+            name: "feed"
+          });
+        })["catch"](function (error) {
+          if (error.response.status == 401) {
+            // If response code is 401
+            _this.errorMessage = error.response.data.message;
+          } else {
+            // Default error message for all response code except 401
+            _this.errorMessage = "Something went wrong. Please try again.";
+          }
+        })["finally"](function (_) {
+          // Set isLoggingIn to false after api request
+          _this.isLoggingIn = false;
+        });
+      }
     }
   }
 });
@@ -2596,9 +2644,15 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit("close", this.logoutDialog);
     },
     logout: function logout() {
-      this.$router.push({
-        name: "login"
-      });
+      var _this = this;
+
+      axios.post("/api/logout").then(function (response) {})["catch"](function (error) {})["finally"](function (_) {
+        _this.$router.push({
+          name: "login"
+        });
+      }); // Clear session storage
+
+      sessionStorage.clear();
     }
   }
 });
@@ -3237,6 +3291,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./routes */ "./resources/js/router/routes.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -3244,6 +3304,38 @@ vue__WEBPACK_IMPORTED_MODULE_1__["default"].use(vue_router__WEBPACK_IMPORTED_MOD
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]({
   mode: "history",
   routes: _routes__WEBPACK_IMPORTED_MODULE_0__["default"]
+}); // User role route permissions
+
+var modules = {
+  login: true,
+  feed: true,
+  chatList: true,
+  chat: true
+}; // Roles modules
+
+var roleModules = {
+  critique: _objectSpread(_objectSpread({}, modules), {}, {
+    "default": 'feed',
+    login: false
+  }),
+  guest: _objectSpread(_objectSpread({}, modules), {}, {
+    "default": 'login',
+    feed: false,
+    chatList: false,
+    chat: false
+  })
+}; // router beforeEach
+
+router.beforeEach(function (to, from, next) {
+  var _sessionStorage$getIt;
+
+  var userRole = (_sessionStorage$getIt = sessionStorage.getItem('userRole')) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : 'guest';
+
+  if (!roleModules[userRole.toLocaleLowerCase()][to.name]) {
+    next({
+      name: roleModules[userRole.toLocaleLowerCase()]['default']
+    });
+  } else next();
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (router);
 
@@ -41269,13 +41361,62 @@ var render = function() {
                   _c(
                     "v-card-text",
                     [
-                      _c("v-text-field", {
-                        attrs: { placeholder: "Username" }
-                      }),
+                      _c(
+                        "v-form",
+                        { ref: "formLogin" },
+                        [
+                          _c("v-text-field", {
+                            attrs: {
+                              placeholder: "Email",
+                              rules: _vm.emailRules
+                            },
+                            model: {
+                              value: _vm.userCredentials.email,
+                              callback: function($$v) {
+                                _vm.$set(_vm.userCredentials, "email", $$v)
+                              },
+                              expression: "userCredentials.email"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-text-field", {
+                            attrs: {
+                              placeholder: "Password",
+                              type: "password",
+                              rules: [
+                                function(v) {
+                                  return !!v || "Please enter your password"
+                                }
+                              ]
+                            },
+                            model: {
+                              value: _vm.userCredentials.password,
+                              callback: function($$v) {
+                                _vm.$set(_vm.userCredentials, "password", $$v)
+                              },
+                              expression: "userCredentials.password"
+                            }
+                          })
+                        ],
+                        1
+                      ),
                       _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { placeholder: "Password", type: "password" }
-                      })
+                      _vm.errorMessage
+                        ? _c(
+                            "v-container",
+                            {
+                              staticClass:
+                                "text-caption text-center red--text font-italic"
+                            },
+                            [
+                              _vm._v(
+                                "\n            " +
+                                  _vm._s(_vm.errorMessage) +
+                                  "\n          "
+                              )
+                            ]
+                          )
+                        : _vm._e()
                     ],
                     1
                   ),
@@ -41294,7 +41435,8 @@ var render = function() {
                                 block: "",
                                 rounded: "",
                                 depressed: "",
-                                color: "#FFD561"
+                                color: "#FFD561",
+                                loading: _vm.isLoggingIn
                               },
                               on: { click: _vm.login }
                             },
@@ -41319,22 +41461,7 @@ var render = function() {
                                 "\n              Create an Account\n            "
                               )
                             ]
-                          ),
-                          _vm._v(" "),
-                          _vm.invalidCombination == true
-                            ? _c(
-                                "v-container",
-                                {
-                                  staticClass:
-                                    "text-caption text-center red white--text mt-4"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n              Username and Password combination does'nt exists\n            "
-                                  )
-                                ]
-                              )
-                            : _vm._e()
+                          )
                         ],
                         1
                       )

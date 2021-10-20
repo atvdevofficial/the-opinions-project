@@ -9,8 +9,25 @@
           >
 
           <v-card-text>
-            <v-text-field placeholder="Username"></v-text-field>
-            <v-text-field placeholder="Password" type="password"></v-text-field>
+            <v-form ref="formLogin">
+              <v-text-field
+                placeholder="Email"
+                v-model="userCredentials.email"
+                :rules="emailRules"
+              ></v-text-field>
+              <v-text-field
+                placeholder="Password"
+                type="password"
+                v-model="userCredentials.password"
+                :rules="[(v) => !!v || 'Please enter your password']"
+              ></v-text-field>
+            </v-form>
+            <v-container
+              class="text-caption text-center red--text font-italic"
+              v-if="errorMessage"
+            >
+              {{ errorMessage }}
+            </v-container>
           </v-card-text>
 
           <v-card-actions>
@@ -21,6 +38,7 @@
                 depressed
                 color="#FFD561"
                 class="font-weight-black"
+                :loading="isLoggingIn"
                 @click="login"
               >
                 Login
@@ -36,12 +54,6 @@
               >
                 Create an Account
               </v-btn>
-              <v-container
-                class="text-caption text-center red white--text mt-4"
-                v-if="invalidCombination == true"
-              >
-                Username and Password combination does'nt exists
-              </v-container>
             </v-row>
           </v-card-actions>
         </v-card>
@@ -55,12 +67,54 @@ export default {
   name: "LoginComponent",
   data() {
     return {
+      isLoggingIn: false,
       invalidCombination: false,
+
+      emailRules: [
+        (v) => !!v || "Please enter your email",
+        (v) => /.+@.+/.test(v) || "Email must be a valid one",
+      ],
+
+      userCredentials: {
+        email: null,
+        password: null,
+      },
+
+      errorMessage: null,
     };
   },
   methods: {
     login() {
-      this.$router.push({ name: "feed" });
+      var formValid = this.$refs.formLogin.validate();
+
+      if (formValid) {
+        // Set isLoggingIn to true
+        this.isLoggingIn = true;
+
+        axios
+          .post("/api/login", this.userCredentials)
+          .then((response) => {
+            var responseData = response.data;
+
+            sessionStorage.setItem("authToken", responseData.token);
+            sessionStorage.setItem("userRole", responseData.role);
+
+            this.$router.push({ name: "feed" });
+          })
+          .catch((error) => {
+            if (error.response.status == 401) {
+              // If response code is 401
+              this.errorMessage = error.response.data.message;
+            } else {
+              // Default error message for all response code except 401
+              this.errorMessage = "Something went wrong. Please try again.";
+            }
+          })
+          .finally((_) => {
+            // Set isLoggingIn to false after api request
+            this.isLoggingIn = false;
+          });
+      }
     },
   },
 };
