@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Critique;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class CritiqueStoreRequest extends FormRequest
+class RegistrationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,13 +13,7 @@ class CritiqueStoreRequest extends FormRequest
      */
     public function authorize()
     {
-        $authenticatedUser = Auth::user();
-        $authenticatedUserRole = $authenticatedUser->role;
-
-        if ($authenticatedUserRole == 'ADMINISTRATOR')
-            return true;
-
-        return false;
+        return true;
     }
 
     /**

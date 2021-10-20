@@ -25,6 +25,13 @@ class AuthenticationTest extends TestCase
         // Response
         $this->postJson(route('login', $administratorCredentials))
             ->assertStatus(200);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(1, User::get());
     }
 
     public function testLogout()
@@ -38,5 +45,12 @@ class AuthenticationTest extends TestCase
         // Response
         $this->postJson(route('logout'))
             ->assertStatus(200);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(1, User::get());
     }
 }

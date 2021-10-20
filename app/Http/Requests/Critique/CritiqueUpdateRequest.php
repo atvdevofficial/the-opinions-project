@@ -41,7 +41,7 @@ class CritiqueUpdateRequest extends FormRequest
         $routeCritique = $this->route('critique');
 
         return [
-            'email' => ['required', 'unique:users,email,' . $routeCritique->user->id],
+            'email' => ['required', 'email', 'unique:users,email,' . $routeCritique->user->id],
             'password' => ['required', 'string'],
 
             'name' => ['required', 'string'],

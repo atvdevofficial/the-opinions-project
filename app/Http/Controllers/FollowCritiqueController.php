@@ -40,7 +40,7 @@ class FollowCritiqueController extends Controller
 
         $authenticatedCritique->followings()->syncWithoutDetaching([$critique->id]);
 
-        return response(['message' => 'Critique Followed']);
+        return response()->json(['message' => 'Critique Followed']);
     }
 
     /**
@@ -56,6 +56,6 @@ class FollowCritiqueController extends Controller
 
         $authenticatedCritique->followings()->detach([$critique->id]);
 
-        return response(['message' => 'Critique Unfollowed']);
+        return response()->json(['message' => 'Critique Unfollowed']);
     }
 }

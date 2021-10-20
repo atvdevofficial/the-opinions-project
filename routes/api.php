@@ -6,6 +6,7 @@ use App\Http\Controllers\CritiqueController;
 use App\Http\Controllers\CritiqueOpinionController;
 use App\Http\Controllers\CritiqueTopicController;
 use App\Http\Controllers\FollowCritiqueController;
+use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,9 @@ Route::group(['middleware' => 'throttle:120'], function () {
     // Forgot / Change Password
     Route::post('/login', [AuthenticationController::class, 'login'])
         ->name('login');
+
+    Route::post('/registration', RegistrationController::class)
+        ->name('register');
 
     /**
      * Authenticated Routes
