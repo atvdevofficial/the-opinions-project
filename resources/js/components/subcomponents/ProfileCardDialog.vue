@@ -53,68 +53,77 @@
 
               <!-- Dialog Body -->
               <v-card-text>
-                <v-row dense align="center" justify="center">
-                  <!-- Default Profile Image -->
-                  <v-col cols="12" class="text-center">
-                    <v-avatar color="#FFEAB1" size="100">
-                      <box-icon name="user" size="md"></box-icon>
-                    </v-avatar>
-                  </v-col>
+                <v-form ref="profileForm">
+                  <v-row dense align="center" justify="center">
+                    <!-- Default Profile Image -->
+                    <v-col cols="12" class="text-center">
+                      <v-avatar color="#FFEAB1" size="100">
+                        <box-icon name="user" size="md"></box-icon>
+                      </v-avatar>
+                    </v-col>
 
-                  <!-- Profile Metrics (Likes, Followers, Followings) -->
-                  <v-col
-                    class="mt-4 d-md-none"
-                    cols="4"
-                    v-for="(metric, index) in profileMetrics"
-                    :key="index + 'pm2'"
-                  >
-                    <div class="text-center">{{ metric.value }}</div>
-                    <div class="caption text-center font-italic">
-                      {{ metric.name }}
-                    </div>
-                  </v-col>
+                    <!-- Profile Metrics (Likes, Followers, Followings) -->
+                    <v-col
+                      class="mt-4 d-md-none"
+                      cols="4"
+                      v-for="(metric, index) in profileMetrics"
+                      :key="index + 'pm2'"
+                    >
+                      <div class="text-center">{{ metric.value }}</div>
+                      <div class="caption text-center font-italic">
+                        {{ metric.name }}
+                      </div>
+                    </v-col>
 
-                  <!-- Profile Dialog Divider -->
-                  <v-col cols="12" class="mt-4 d-md-none">
-                    <v-divider></v-divider>
-                  </v-col>
+                    <!-- Profile Dialog Divider -->
+                    <v-col cols="12" class="mt-4 d-md-none">
+                      <v-divider></v-divider>
+                    </v-col>
 
-                  <!-- Name text field -->
-                  <v-col cols="12">
-                    <v-text-field
-                      placeholder="Name"
-                      type="text"
-                      v-model="editedProfile.name"
-                    ></v-text-field>
-                  </v-col>
+                    <!-- Name text field -->
+                    <v-col cols="12">
+                      <v-text-field
+                        placeholder="Name"
+                        type="text"
+                        v-model="editedProfile.name"
+                        :rules="[(v) => !!v || 'Name is required']"
+                        :error-messages="profileFormServerValidations.name"
+                      ></v-text-field>
+                    </v-col>
 
-                  <!-- Username text field -->
-                  <v-col cols="12">
-                    <v-text-field
-                      placeholder="Username"
-                      type="text"
-                      v-model="editedProfile.username"
-                    ></v-text-field>
-                  </v-col>
+                    <!-- Username text field -->
+                    <v-col cols="12">
+                      <v-text-field
+                        placeholder="Username"
+                        type="text"
+                        v-model="editedProfile.username"
+                        :rules="[(v) => !!v || 'Username is required']"
+                        :error-messages="profileFormServerValidations.username"
+                      ></v-text-field>
+                    </v-col>
 
-                  <!-- Email text field -->
-                  <v-col cols="12">
-                    <v-text-field
-                      placeholder="Email"
-                      type="email"
-                      v-model="editedProfile.email"
-                    ></v-text-field>
-                  </v-col>
+                    <!-- Email text field -->
+                    <v-col cols="12">
+                      <v-text-field
+                        placeholder="Email"
+                        type="email"
+                        v-model="editedProfile.email"
+                        :rules="[(v) => !!v || 'Email is required']"
+                        :error-messages="profileFormServerValidations.email"
+                      ></v-text-field>
+                    </v-col>
 
-                  <!-- Password text field -->
-                  <v-col cols="12">
-                    <v-text-field
-                      placeholder="Password"
-                      type="password"
-                      v-model="editedProfile.password"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
+                    <!-- Password text field -->
+                    <v-col cols="12">
+                      <v-text-field
+                        placeholder="Password"
+                        type="password"
+                        v-model="editedProfile.password"
+                        :error-messages="profileFormServerValidations.password"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-form>
               </v-card-text>
 
               <!-- Dialog Actions -->
@@ -188,6 +197,14 @@ export default {
         password: null,
       },
 
+      // Server validation for profile form
+      profileFormServerValidations: {
+        name: null,
+        username: null,
+        email: null,
+        password: null,
+      },
+
       profileMetrics: [
         { name: "Likes", value: 100 },
         { name: "Followers", value: 100 },
@@ -207,6 +224,9 @@ export default {
     // Handler for profile dialog close
     profileDialogClose() {
       this.profileDialog = false;
+
+      // Set editedProfile equals to profile without link
+      this.editedProfile = Object.assign({}, this.profile);
 
       // Emit an event named close together
       // with profileDialog value
@@ -246,44 +266,58 @@ export default {
 
     // Update current authenticated critique profile
     updateCritiqueProfile() {
-      // Retrieve current authenticated crituque id from session storage
-      var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+      // Validate form
+      if (this.$refs.profileForm.validate()) {
+        // Retrieve current authenticated crituque id from session storage
+        var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
 
-      // set isUpdatingProfile to true
-      this.isUpdatingProfile = true;
+        // set isUpdatingProfile to true
+        this.isUpdatingProfile = true;
 
-      axios
-        .put("/api/critiques/" + critiqueId, this.editedProfile)
-        .then((response) => {
-          let data = response.data;
+        axios
+          .put("/api/critiques/" + critiqueId, this.editedProfile)
+          .then((response) => {
+            let data = response.data;
 
-          // Extract needed updated critique profile info from response
-          this.profile = {
-            name: data.name,
-            username: data.username,
-            email: data.user.email,
-          };
+            // Extract needed updated critique profile info from response
+            this.profile = {
+              name: data.name,
+              username: data.username,
+              email: data.user.email,
+            };
 
-          // Set editedProfile equals to profile without link
-          this.editedProfile = Object.assign({}, this.profile);
+            // Close profile dialog
+            this.profileDialogClose();
 
-          // Close profile dialog
-          this.profileDialogClose();
-
-          toastr.success(
-            "Your profile was updated successfuly",
-            "Critique Profile Updated",
-            { timeOut: 2000 }
-          );
-        })
-        .catch((error) => {
-          console.log(error.response.data);
-        })
-        .finally((_) => {
-          // Set isUpdatingProfile to false
-          // at the end of the request
-          this.isUpdatingProfile = false;
-        });
+            // Pop Notification
+            toastr.success(
+              "Your profile was updated successfuly",
+              "Critique Profile Updated",
+              { timeOut: 2000 }
+            );
+          })
+          .catch((error) => {
+            // Server validations
+            if (error.response.status == 422) {
+              this.profileFormServerValidations = {
+                ...error.response.data.errors,
+              };
+            } else {
+              // Default action
+              // Pop Notification
+              toastr.error(
+                "A problem occured while processing your request. Please try again.",
+                "Something Went Wrong",
+                { timeOut: 2000 }
+              );
+            }
+          })
+          .finally((_) => {
+            // Set isUpdatingProfile to false
+            // at the end of the request
+            this.isUpdatingProfile = false;
+          });
+      }
     },
   },
 };

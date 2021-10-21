@@ -2775,6 +2775,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2868,20 +2883,21 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      isSubmittingOpinion: false,
+      isRetrievingTopics: false,
       opinionDialog: false,
-      topics: [{
-        id: 1,
-        text: "Not Financial Advise"
-      }, {
-        id: 2,
-        text: "Financial Advise"
-      }, {
-        id: 3,
-        text: "Cryto Currency"
-      }, {
-        id: 4,
-        text: "Stock Market"
-      }],
+      topics: [],
+      opinion: {
+        text: null,
+        topics: [],
+        isPublic: true
+      },
+      // Server validation for opinion form
+      opinionFormServerValidations: {
+        text: null,
+        topics: null,
+        isPublic: true
+      },
       opinionTextFieldRules: [function (v) {
         return !!v || "Please share your opinion";
       }, function (v) {
@@ -2889,15 +2905,83 @@ __webpack_require__.r(__webpack_exports__);
       }]
     };
   },
+  mounted: function mounted() {
+    this.retrieveTopics();
+  },
   watch: {
     showDialog: function showDialog() {
       this.opinionDialog = this.showDialog;
     }
   },
   methods: {
+    // Handles opinion dialog close
     closeDialog: function closeDialog() {
-      this.opinionDialog = false;
+      this.opinionDialog = false; // Reset opinion form values
+
+      this.opinion = {
+        text: null,
+        topics: [],
+        isPublic: true
+      }; // Emit a close event together with opinionDialog value
+
       this.$emit("close", this.opinionDialog);
+    },
+    // Retrieve topics
+    retrieveTopics: function retrieveTopics() {
+      var _this = this;
+
+      this.isRetrievingTopics = true;
+      axios.get("/api/topics").then(function (response) {
+        _this.topics = response.data;
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        // Set isRetrievingTopics to false
+        // at the end of the request
+        _this.isRetrievingTopics = false;
+      });
+    },
+    // Submit opinion
+    submitOpinion: function submitOpinion() {
+      var _this2 = this;
+
+      // Validate form
+      if (this.$refs.opinionForm.validate()) {
+        var _sessionStorage$getIt;
+
+        // Retrieve current authenticated crituque id from session storage
+        var critiqueId = (_sessionStorage$getIt = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : null; // Set isSubmittingOpinion to true
+
+        this.isSubmittingOpinion = true;
+        axios.post("/api/critiques/".concat(critiqueId, "/opinions"), _objectSpread(_objectSpread({}, this.opinion), {}, {
+          is_public: this.opinion.isPublic
+        })).then(function (response) {
+          // Pop Notification
+          toastr.success("Your opinion will go a long way.", "Opinion Shared", {
+            timeOut: 2000
+          }); // Close opinion dialog
+
+          _this2.closeDialog();
+        })["catch"](function (error) {
+          // Server validations
+          if (error.response.status == 422) {
+            _this2.opinionFormServerValidations = _objectSpread({}, error.response.data.errors);
+          } else {
+            // Default action
+            // Pop Notification
+            toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+              timeOut: 2000
+            });
+          }
+        })["finally"](function (_) {
+          // Set isSubmittingOpinion to false
+          // at the end of the request
+          _this2.isSubmittingOpinion = false;
+        });
+      }
     }
   }
 });
@@ -2916,6 +3000,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _LogoutDialog_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LogoutDialog.vue */ "./resources/js/components/subcomponents/LogoutDialog.vue");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3101,6 +3200,13 @@ __webpack_require__.r(__webpack_exports__);
         email: "Profile Email",
         password: null
       },
+      // Server validation for profile form
+      profileFormServerValidations: {
+        name: null,
+        username: null,
+        email: null,
+        password: null
+      },
       profileMetrics: [{
         name: "Likes",
         value: 100
@@ -3124,7 +3230,9 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     // Handler for profile dialog close
     profileDialogClose: function profileDialogClose() {
-      this.profileDialog = false; // Emit an event named close together
+      this.profileDialog = false; // Set editedProfile equals to profile without link
+
+      this.editedProfile = Object.assign({}, this.profile); // Emit an event named close together
       // with profileDialog value
 
       this.$emit("close", this.profileDialog);
@@ -3156,36 +3264,48 @@ __webpack_require__.r(__webpack_exports__);
     },
     // Update current authenticated critique profile
     updateCritiqueProfile: function updateCritiqueProfile() {
-      var _sessionStorage$getIt2,
-          _this2 = this;
+      var _this2 = this;
 
-      // Retrieve current authenticated crituque id from session storage
-      var critiqueId = (_sessionStorage$getIt2 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt2 !== void 0 ? _sessionStorage$getIt2 : null; // set isUpdatingProfile to true
+      // Validate form
+      if (this.$refs.profileForm.validate()) {
+        var _sessionStorage$getIt2;
 
-      this.isUpdatingProfile = true;
-      axios.put("/api/critiques/" + critiqueId, this.editedProfile).then(function (response) {
-        var data = response.data; // Extract needed updated critique profile info from response
+        // Retrieve current authenticated crituque id from session storage
+        var critiqueId = (_sessionStorage$getIt2 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt2 !== void 0 ? _sessionStorage$getIt2 : null; // set isUpdatingProfile to true
 
-        _this2.profile = {
-          name: data.name,
-          username: data.username,
-          email: data.user.email
-        }; // Set editedProfile equals to profile without link
+        this.isUpdatingProfile = true;
+        axios.put("/api/critiques/" + critiqueId, this.editedProfile).then(function (response) {
+          var data = response.data; // Extract needed updated critique profile info from response
 
-        _this2.editedProfile = Object.assign({}, _this2.profile); // Close profile dialog
+          _this2.profile = {
+            name: data.name,
+            username: data.username,
+            email: data.user.email
+          }; // Close profile dialog
 
-        _this2.profileDialogClose();
+          _this2.profileDialogClose(); // Pop Notification
 
-        toastr.success("Your profile was updated successfuly", "Critique Profile Updated", {
-          timeOut: 2000
+
+          toastr.success("Your profile was updated successfuly", "Critique Profile Updated", {
+            timeOut: 2000
+          });
+        })["catch"](function (error) {
+          // Server validations
+          if (error.response.status == 422) {
+            _this2.profileFormServerValidations = _objectSpread({}, error.response.data.errors);
+          } else {
+            // Default action
+            // Pop Notification
+            toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+              timeOut: 2000
+            });
+          }
+        })["finally"](function (_) {
+          // Set isUpdatingProfile to false
+          // at the end of the request
+          _this2.isUpdatingProfile = false;
         });
-      })["catch"](function (error) {
-        console.log(error.response.data);
-      })["finally"](function (_) {
-        // Set isUpdatingProfile to false
-        // at the end of the request
-        _this2.isUpdatingProfile = false;
-      });
+      }
     }
   }
 });
@@ -41928,63 +42048,97 @@ var render = function() {
               _c(
                 "v-container",
                 [
-                  _c("v-textarea", {
-                    attrs: {
-                      counter: "",
-                      "auto-grow": "",
-                      autofocus: "",
-                      color: "#FFD561",
-                      rules: _vm.opinionTextFieldRules,
-                      placeholder: "Your opinion goes here"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("v-autocomplete", {
-                    attrs: {
-                      multiple: "",
-                      "item-text": "text",
-                      "item-value": "id",
-                      items: _vm.topics,
-                      placeholder: "Select your topic of choice"
-                    },
-                    scopedSlots: _vm._u([
-                      {
-                        key: "item",
-                        fn: function(data) {
-                          return [
-                            _c(
-                              "v-list-item-content",
-                              [
-                                _c("v-list-item-title", {
-                                  staticClass: "black--text",
-                                  domProps: {
-                                    innerHTML: _vm._s(data.item.text)
-                                  }
-                                })
-                              ],
-                              1
-                            )
-                          ]
+                  _c(
+                    "v-form",
+                    { ref: "opinionForm" },
+                    [
+                      _c("v-textarea", {
+                        attrs: {
+                          counter: "",
+                          "auto-grow": "",
+                          autofocus: "",
+                          color: "#FFD561",
+                          rules: _vm.opinionTextFieldRules,
+                          placeholder: "Your opinion goes here",
+                          disabled: _vm.isSubmittingOpinion,
+                          "error-messages":
+                            _vm.opinionFormServerValidations.text
+                        },
+                        model: {
+                          value: _vm.opinion.text,
+                          callback: function($$v) {
+                            _vm.$set(_vm.opinion, "text", $$v)
+                          },
+                          expression: "opinion.text"
                         }
-                      },
-                      {
-                        key: "selection",
-                        fn: function(ref) {
-                          var item = ref.item
-                          return [
-                            _c(
-                              "v-chip",
-                              {
-                                staticClass: "caption",
-                                attrs: { small: "", color: "#FFD561" }
-                              },
-                              [_vm._v(_vm._s(item.text))]
-                            )
-                          ]
+                      }),
+                      _vm._v(" "),
+                      _c("v-autocomplete", {
+                        attrs: {
+                          multiple: "",
+                          "item-text": "text",
+                          "item-value": "id",
+                          items: _vm.topics,
+                          placeholder: "Select your topic of choice",
+                          loading: _vm.isRetrievingTopics,
+                          disabled:
+                            _vm.isRetrievingTopics || _vm.isSubmittingOpinion,
+                          rules: [
+                            function(v) {
+                              return !!v.length || "Select atleast one topic"
+                            }
+                          ],
+                          "error-messages":
+                            _vm.opinionFormServerValidations.topics
+                        },
+                        scopedSlots: _vm._u([
+                          {
+                            key: "item",
+                            fn: function(data) {
+                              return [
+                                _c(
+                                  "v-list-item-content",
+                                  [
+                                    _c("v-list-item-title", {
+                                      staticClass: "black--text",
+                                      domProps: {
+                                        innerHTML: _vm._s(data.item.text)
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ]
+                            }
+                          },
+                          {
+                            key: "selection",
+                            fn: function(ref) {
+                              var item = ref.item
+                              return [
+                                _c(
+                                  "v-chip",
+                                  {
+                                    staticClass: "caption",
+                                    attrs: { small: "", color: "#FFD561" }
+                                  },
+                                  [_vm._v(_vm._s(item.text))]
+                                )
+                              ]
+                            }
+                          }
+                        ]),
+                        model: {
+                          value: _vm.opinion.topics,
+                          callback: function($$v) {
+                            _vm.$set(_vm.opinion, "topics", $$v)
+                          },
+                          expression: "opinion.topics"
                         }
-                      }
-                    ])
-                  })
+                      })
+                    ],
+                    1
+                  )
                 ],
                 1
               )
@@ -42003,15 +42157,20 @@ var render = function() {
                   attrs: { color: "default", text: "" },
                   on: { click: _vm.closeDialog }
                 },
-                [_vm._v("\n        Cancel\n      ")]
+                [_vm._v(" Cancel ")]
               ),
               _vm._v(" "),
               _c(
                 "v-btn",
                 {
                   staticClass: "font-weight-black px-8",
-                  attrs: { rounded: "", depressed: "", color: "#FFD561" },
-                  on: { click: _vm.closeDialog }
+                  attrs: {
+                    rounded: "",
+                    depressed: "",
+                    color: "#FFD561",
+                    loading: _vm.isSubmittingOpinion
+                  },
+                  on: { click: _vm.submitOpinion }
                 },
                 [_vm._v("\n        Share\n      ")]
               )
@@ -42178,188 +42337,234 @@ var render = function() {
                             "v-card-text",
                             [
                               _c(
-                                "v-row",
-                                {
-                                  attrs: {
-                                    dense: "",
-                                    align: "center",
-                                    justify: "center"
-                                  }
-                                },
+                                "v-form",
+                                { ref: "profileForm" },
                                 [
                                   _c(
-                                    "v-col",
+                                    "v-row",
                                     {
-                                      staticClass: "text-center",
-                                      attrs: { cols: "12" }
+                                      attrs: {
+                                        dense: "",
+                                        align: "center",
+                                        justify: "center"
+                                      }
                                     },
                                     [
                                       _c(
-                                        "v-avatar",
+                                        "v-col",
                                         {
-                                          attrs: {
-                                            color: "#FFEAB1",
-                                            size: "100"
-                                          }
+                                          staticClass: "text-center",
+                                          attrs: { cols: "12" }
                                         },
                                         [
-                                          _c("box-icon", {
-                                            attrs: { name: "user", size: "md" }
+                                          _c(
+                                            "v-avatar",
+                                            {
+                                              attrs: {
+                                                color: "#FFEAB1",
+                                                size: "100"
+                                              }
+                                            },
+                                            [
+                                              _c("box-icon", {
+                                                attrs: {
+                                                  name: "user",
+                                                  size: "md"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _vm._l(_vm.profileMetrics, function(
+                                        metric,
+                                        index
+                                      ) {
+                                        return _c(
+                                          "v-col",
+                                          {
+                                            key: index + "pm2",
+                                            staticClass: "mt-4 d-md-none",
+                                            attrs: { cols: "4" }
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              { staticClass: "text-center" },
+                                              [_vm._v(_vm._s(metric.value))]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass:
+                                                  "caption text-center font-italic"
+                                              },
+                                              [
+                                                _vm._v(
+                                                  "\n                      " +
+                                                    _vm._s(metric.name) +
+                                                    "\n                    "
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        {
+                                          staticClass: "mt-4 d-md-none",
+                                          attrs: { cols: "12" }
+                                        },
+                                        [_c("v-divider")],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        { attrs: { cols: "12" } },
+                                        [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              placeholder: "Name",
+                                              type: "text",
+                                              rules: [
+                                                function(v) {
+                                                  return (
+                                                    !!v || "Name is required"
+                                                  )
+                                                }
+                                              ],
+                                              "error-messages":
+                                                _vm.profileFormServerValidations
+                                                  .name
+                                            },
+                                            model: {
+                                              value: _vm.editedProfile.name,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedProfile,
+                                                  "name",
+                                                  $$v
+                                                )
+                                              },
+                                              expression: "editedProfile.name"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        { attrs: { cols: "12" } },
+                                        [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              placeholder: "Username",
+                                              type: "text",
+                                              rules: [
+                                                function(v) {
+                                                  return (
+                                                    !!v ||
+                                                    "Username is required"
+                                                  )
+                                                }
+                                              ],
+                                              "error-messages":
+                                                _vm.profileFormServerValidations
+                                                  .username
+                                            },
+                                            model: {
+                                              value: _vm.editedProfile.username,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedProfile,
+                                                  "username",
+                                                  $$v
+                                                )
+                                              },
+                                              expression:
+                                                "editedProfile.username"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        { attrs: { cols: "12" } },
+                                        [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              placeholder: "Email",
+                                              type: "email",
+                                              rules: [
+                                                function(v) {
+                                                  return (
+                                                    !!v || "Email is required"
+                                                  )
+                                                }
+                                              ],
+                                              "error-messages":
+                                                _vm.profileFormServerValidations
+                                                  .email
+                                            },
+                                            model: {
+                                              value: _vm.editedProfile.email,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedProfile,
+                                                  "email",
+                                                  $$v
+                                                )
+                                              },
+                                              expression: "editedProfile.email"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        { attrs: { cols: "12" } },
+                                        [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              placeholder: "Password",
+                                              type: "password",
+                                              "error-messages":
+                                                _vm.profileFormServerValidations
+                                                  .password
+                                            },
+                                            model: {
+                                              value: _vm.editedProfile.password,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedProfile,
+                                                  "password",
+                                                  $$v
+                                                )
+                                              },
+                                              expression:
+                                                "editedProfile.password"
+                                            }
                                           })
                                         ],
                                         1
                                       )
                                     ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _vm._l(_vm.profileMetrics, function(
-                                    metric,
-                                    index
-                                  ) {
-                                    return _c(
-                                      "v-col",
-                                      {
-                                        key: index + "pm2",
-                                        staticClass: "mt-4 d-md-none",
-                                        attrs: { cols: "4" }
-                                      },
-                                      [
-                                        _c(
-                                          "div",
-                                          { staticClass: "text-center" },
-                                          [_vm._v(_vm._s(metric.value))]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "div",
-                                          {
-                                            staticClass:
-                                              "caption text-center font-italic"
-                                          },
-                                          [
-                                            _vm._v(
-                                              "\n                    " +
-                                                _vm._s(metric.name) +
-                                                "\n                  "
-                                            )
-                                          ]
-                                        )
-                                      ]
-                                    )
-                                  }),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-col",
-                                    {
-                                      staticClass: "mt-4 d-md-none",
-                                      attrs: { cols: "12" }
-                                    },
-                                    [_c("v-divider")],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-col",
-                                    { attrs: { cols: "12" } },
-                                    [
-                                      _c("v-text-field", {
-                                        attrs: {
-                                          placeholder: "Name",
-                                          type: "text"
-                                        },
-                                        model: {
-                                          value: _vm.editedProfile.name,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.editedProfile,
-                                              "name",
-                                              $$v
-                                            )
-                                          },
-                                          expression: "editedProfile.name"
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-col",
-                                    { attrs: { cols: "12" } },
-                                    [
-                                      _c("v-text-field", {
-                                        attrs: {
-                                          placeholder: "Username",
-                                          type: "text"
-                                        },
-                                        model: {
-                                          value: _vm.editedProfile.username,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.editedProfile,
-                                              "username",
-                                              $$v
-                                            )
-                                          },
-                                          expression: "editedProfile.username"
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-col",
-                                    { attrs: { cols: "12" } },
-                                    [
-                                      _c("v-text-field", {
-                                        attrs: {
-                                          placeholder: "Email",
-                                          type: "email"
-                                        },
-                                        model: {
-                                          value: _vm.editedProfile.email,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.editedProfile,
-                                              "email",
-                                              $$v
-                                            )
-                                          },
-                                          expression: "editedProfile.email"
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-col",
-                                    { attrs: { cols: "12" } },
-                                    [
-                                      _c("v-text-field", {
-                                        attrs: {
-                                          placeholder: "Password",
-                                          type: "password"
-                                        },
-                                        model: {
-                                          value: _vm.editedProfile.password,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.editedProfile,
-                                              "password",
-                                              $$v
-                                            )
-                                          },
-                                          expression: "editedProfile.password"
-                                        }
-                                      })
-                                    ],
-                                    1
+                                    2
                                   )
                                 ],
-                                2
+                                1
                               )
                             ],
                             1
