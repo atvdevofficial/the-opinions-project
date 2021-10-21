@@ -16,6 +16,26 @@
 
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+        <style>
+            #toast-container {
+                font-family: 'Roboto Condensed', 'Courier New', Courier, monospace;
+                opacity: 1;
+            }
+
+            #toast-container > .toast-success {
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20style%3D%22fill%3A%20rgba(0%2C%200%2C%200%2C%201)%3Btransform%3A%20%3BmsFilter%3A%3B%22%3E%3Cpath%20d%3D%22m10%2015.586-3.293-3.293-1.414%201.414L10%2018.414l9.707-9.707-1.414-1.414z%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E") !important;
+                color: #000000;
+                background-color: #ffc830;
+                opacity: 1;
+            }
+
+            #toast-container > .toast-success > .toast-message{
+                font-size: .9rem;
+                font-style: italic;
+            }
+        </style>
     </head>
     <body>
         <div id="app">
@@ -24,5 +44,6 @@
 
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     </body>
 </html>

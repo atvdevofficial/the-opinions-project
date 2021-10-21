@@ -3175,6 +3175,10 @@ __webpack_require__.r(__webpack_exports__);
         _this2.editedProfile = Object.assign({}, _this2.profile); // Close profile dialog
 
         _this2.profileDialogClose();
+
+        toastr.success("Your profile was updated successfuly", "Critique Profile Updated", {
+          timeOut: 2000
+        });
       })["catch"](function (error) {
         console.log(error.response.data);
       })["finally"](function (_) {

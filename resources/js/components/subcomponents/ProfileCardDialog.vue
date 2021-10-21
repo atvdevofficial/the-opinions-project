@@ -269,6 +269,12 @@ export default {
 
           // Close profile dialog
           this.profileDialogClose();
+
+          toastr.success(
+            "Your profile was updated successfuly",
+            "Critique Profile Updated",
+            { timeOut: 2000 }
+          );
         })
         .catch((error) => {
           console.log(error.response.data);
