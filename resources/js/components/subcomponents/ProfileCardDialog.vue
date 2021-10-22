@@ -272,7 +272,12 @@ export default {
           this.editedProfile = Object.assign({}, this.profile);
         })
         .catch((error) => {
-          console.log(error.response.data);
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
         })
         .finally((_) => {});
     },

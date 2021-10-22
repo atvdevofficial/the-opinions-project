@@ -21,9 +21,13 @@ class OpinionFactory extends Factory
      */
     public function definition()
     {
+        $dateTime = $this->faker->dateTime;
+
         return [
             'text' => $this->faker->paragraph(),
-            'is_public' => true
+            'is_public' => true,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
         ];
     }
 }

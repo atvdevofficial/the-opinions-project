@@ -2421,6 +2421,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2441,7 +2460,13 @@ __webpack_require__.r(__webpack_exports__);
       profileDialog: false,
       opinionDialog: false,
       logoutDialog: false,
-      opinions: []
+      opinions: [],
+      paginationLinks: {
+        first: null,
+        last: null,
+        prev: null,
+        next: null
+      }
     };
   },
   mounted: function mounted() {
@@ -2462,12 +2487,50 @@ __webpack_require__.r(__webpack_exports__);
     },
     // Retrieve opinions feed
     retrieveOpinionsFeed: function retrieveOpinionsFeed() {
-      this.opinions = [];
+      var _this = this;
+
+      // Set isRetrievingOpinions to true
+      this.isRetrievingOpinions = true;
+      axios.get("/api/feed").then(function (response) {
+        var data = response.data; // Set opinions to data
+
+        _this.opinions = data.data; // Set pagination links
+
+        _this.paginationLinks = data.links;
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        // Set isRetrievingOpinions to false after request
+        _this.isRetrievingOpinions = false;
+      });
+    },
+    // Load more opinions
+    loadMoreOpinions: function loadMoreOpinions() {
+      var _this2 = this;
+
+      axios.get(this.paginationLinks.next).then(function (response) {
+        var data = response.data; // Concat opinions
+
+        _this2.opinions = _this2.opinions.concat(data.data); // Set pagination links
+
+        _this2.paginationLinks = data.links;
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        // Set isRetrievingOpinions to false after request
+        _this2.isRetrievingOpinions = false;
+      });
     },
     // Retrieve critique opinions
     retrieveCritiqueOpinions: function retrieveCritiqueOpinions() {
       var _sessionStorage$getIt,
-          _this = this;
+          _this3 = this;
 
       // Set isRetrievingOpinions to true
       this.isRetrievingOpinions = true; // Retrieve current authenticated crituque id from session storage
@@ -2476,12 +2539,15 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("/api/critiques/".concat(critiqueId, "/opinions")).then(function (response) {
         var data = response.data; // Set opinions to data
 
-        _this.opinions = data;
+        _this3.opinions = data;
       })["catch"](function (error) {
-        console.log(error.response.data);
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
       })["finally"](function (_) {
         // Set isRetrievingOpinions to false after request
-        _this.isRetrievingOpinions = false;
+        _this3.isRetrievingOpinions = false;
       });
     },
     // Handles opinion dialog opinion-created event
@@ -3327,7 +3393,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this.editedProfile = Object.assign({}, _this.profile);
       })["catch"](function (error) {
-        console.log(error.response.data);
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
       })["finally"](function (_) {});
     },
     // Update current authenticated critique profile
@@ -41641,7 +41710,7 @@ var render = function() {
                               { staticClass: "mt-4 text-center font-italic" },
                               [
                                 _vm._v(
-                                  "\n              Oops, looks like there are no opinions out there, share yours now!\n            "
+                                  "\n              Oops, looks like there are no opinions out there, share yours\n              now!\n            "
                                 )
                               ]
                             )
@@ -41700,14 +41769,12 @@ var render = function() {
       _vm._v(" "),
       _c(
         "v-footer",
-        {
-          staticClass: "d-md-none",
-          attrs: { app: "", color: "transparent", "min-height": "100" }
-        },
+        { staticClass: "d-md-none", attrs: { app: "", color: "transparent" } },
         [
           _c(
             "v-btn",
             {
+              staticStyle: { "margin-bottom": "6rem", "margin-right": "1rem" },
               attrs: {
                 absolute: "",
                 right: "",

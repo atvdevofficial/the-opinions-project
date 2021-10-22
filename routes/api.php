@@ -5,6 +5,7 @@ use App\Http\Controllers\OpinionController;
 use App\Http\Controllers\CritiqueController;
 use App\Http\Controllers\CritiqueOpinionController;
 use App\Http\Controllers\CritiqueTopicController;
+use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowCritiqueController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\TopicController;
@@ -37,6 +38,8 @@ Route::group(['middleware' => 'throttle:120'], function () {
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/logout', [AuthenticationController::class, 'logout'])
             ->name('logout');
+
+        Route::get('feed', FeedController::class)->name('feed');
 
         Route::apiResource('critiques', CritiqueController::class);
 

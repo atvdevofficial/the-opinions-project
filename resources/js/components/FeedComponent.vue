@@ -2,7 +2,12 @@
   <div>
     <!-- Start of Toolbar -->
     <v-app-bar dense color="#FFD561" elevation="0">
-      <v-toolbar-title class="font-weight-black" style="cursor: pointer;" @click="retrieveOpinionsFeed">Opinions</v-toolbar-title>
+      <v-toolbar-title
+        class="font-weight-black"
+        style="cursor: pointer"
+        @click="retrieveOpinionsFeed"
+        >Opinions</v-toolbar-title
+      >
       <v-spacer></v-spacer>
 
       <!-- Chat button -->
@@ -85,7 +90,8 @@
               v-if="!isRetrievingOpinions && opinions.length == 0"
             >
               <div class="mt-4 text-center font-italic">
-                Oops, looks like there are no opinions out there, share yours now!
+                Oops, looks like there are no opinions out there, share yours
+                now!
               </div>
             </v-container>
             <v-row v-if="!isRetrievingOpinions && opinions.length > 0">
@@ -104,6 +110,18 @@
                   :timestamp="opinion.created_at || 'timestamp'"
                 ></opinion-card>
               </v-col>
+              <!-- <v-col cols="12">
+                <v-btn
+                  block
+                  small
+                  text
+                  depressed
+                  @click="loadMoreOpinions"
+                  v-if="paginationLinks.next"
+                >
+                  Load more opinions
+                </v-btn>
+              </v-col> -->
             </v-row>
           </v-col>
           <!-- End of Feed -->
@@ -119,13 +137,14 @@
     <!-- End of Body -->
 
     <!-- Fab button for opinion dialog -->
-    <v-footer app color="transparent" min-height="100" class="d-md-none">
+    <v-footer app color="transparent" class="d-md-none">
       <v-btn
         absolute
         right
         fab
         elevation="2"
         color="primary"
+        style="margin-bottom: 6rem; margin-right: 1rem;"
         @click="opinionDialog = true"
       >
         <box-icon name="plus"></box-icon>
@@ -158,6 +177,12 @@ export default {
       logoutDialog: false,
 
       opinions: [],
+      paginationLinks: {
+        first: null,
+        last: null,
+        prev: null,
+        next: null,
+      },
     };
   },
   mounted() {
@@ -182,7 +207,59 @@ export default {
 
     // Retrieve opinions feed
     retrieveOpinionsFeed() {
-      this.opinions = [];
+      // Set isRetrievingOpinions to true
+      this.isRetrievingOpinions = true;
+
+      axios
+        .get("/api/feed")
+        .then((response) => {
+          let data = response.data;
+
+          // Set opinions to data
+          this.opinions = data.data;
+
+          // Set pagination links
+          this.paginationLinks = data.links;
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          // Set isRetrievingOpinions to false after request
+          this.isRetrievingOpinions = false;
+        });
+    },
+
+    // Load more opinions
+    loadMoreOpinions() {
+      axios
+        .get(this.paginationLinks.next)
+        .then((response) => {
+          let data = response.data;
+
+          // Concat opinions
+          this.opinions = this.opinions.concat(data.data);
+
+          // Set pagination links
+          this.paginationLinks = data.links;
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          // Set isRetrievingOpinions to false after request
+          this.isRetrievingOpinions = false;
+        });
     },
 
     // Retrieve critique opinions
@@ -202,7 +279,12 @@ export default {
           this.opinions = data;
         })
         .catch((error) => {
-          console.log(error.response.data);
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
         })
         .finally((_) => {
           // Set isRetrievingOpinions to false after request

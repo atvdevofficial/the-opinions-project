@@ -17,9 +17,9 @@ class CritiqueOpinionController extends Controller
      */
     public function index(CritiqueOpinionIndexRequest $request, Critique $critique)
     {
-        $opinions = $critique->opinions()->orderBy('id', 'desc')->get();
+        $opinions = $critique->opinions()->orderBy('created_at', 'desc')->with('critique', 'topics')->get();
 
-        return OpinionResource::collection($opinions->load('critique', 'topics'));
+        return OpinionResource::collection($opinions);
     }
 
     /**
