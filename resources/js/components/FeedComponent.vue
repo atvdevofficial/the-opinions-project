@@ -2,7 +2,7 @@
   <div>
     <!-- Start of Toolbar -->
     <v-app-bar dense color="#FFD561" elevation="0">
-      <v-toolbar-title class="font-weight-black">Opinions</v-toolbar-title>
+      <v-toolbar-title class="font-weight-black" style="cursor: pointer;" @click="retrieveOpinionsFeed">Opinions</v-toolbar-title>
       <v-spacer></v-spacer>
 
       <!-- Chat button -->
@@ -38,6 +38,7 @@
                 <profile-card-dialog
                   :showDialog="profileDialog"
                   @close="profileDialogClose"
+                  @shared-opinions="retrieveCritiqueOpinions"
                 ></profile-card-dialog>
 
                 <!-- Opinion Dialog -->
@@ -45,7 +46,20 @@
                   <opinion-dialog
                     :showDialog="opinionDialog"
                     @close="opinionDialogClose"
+                    @opinion-created="opinionCreated"
                   ></opinion-dialog>
+                </div>
+
+                <div class="mt-2 px-4">
+                  <v-btn
+                    x-small
+                    text
+                    block
+                    rounded
+                    depressed
+                    @click="retrieveCritiqueOpinions"
+                    >See shared opinions</v-btn
+                  >
                 </div>
               </v-card-text>
             </v-card>
@@ -54,7 +68,27 @@
 
           <!-- Start of Feed -->
           <v-col cols="12" md="8" lg="9" xl="8">
-            <v-row>
+            <v-container class="my-8" v-if="isRetrievingOpinions">
+              <div class="text-center">
+                <v-progress-circular
+                  :size="50"
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
+              </div>
+              <div class="mt-4 text-center font-italic caption">
+                Retrieving opinions, please wait...
+              </div>
+            </v-container>
+            <v-container
+              class="my-8"
+              v-if="!isRetrievingOpinions && opinions.length == 0"
+            >
+              <div class="mt-4 text-center font-italic">
+                Oops, looks like there are no opinions out there, share yours now!
+              </div>
+            </v-container>
+            <v-row v-if="!isRetrievingOpinions && opinions.length > 0">
               <v-col
                 cols="12"
                 v-for="(opinion, index) in opinions"
@@ -62,12 +96,12 @@
               >
                 <!-- Opinion Card Goes Here -->
                 <opinion-card
-                  :name="opinion.name"
-                  :username="opinion.username"
-                  :text="opinion.text"
-                  :topics="opinion.topics"
-                  :likes="opinion.likes"
-                  :timestamp="opinion.timestamp"
+                  :name="opinion.critique.name || 'name'"
+                  :username="opinion.critique.username || 'username'"
+                  :text="opinion.text || 'text'"
+                  :topics="opinion.topics || []"
+                  :likes="opinion.likes || 0"
+                  :timestamp="opinion.created_at || 'timestamp'"
                 ></opinion-card>
               </v-col>
             </v-row>
@@ -118,29 +152,16 @@ export default {
   },
   data() {
     return {
+      isRetrievingOpinions: false,
       profileDialog: false,
       opinionDialog: false,
       logoutDialog: false,
 
-      opinions: [
-        {
-          name: "Profile Name",
-          username: "Profile Username",
-          text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam consequatur excepturi suscipit odit inventore adipisci assumenda beatae cumque? Omnis vel molestiae consectetur adipisci provident, delectus dolorum reprehenderit voluptate dolores? Exercitationem.",
-          topics: ["NotFinancialAdvice"],
-          likes: 100,
-          timestamp: "10m",
-        },
-        {
-          name: "Profile Name",
-          username: "Profile Username",
-          text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam consequatur excepturi suscipit odit inventore adipisci assumenda beatae cumque? Omnis vel molestiae consectetur adipisci provident, delectus dolorum reprehenderit voluptate dolores? Exercitationem.",
-          topics: ["FinancialAdvice"],
-          likes: 2000,
-          timestamp: "30m",
-        },
-      ],
+      opinions: [],
     };
+  },
+  mounted() {
+    this.retrieveOpinionsFeed();
   },
   methods: {
     addSelectedItem(e) {
@@ -157,6 +178,41 @@ export default {
 
     logoutDialogClose(value) {
       this.logoutDialog = value;
+    },
+
+    // Retrieve opinions feed
+    retrieveOpinionsFeed() {
+      this.opinions = [];
+    },
+
+    // Retrieve critique opinions
+    retrieveCritiqueOpinions() {
+      // Set isRetrievingOpinions to true
+      this.isRetrievingOpinions = true;
+
+      // Retrieve current authenticated crituque id from session storage
+      var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+      axios
+        .get(`/api/critiques/${critiqueId}/opinions`)
+        .then((response) => {
+          let data = response.data;
+
+          // Set opinions to data
+          this.opinions = data;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        })
+        .finally((_) => {
+          // Set isRetrievingOpinions to false after request
+          this.isRetrievingOpinions = false;
+        });
+    },
+
+    // Handles opinion dialog opinion-created event
+    opinionCreated(data) {
+      this.opinions.unshift(data);
     },
   },
 };

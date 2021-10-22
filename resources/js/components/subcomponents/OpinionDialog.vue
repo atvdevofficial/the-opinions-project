@@ -192,12 +192,16 @@ export default {
             is_public: this.opinion.isPublic,
           })
           .then((response) => {
+            let data = response.data;
+
             // Pop Notification
             toastr.success(
               "Your opinion will go a long way.",
               "Opinion Shared",
               { timeOut: 2000 }
             );
+
+            this.$emit("opinion-created", data);
 
             // Close opinion dialog
             this.closeDialog();

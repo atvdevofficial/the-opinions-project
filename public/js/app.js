@@ -2387,6 +2387,40 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2403,25 +2437,15 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      isRetrievingOpinions: false,
       profileDialog: false,
       opinionDialog: false,
       logoutDialog: false,
-      opinions: [{
-        name: "Profile Name",
-        username: "Profile Username",
-        text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam consequatur excepturi suscipit odit inventore adipisci assumenda beatae cumque? Omnis vel molestiae consectetur adipisci provident, delectus dolorum reprehenderit voluptate dolores? Exercitationem.",
-        topics: ["NotFinancialAdvice"],
-        likes: 100,
-        timestamp: "10m"
-      }, {
-        name: "Profile Name",
-        username: "Profile Username",
-        text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam consequatur excepturi suscipit odit inventore adipisci assumenda beatae cumque? Omnis vel molestiae consectetur adipisci provident, delectus dolorum reprehenderit voluptate dolores? Exercitationem.",
-        topics: ["FinancialAdvice"],
-        likes: 2000,
-        timestamp: "30m"
-      }]
+      opinions: []
     };
+  },
+  mounted: function mounted() {
+    this.retrieveOpinionsFeed();
   },
   methods: {
     addSelectedItem: function addSelectedItem(e) {
@@ -2435,6 +2459,34 @@ __webpack_require__.r(__webpack_exports__);
     },
     logoutDialogClose: function logoutDialogClose(value) {
       this.logoutDialog = value;
+    },
+    // Retrieve opinions feed
+    retrieveOpinionsFeed: function retrieveOpinionsFeed() {
+      this.opinions = [];
+    },
+    // Retrieve critique opinions
+    retrieveCritiqueOpinions: function retrieveCritiqueOpinions() {
+      var _sessionStorage$getIt,
+          _this = this;
+
+      // Set isRetrievingOpinions to true
+      this.isRetrievingOpinions = true; // Retrieve current authenticated crituque id from session storage
+
+      var critiqueId = (_sessionStorage$getIt = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : null;
+      axios.get("/api/critiques/".concat(critiqueId, "/opinions")).then(function (response) {
+        var data = response.data; // Set opinions to data
+
+        _this.opinions = data;
+      })["catch"](function (error) {
+        console.log(error.response.data);
+      })["finally"](function (_) {
+        // Set isRetrievingOpinions to false after request
+        _this.isRetrievingOpinions = false;
+      });
+    },
+    // Handles opinion dialog opinion-created event
+    opinionCreated: function opinionCreated(data) {
+      this.opinions.unshift(data);
     }
   }
 });
@@ -2731,7 +2783,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "OpinionCard",
   props: {
@@ -2959,10 +3010,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         axios.post("/api/critiques/".concat(critiqueId, "/opinions"), _objectSpread(_objectSpread({}, this.opinion), {}, {
           is_public: this.opinion.isPublic
         })).then(function (response) {
-          // Pop Notification
+          var data = response.data; // Pop Notification
+
           toastr.success("Your opinion will go a long way.", "Opinion Shared", {
             timeOut: 2000
-          }); // Close opinion dialog
+          });
+
+          _this2.$emit("opinion-created", data); // Close opinion dialog
+
 
           _this2.closeDialog();
         })["catch"](function (error) {
@@ -3006,6 +3061,19 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3306,6 +3374,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _this2.isUpdatingProfile = false;
         });
       }
+    },
+    // Emit an event
+    seeSharedOpinions: function seeSharedOpinions() {
+      this.$emit("shared-opinions");
+      this.profileDialog = false; // Emit an event named close together
+      // with profileDialog value
+
+      this.$emit("close", this.profileDialog);
     }
   }
 });
@@ -41384,9 +41460,15 @@ var render = function() {
         "v-app-bar",
         { attrs: { dense: "", color: "#FFD561", elevation: "0" } },
         [
-          _c("v-toolbar-title", { staticClass: "font-weight-black" }, [
-            _vm._v("Opinions")
-          ]),
+          _c(
+            "v-toolbar-title",
+            {
+              staticClass: "font-weight-black",
+              staticStyle: { cursor: "pointer" },
+              on: { click: _vm.retrieveOpinionsFeed }
+            },
+            [_vm._v("Opinions")]
+          ),
           _vm._v(" "),
           _c("v-spacer"),
           _vm._v(" "),
@@ -41461,7 +41543,11 @@ var render = function() {
                             [
                               _c("profile-card-dialog", {
                                 attrs: { showDialog: _vm.profileDialog },
-                                on: { close: _vm.profileDialogClose }
+                                on: {
+                                  close: _vm.profileDialogClose,
+                                  "shared-opinions":
+                                    _vm.retrieveCritiqueOpinions
+                                }
                               }),
                               _vm._v(" "),
                               _c(
@@ -41470,8 +41556,35 @@ var render = function() {
                                 [
                                   _c("opinion-dialog", {
                                     attrs: { showDialog: _vm.opinionDialog },
-                                    on: { close: _vm.opinionDialogClose }
+                                    on: {
+                                      close: _vm.opinionDialogClose,
+                                      "opinion-created": _vm.opinionCreated
+                                    }
                                   })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "mt-2 px-4" },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        "x-small": "",
+                                        text: "",
+                                        block: "",
+                                        rounded: "",
+                                        depressed: ""
+                                      },
+                                      on: {
+                                        click: _vm.retrieveCritiqueOpinions
+                                      }
+                                    },
+                                    [_vm._v("See shared opinions")]
+                                  )
                                 ],
                                 1
                               )
@@ -41489,29 +41602,79 @@ var render = function() {
                     "v-col",
                     { attrs: { cols: "12", md: "8", lg: "9", xl: "8" } },
                     [
-                      _c(
-                        "v-row",
-                        _vm._l(_vm.opinions, function(opinion, index) {
-                          return _c(
-                            "v-col",
-                            { key: index, attrs: { cols: "12" } },
-                            [
-                              _c("opinion-card", {
-                                attrs: {
-                                  name: opinion.name,
-                                  username: opinion.username,
-                                  text: opinion.text,
-                                  topics: opinion.topics,
-                                  likes: opinion.likes,
-                                  timestamp: opinion.timestamp
-                                }
-                              })
-                            ],
+                      _vm.isRetrievingOpinions
+                        ? _c("v-container", { staticClass: "my-8" }, [
+                            _c(
+                              "div",
+                              { staticClass: "text-center" },
+                              [
+                                _c("v-progress-circular", {
+                                  attrs: {
+                                    size: 50,
+                                    indeterminate: "",
+                                    color: "primary"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "mt-4 text-center font-italic caption"
+                              },
+                              [
+                                _vm._v(
+                                  "\n              Retrieving opinions, please wait...\n            "
+                                )
+                              ]
+                            )
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      !_vm.isRetrievingOpinions && _vm.opinions.length == 0
+                        ? _c("v-container", { staticClass: "my-8" }, [
+                            _c(
+                              "div",
+                              { staticClass: "mt-4 text-center font-italic" },
+                              [
+                                _vm._v(
+                                  "\n              Oops, looks like there are no opinions out there, share yours now!\n            "
+                                )
+                              ]
+                            )
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      !_vm.isRetrievingOpinions && _vm.opinions.length > 0
+                        ? _c(
+                            "v-row",
+                            _vm._l(_vm.opinions, function(opinion, index) {
+                              return _c(
+                                "v-col",
+                                { key: index, attrs: { cols: "12" } },
+                                [
+                                  _c("opinion-card", {
+                                    attrs: {
+                                      name: opinion.critique.name || "name",
+                                      username:
+                                        opinion.critique.username || "username",
+                                      text: opinion.text || "text",
+                                      topics: opinion.topics || [],
+                                      likes: opinion.likes || 0,
+                                      timestamp:
+                                        opinion.created_at || "timestamp"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            }),
                             1
                           )
-                        }),
-                        1
-                      )
+                        : _vm._e()
                     ],
                     1
                   ),
@@ -41878,7 +42041,7 @@ var render = function() {
         [
           _c(
             "v-list-item",
-            { staticClass: "grow pl-0" },
+            { staticClass: "grow px-0" },
             [
               _c(
                 "v-list-item-avatar",
@@ -41927,12 +42090,8 @@ var render = function() {
             _vm._l(_vm.topics, function(topic, index) {
               return _c(
                 "v-chip",
-                {
-                  key: index,
-                  staticClass: "mr-2",
-                  attrs: { small: "", color: "#FFD561" }
-                },
-                [_vm._v("\n        " + _vm._s(topic) + "\n      ")]
+                { key: index, staticClass: "mr-2", attrs: { small: "" } },
+                [_vm._v("\n        #" + _vm._s(topic.text) + "\n      ")]
               )
             }),
             1
@@ -41946,7 +42105,7 @@ var render = function() {
               staticClass: "mr-2 font-weight-bold",
               attrs: { small: "", color: "#FFD561" }
             },
-            [_vm._v(" 90 ")]
+            [_vm._v(" " + _vm._s(_vm.likes) + " ")]
           ),
           _vm._v(" "),
           _c(
@@ -42378,6 +42537,31 @@ var render = function() {
                                         ],
                                         1
                                       ),
+                                      _vm._v(" "),
+                                      _c("v-col", { attrs: { cols: "12" } }, [
+                                        _c(
+                                          "div",
+                                          { staticClass: "mt-2 px-4" },
+                                          [
+                                            _c(
+                                              "v-btn",
+                                              {
+                                                attrs: {
+                                                  "x-small": "",
+                                                  text: "",
+                                                  block: "",
+                                                  depressed: ""
+                                                },
+                                                on: {
+                                                  click: _vm.seeSharedOpinions
+                                                }
+                                              },
+                                              [_vm._v("See shared opinions")]
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ]),
                                       _vm._v(" "),
                                       _vm._l(_vm.profileMetrics, function(
                                         metric,

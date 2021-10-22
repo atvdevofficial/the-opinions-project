@@ -36,5 +36,11 @@ class TestingSeeder extends Seeder
         // Opinions
         $opinion = \App\Models\Opinion::factory()->state(['critique_id' => $critique->id])->create();
         $opinion->topics()->sync($topics);
+
+        $opinion = \App\Models\Opinion::factory()->state(['critique_id' => $critique->id])->create();
+        $opinion->topics()->sync($topics);
+
+        $opinion = \App\Models\Opinion::factory()->state(['critique_id' => $critique->id])->create();
+        $opinion->topics()->sync($topics);
     }
 }

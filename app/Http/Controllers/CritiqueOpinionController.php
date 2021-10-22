@@ -17,9 +17,9 @@ class CritiqueOpinionController extends Controller
      */
     public function index(CritiqueOpinionIndexRequest $request, Critique $critique)
     {
-        $opinions = $critique->opinions;
+        $opinions = $critique->opinions()->orderBy('id', 'desc')->get();
 
-        return OpinionResource::collection($opinions);
+        return OpinionResource::collection($opinions->load('critique', 'topics'));
     }
 
     /**
@@ -33,6 +33,6 @@ class CritiqueOpinionController extends Controller
         $opinion = $critique->opinions()->create($request->validated());
         $opinion->topics()->sync($request->validated()['topics']);
 
-        return new OpinionResource($opinion);
+        return new OpinionResource($opinion->load('critique', 'topics'));
     }
 }

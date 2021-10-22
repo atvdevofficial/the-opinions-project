@@ -2,7 +2,7 @@
   <v-card elevation="0">
     <!-- Card Title -->
     <v-card-title>
-      <v-list-item class="grow pl-0">
+      <v-list-item class="grow px-0">
         <v-list-item-avatar color="#FFEAB1">
           <box-icon name="user" size="sm"></box-icon>
         </v-list-item-avatar>
@@ -33,17 +33,16 @@
       <div>
         <v-chip
           small
-          color="#FFD561"
           class="mr-2"
           v-for="(topic, index) in topics"
           :key="index"
         >
-          {{ topic }}
+          #{{ topic.text }}
         </v-chip>
       </div>
       <v-spacer></v-spacer>
       <!-- Like button -->
-      <v-chip small color="#FFD561" class="mr-2 font-weight-bold"> 90 </v-chip>
+      <v-chip small color="#FFD561" class="mr-2 font-weight-bold"> {{ likes }} </v-chip>
       <v-btn
         small
         rounded

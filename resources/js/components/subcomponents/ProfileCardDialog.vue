@@ -62,6 +62,19 @@
                       </v-avatar>
                     </v-col>
 
+                    <v-col cols="12">
+                      <div class="mt-2 px-4">
+                        <v-btn
+                          x-small
+                          text
+                          block
+                          depressed
+                          @click="seeSharedOpinions"
+                          >See shared opinions</v-btn
+                        >
+                      </div>
+                    </v-col>
+
                     <!-- Profile Metrics (Likes, Followers, Followings) -->
                     <v-col
                       class="mt-4 d-md-none"
@@ -318,6 +331,16 @@ export default {
             this.isUpdatingProfile = false;
           });
       }
+    },
+
+    // Emit an event
+    seeSharedOpinions() {
+      this.$emit("shared-opinions");
+
+      this.profileDialog = false;
+      // Emit an event named close together
+      // with profileDialog value
+      this.$emit("close", this.profileDialog);
     },
   },
 };
