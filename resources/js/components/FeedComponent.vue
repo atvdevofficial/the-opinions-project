@@ -11,7 +11,7 @@
       <v-spacer></v-spacer>
 
       <!-- Chat button -->
-      <v-btn icon @click="$router.push({ name: 'chatList' })">
+      <v-btn icon @click="$router.push({ name: 'chats' })">
         <box-icon name="chat"></box-icon>
       </v-btn>
 

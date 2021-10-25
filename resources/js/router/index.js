@@ -14,7 +14,7 @@ const router = new VueRouter({
 const modules = {
     login: true,
     feed: true,
-    chatList: true,
+    chats: true,
     chat: true
 }
 
@@ -29,7 +29,7 @@ const roleModules = {
         ...modules,
         default: 'login',
         feed: false,
-        chatList: false,
+        chats: false,
         chat: false
     }
 }

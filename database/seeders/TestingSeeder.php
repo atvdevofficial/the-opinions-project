@@ -66,5 +66,12 @@ class TestingSeeder extends Seeder
 
         // Critique Two is one of the followers of Critique One
         $critiqueOne->followers()->attach($critiqueTwo->id);
+
+        /**
+         * Messages
+         */
+        $critiqueOne->sentMessages()->create(['receiver_id' => $critiqueTwo->id, 'text' => 'Hello World, from critique one to critique two']);
+        $critiqueTwo->sentMessages()->create(['receiver_id' => $critiqueOne->id,'text' => 'Hello World, from critique two to critique one']);
+        $critiqueThree->sentMessages()->create(['receiver_id' => $critiqueOne->id,'text' => 'Hello World, from critique three to critique one']);
     }
 }

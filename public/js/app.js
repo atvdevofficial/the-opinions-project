@@ -2169,16 +2169,63 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ChatComponent",
   data: function data() {
     return {
+      isRetrievingMessages: false,
+      isSendingMessages: false,
       message: null,
-      messages: ["The point of this vue directive is to keep things scrolled to the bottom", "Let's load a couple of random bacon related messages.", "Okay, now let's see how this div is always scrolled to the bottom"]
+      messages: []
     };
   },
+  mounted: function mounted() {
+    this.retrieveMessages();
+  },
   methods: {
-    sendMessage: function sendMessage() {
+    pushMessageToMessages: function pushMessageToMessages(message) {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -2187,7 +2234,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return _this.messages.push(_this.message);
+                return _this.messages.push(message);
 
               case 2:
                 _this.message = null;
@@ -2200,16 +2247,68 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee);
       }))();
+    },
+    retrieveMessages: function retrieveMessages() {
+      var _sessionStorage$getIt,
+          _this2 = this;
+
+      // Set isRetievingMessages to true
+      this.isRetrievingMessages = true; // Retrieve current authenticated crituque id from session storage
+
+      var critiqueId = (_sessionStorage$getIt = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : null; // Retieve receiver
+
+      var receiverId = this.$route.params.id;
+      axios.get("/api/critiques/".concat(critiqueId, "/messages?receiver=").concat(receiverId)).then(function (response) {
+        var data = response.data; // Set messages to data
+
+        _this2.messages = data;
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        _this2.isRetrievingMessages = false;
+      });
+    },
+    sendMessage: function sendMessage() {
+      var _this3 = this;
+
+      if (this.$refs.formMessage.validate()) {
+        var _sessionStorage$getIt2;
+
+        // Set isRetievingMessages to true
+        this.isSendingMessages = true; // Retrieve current authenticated crituque id from session storage
+
+        var critiqueId = (_sessionStorage$getIt2 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt2 !== void 0 ? _sessionStorage$getIt2 : null; // Retieve receiver
+
+        var receiverId = this.$route.params.id;
+        axios.post("/api/critiques/".concat(critiqueId, "/messages"), {
+          text: this.message,
+          receiver_id: receiverId
+        }).then(function (response) {
+          var data = response.data; // Set messages to data
+
+          _this3.pushMessageToMessages(data);
+        })["catch"](function (error) {
+          // Pop Notification
+          toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+            timeOut: 2000
+          });
+        })["finally"](function (_) {
+          _this3.isSendingMessages = false;
+        });
+      }
     }
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatListComponent.vue?vue&type=script&lang=js&":
-/*!************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatListComponent.vue?vue&type=script&lang=js& ***!
-  \************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatsComponent.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatsComponent.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2260,10 +2359,61 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "ChatListComponent",
+  name: "ChatsComponent",
   data: function data() {
-    return {};
+    return {
+      isRetrievingMessages: false,
+      messages: []
+    };
+  },
+  mounted: function mounted() {
+    this.retrieveMessages();
+  },
+  methods: {
+    retrieveMessages: function retrieveMessages() {
+      var _sessionStorage$getIt,
+          _this = this;
+
+      // Set isRetievingMessages to true
+      this.isRetrievingMessages = true; // Retrieve current authenticated crituque id from session storage
+
+      var critiqueId = (_sessionStorage$getIt = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : null;
+      axios.get("/api/critiques/".concat(critiqueId, "/messages")).then(function (response) {
+        var data = response.data; // Set messages to data
+
+        _this.messages = data;
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        _this.isRetrievingMessages = false;
+      });
+    }
   }
 });
 
@@ -3712,7 +3862,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]({
 var modules = {
   login: true,
   feed: true,
-  chatList: true,
+  chats: true,
   chat: true
 }; // Roles modules
 
@@ -3724,7 +3874,7 @@ var roleModules = {
   guest: _objectSpread(_objectSpread({}, modules), {}, {
     "default": 'login',
     feed: false,
-    chatList: false,
+    chats: false,
     chat: false
   })
 }; // router beforeEach
@@ -3757,7 +3907,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _components_LoginComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/LoginComponent.vue */ "./resources/js/components/LoginComponent.vue");
 /* harmony import */ var _components_FeedComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/FeedComponent.vue */ "./resources/js/components/FeedComponent.vue");
-/* harmony import */ var _components_ChatListComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/ChatListComponent.vue */ "./resources/js/components/ChatListComponent.vue");
+/* harmony import */ var _components_ChatsComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/ChatsComponent.vue */ "./resources/js/components/ChatsComponent.vue");
 /* harmony import */ var _components_ChatComponent_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/ChatComponent.vue */ "./resources/js/components/ChatComponent.vue");
 
 
@@ -3772,11 +3922,11 @@ var routes = [{
   name: 'feed',
   component: _components_FeedComponent_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
 }, {
-  path: '/chat-list',
-  name: 'chatList',
-  component: _components_ChatListComponent_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  path: '/chats',
+  name: 'chats',
+  component: _components_ChatsComponent_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
 }, {
-  path: '/chat/username',
+  path: '/chats/:id',
   name: 'chat',
   component: _components_ChatComponent_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
 }];
@@ -40541,10 +40691,10 @@ component.options.__file = "resources/js/components/ChatComponent.vue"
 
 /***/ }),
 
-/***/ "./resources/js/components/ChatListComponent.vue":
-/*!*******************************************************!*\
-  !*** ./resources/js/components/ChatListComponent.vue ***!
-  \*******************************************************/
+/***/ "./resources/js/components/ChatsComponent.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/components/ChatsComponent.vue ***!
+  \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -40552,8 +40702,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _ChatListComponent_vue_vue_type_template_id_c28849a8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChatListComponent.vue?vue&type=template&id=c28849a8& */ "./resources/js/components/ChatListComponent.vue?vue&type=template&id=c28849a8&");
-/* harmony import */ var _ChatListComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ChatListComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/ChatListComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _ChatsComponent_vue_vue_type_template_id_2bb55d4d___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChatsComponent.vue?vue&type=template&id=2bb55d4d& */ "./resources/js/components/ChatsComponent.vue?vue&type=template&id=2bb55d4d&");
+/* harmony import */ var _ChatsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ChatsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/ChatsComponent.vue?vue&type=script&lang=js&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -40563,9 +40713,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 ;
 var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _ChatListComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _ChatListComponent_vue_vue_type_template_id_c28849a8___WEBPACK_IMPORTED_MODULE_0__.render,
-  _ChatListComponent_vue_vue_type_template_id_c28849a8___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  _ChatsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ChatsComponent_vue_vue_type_template_id_2bb55d4d___WEBPACK_IMPORTED_MODULE_0__.render,
+  _ChatsComponent_vue_vue_type_template_id_2bb55d4d___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
   false,
   null,
   null,
@@ -40575,7 +40725,7 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/ChatListComponent.vue"
+component.options.__file = "resources/js/components/ChatsComponent.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
@@ -40885,10 +41035,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/ChatListComponent.vue?vue&type=script&lang=js&":
-/*!********************************************************************************!*\
-  !*** ./resources/js/components/ChatListComponent.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************/
+/***/ "./resources/js/components/ChatsComponent.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/ChatsComponent.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -40896,8 +41046,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatListComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ChatListComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatListComponent.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatListComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ChatsComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatsComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -41073,19 +41223,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/ChatListComponent.vue?vue&type=template&id=c28849a8&":
-/*!**************************************************************************************!*\
-  !*** ./resources/js/components/ChatListComponent.vue?vue&type=template&id=c28849a8& ***!
-  \**************************************************************************************/
+/***/ "./resources/js/components/ChatsComponent.vue?vue&type=template&id=2bb55d4d&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/ChatsComponent.vue?vue&type=template&id=2bb55d4d& ***!
+  \***********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatListComponent_vue_vue_type_template_id_c28849a8___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatListComponent_vue_vue_type_template_id_c28849a8___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatsComponent_vue_vue_type_template_id_2bb55d4d___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatsComponent_vue_vue_type_template_id_2bb55d4d___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatListComponent_vue_vue_type_template_id_c28849a8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ChatListComponent.vue?vue&type=template&id=c28849a8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatListComponent.vue?vue&type=template&id=c28849a8&");
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatsComponent_vue_vue_type_template_id_2bb55d4d___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ChatsComponent.vue?vue&type=template&id=2bb55d4d& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatsComponent.vue?vue&type=template&id=2bb55d4d&");
 
 
 /***/ }),
@@ -41262,7 +41412,7 @@ var render = function() {
             {
               on: {
                 click: function($event) {
-                  return _vm.$router.push({ name: "chatList" })
+                  return _vm.$router.push({ name: "chats" })
                 }
               }
             },
@@ -41312,39 +41462,86 @@ var render = function() {
         "v-main",
         { staticClass: "pa-0" },
         [
-          _c(
-            "v-list",
-            { staticClass: "pa-0", attrs: { "two-line": "" } },
-            _vm._l(_vm.messages, function(message, index) {
-              return _c(
-                "v-list-item",
-                {
-                  key: index,
-                  style:
-                    index % 2 == 0
-                      ? "background-color: #EEEEEE;"
-                      : "background-color: #FFFFFF;"
-                },
-                [
-                  _c(
-                    "v-list-item-content",
-                    { staticClass: "caption" },
+          _vm.isRetrievingMessages
+            ? _c("v-container", { staticClass: "my-8" }, [
+                _c(
+                  "div",
+                  { staticClass: "text-center" },
+                  [
+                    _c("v-progress-circular", {
+                      attrs: { size: 50, indeterminate: "", color: "primary" }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "mt-4 text-center font-italic caption" },
+                  [
+                    _vm._v(
+                      "\n        Retrieving messages, please wait...\n      "
+                    )
+                  ]
+                )
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          !_vm.isRetrievingMessages && _vm.messages.length == 0
+            ? _c("v-container", { staticClass: "my-8" }, [
+                _c("div", { staticClass: "mt-4 text-center font-italic" }, [
+                  _vm._v(
+                    "\n        Its empty here. Start a conversation now!\n      "
+                  )
+                ])
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          !_vm.isRetrievingMessages && _vm.messages.length > 0
+            ? _c(
+                "v-list",
+                { staticClass: "pa-0", attrs: { "two-line": "" } },
+                _vm._l(_vm.messages, function(message, index) {
+                  return _c(
+                    "v-list-item",
+                    {
+                      key: index,
+                      style:
+                        message.sender_id != _vm.$route.params.id
+                          ? "background-color: #EEEEEE;"
+                          : "background-color: #FFFFFF;"
+                    },
                     [
-                      _vm._v("\n          " + _vm._s(message) + "\n          "),
                       _c(
-                        "v-list-item-subtitle",
-                        { staticClass: "mt-2 caption font-italic" },
-                        [_vm._v("\n            - 09/28/2021 14:00\n          ")]
+                        "v-list-item-content",
+                        { staticClass: "caption" },
+                        [
+                          _vm._v(
+                            "\n          " +
+                              _vm._s(message.text) +
+                              "\n          "
+                          ),
+                          _c(
+                            "v-list-item-subtitle",
+                            { staticClass: "mt-2 caption font-italic" },
+                            [
+                              _vm._v(
+                                "\n            - " +
+                                  _vm._s(message.created_at) +
+                                  "\n          "
+                              )
+                            ]
+                          )
+                        ],
+                        1
                       )
                     ],
                     1
                   )
-                ],
+                }),
                 1
               )
-            }),
-            1
-          )
+            : _vm._e()
         ],
         1
       ),
@@ -41353,31 +41550,71 @@ var render = function() {
         "v-footer",
         { attrs: { app: "", color: "#ffeab1", "min-height": "100" } },
         [
-          _c("v-textarea", {
-            attrs: {
-              dense: "",
-              flat: "",
-              "hide-details": "",
-              solo: "",
-              rows: "2"
-            },
-            model: {
-              value: _vm.message,
-              callback: function($$v) {
-                _vm.message = $$v
-              },
-              expression: "message"
-            }
-          }),
-          _vm._v(" "),
           _c(
-            "v-btn",
-            {
-              staticClass: "ml-4 font-weight-bold",
-              attrs: { text: "" },
-              on: { click: _vm.sendMessage }
-            },
-            [_vm._v("\n      Send\n    ")]
+            "v-row",
+            [
+              _c(
+                "v-col",
+                { attrs: { cols: "9", sm: "10", md: "11" } },
+                [
+                  _c(
+                    "v-form",
+                    { ref: "formMessage" },
+                    [
+                      _c("v-textarea", {
+                        attrs: {
+                          dense: "",
+                          flat: "",
+                          solo: "",
+                          rows: "2",
+                          "hide-details": "",
+                          placeholder: "Your message goes here",
+                          rules: [
+                            function(v) {
+                              return !!v || "Required"
+                            }
+                          ]
+                        },
+                        model: {
+                          value: _vm.message,
+                          callback: function($$v) {
+                            _vm.message = $$v
+                          },
+                          expression: "message"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-col",
+                {
+                  staticClass: "d-flex align-center",
+                  attrs: { cols: "3", sm: "2", md: "1" }
+                },
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "font-weight-bold",
+                      attrs: {
+                        block: "",
+                        text: "",
+                        loading: _vm.isSendingMessages
+                      },
+                      on: { click: _vm.sendMessage }
+                    },
+                    [_vm._v("\n          Send\n        ")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
           )
         ],
         1
@@ -41393,10 +41630,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatListComponent.vue?vue&type=template&id=c28849a8&":
-/*!*****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatListComponent.vue?vue&type=template&id=c28849a8& ***!
-  \*****************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatsComponent.vue?vue&type=template&id=2bb55d4d&":
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ChatsComponent.vue?vue&type=template&id=2bb55d4d& ***!
+  \**************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -41449,46 +41686,105 @@ var render = function() {
                 )
               ]),
               _vm._v(" "),
-              _c(
-                "v-list",
-                { attrs: { "two-line": "" } },
-                _vm._l([1, 2, 3], function(index) {
-                  return _c(
-                    "v-list-item",
-                    { key: index, attrs: { to: "/chat/username" } },
-                    [
-                      _c(
-                        "v-list-item-avatar",
-                        { attrs: { color: "#FFEAB1" } },
+              _vm.isRetrievingMessages
+                ? _c("v-container", { staticClass: "my-8" }, [
+                    _c(
+                      "div",
+                      { staticClass: "text-center" },
+                      [
+                        _c("v-progress-circular", {
+                          attrs: {
+                            size: 50,
+                            indeterminate: "",
+                            color: "primary"
+                          }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "mt-4 text-center font-italic caption" },
+                      [
+                        _vm._v(
+                          "\n          Retrieving messages, please wait...\n        "
+                        )
+                      ]
+                    )
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              !_vm.isRetrievingMessages && _vm.messages.length == 0
+                ? _c("v-container", { staticClass: "my-8" }, [
+                    _c("div", { staticClass: "mt-4 text-center font-italic" }, [
+                      _vm._v(
+                        "\n          Oops, looks like there are no messages from and/or for you here.\n        "
+                      )
+                    ])
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              !_vm.isRetrievingMessages && _vm.messages.length > 0
+                ? _c(
+                    "v-list",
+                    { attrs: { "two-line": "" } },
+                    _vm._l(_vm.messages, function(message, index) {
+                      return _c(
+                        "v-list-item",
+                        {
+                          key: index,
+                          on: {
+                            click: function($event) {
+                              return _vm.$router.push({
+                                name: "chat",
+                                params: { id: message.critique_id }
+                              })
+                            }
+                          }
+                        },
                         [
-                          _c("box-icon", {
-                            attrs: { name: "user", size: "sm" }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-item-content",
-                        [
-                          _c("v-list-item-title", [
-                            _c("div", [_vm._v("Elen Mac Doe")]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "caption font-italic" }, [
-                              _vm._v(
-                                "\n                Lorem, ipsum dolor sit amet consectetur adipisicing elit. At,\n                voluptate.\n              "
-                              )
-                            ])
-                          ])
+                          _c(
+                            "v-list-item-avatar",
+                            { attrs: { color: "#FFEAB1" } },
+                            [
+                              _c("box-icon", {
+                                attrs: { name: "user", size: "sm" }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-list-item-content",
+                            [
+                              _c("v-list-item-title", [
+                                _c("div", [
+                                  _vm._v(_vm._s(message.critique_name))
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "caption font-italic" },
+                                  [
+                                    _vm._v(
+                                      "\n                " +
+                                        _vm._s(message.text) +
+                                        "\n              "
+                                    )
+                                  ]
+                                )
+                              ])
+                            ],
+                            1
+                          )
                         ],
                         1
                       )
-                    ],
+                    }),
                     1
                   )
-                }),
-                1
-              )
+                : _vm._e()
             ],
             1
           )
@@ -41547,7 +41843,7 @@ var render = function() {
               attrs: { icon: "" },
               on: {
                 click: function($event) {
-                  return _vm.$router.push({ name: "chatList" })
+                  return _vm.$router.push({ name: "chats" })
                 }
               }
             },

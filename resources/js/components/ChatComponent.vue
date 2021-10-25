@@ -2,7 +2,7 @@
   <div>
     <!-- Start of App Bar -->
     <v-app-bar app dense color="#FFD561" elevation="0">
-      <v-app-bar-nav-icon @click="$router.push({ name: 'chatList' })">
+      <v-app-bar-nav-icon @click="$router.push({ name: 'chats' })">
         <box-icon name="arrow-back"></box-icon>
       </v-app-bar-nav-icon>
       <v-toolbar-title class="pa-0">
@@ -24,20 +24,46 @@
 
     <!-- Start of Body -->
     <v-main class="pa-0">
-      <v-list two-line class="pa-0">
+      <v-container class="my-8" v-if="isRetrievingMessages">
+        <div class="text-center">
+          <v-progress-circular
+            :size="50"
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+        <div class="mt-4 text-center font-italic caption">
+          Retrieving messages, please wait...
+        </div>
+      </v-container>
+
+      <v-container
+        class="my-8"
+        v-if="!isRetrievingMessages && messages.length == 0"
+      >
+        <div class="mt-4 text-center font-italic">
+          Its empty here. Start a conversation now!
+        </div>
+      </v-container>
+
+      <v-list
+        two-line
+        class="pa-0"
+        v-if="!isRetrievingMessages && messages.length > 0"
+      >
         <v-list-item
           v-for="(message, index) in messages"
           :key="index"
           :style="
-            index % 2 == 0
+            message.sender_id != $route.params.id
               ? 'background-color: #EEEEEE;'
               : 'background-color: #FFFFFF;'
           "
         >
           <v-list-item-content class="caption">
-            {{ message }}
+            {{ message.text }}
             <v-list-item-subtitle class="mt-2 caption font-italic">
-              - 09/28/2021 14:00
+              - {{ message.created_at }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -45,17 +71,33 @@
     </v-main>
 
     <v-footer app color="#ffeab1" min-height="100">
-      <v-textarea
-        dense
-        flat
-        hide-details
-        solo
-        rows="2"
-        v-model="message"
-      ></v-textarea>
-      <v-btn text class="ml-4 font-weight-bold" @click="sendMessage">
-        Send
-      </v-btn>
+      <v-row>
+        <v-col cols="9" sm="10" md="11">
+          <v-form ref="formMessage">
+            <v-textarea
+              dense
+              flat
+              solo
+              rows="2"
+              hide-details=""
+              v-model="message"
+              placeholder="Your message goes here"
+              :rules="[(v) => !!v || 'Required']"
+            ></v-textarea>
+          </v-form>
+        </v-col>
+        <v-col cols="3" sm="2" md="1" class="d-flex align-center">
+          <v-btn
+            block
+            text
+            class="font-weight-bold"
+            @click="sendMessage"
+            :loading="isSendingMessages"
+          >
+            Send
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-footer>
   </div>
 </template>
@@ -65,19 +107,88 @@ export default {
   name: "ChatComponent",
   data() {
     return {
+      isRetrievingMessages: false,
+      isSendingMessages: false,
+
       message: null,
-      messages: [
-        "The point of this vue directive is to keep things scrolled to the bottom",
-        "Let's load a couple of random bacon related messages.",
-        "Okay, now let's see how this div is always scrolled to the bottom",
-      ],
+      messages: [],
     };
   },
+  mounted() {
+    this.retrieveMessages();
+  },
   methods: {
-    async sendMessage() {
-      await this.messages.push(this.message);
+    async pushMessageToMessages(message) {
+      await this.messages.push(message);
       this.message = null;
       window.scrollTo(0, document.body.scrollHeight);
+    },
+
+    retrieveMessages() {
+      // Set isRetievingMessages to true
+      this.isRetrievingMessages = true;
+
+      // Retrieve current authenticated crituque id from session storage
+      var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+      // Retieve receiver
+      var receiverId = this.$route.params.id;
+
+      axios
+        .get(`/api/critiques/${critiqueId}/messages?receiver=${receiverId}`)
+        .then((response) => {
+          let data = response.data;
+
+          // Set messages to data
+          this.messages = data;
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          this.isRetrievingMessages = false;
+        });
+    },
+
+    sendMessage() {
+      if (this.$refs.formMessage.validate()) {
+        // Set isRetievingMessages to true
+        this.isSendingMessages = true;
+
+        // Retrieve current authenticated crituque id from session storage
+        var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+        // Retieve receiver
+        var receiverId = this.$route.params.id;
+
+        axios
+          .post(`/api/critiques/${critiqueId}/messages`, {
+            text: this.message,
+            receiver_id: receiverId,
+          })
+          .then((response) => {
+            let data = response.data;
+
+            // Set messages to data
+            this.pushMessageToMessages(data);
+          })
+          .catch((error) => {
+            // Pop Notification
+            toastr.error(
+              "A problem occured while processing your request. Please try again.",
+              "Something Went Wrong",
+              { timeOut: 2000 }
+            );
+          })
+          .finally((_) => {
+            this.isSendingMessages = false;
+          });
+      }
     },
   },
 };

@@ -1,7 +1,7 @@
 import LoginComponent from '../components/LoginComponent.vue'
 
 import FeedComponent from '../components/FeedComponent.vue'
-import ChatListComponent from '../components/ChatListComponent.vue'
+import ChatsComponent from '../components/ChatsComponent.vue'
 import ChatComponent from '../components/ChatComponent.vue'
 
 const routes = [
@@ -16,12 +16,12 @@ const routes = [
         component: FeedComponent
     },
     {
-        path: '/chat-list',
-        name: 'chatList',
-        component: ChatListComponent
+        path: '/chats',
+        name: 'chats',
+        component: ChatsComponent
     },
     {
-        path: '/chat/username',
+        path: '/chats/:id',
         name: 'chat',
         component: ChatComponent
     },

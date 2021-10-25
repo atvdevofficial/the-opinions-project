@@ -20,11 +20,11 @@ class MessageTest extends TestCase
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
-        // Reciever Critique User & Critique
+        // receiver Critique User & Critique
         $receiverCritiqueUser = User::factory()->role('CRITIQUE')->create();
         $receiverCritique = Critique::factory()->state(['user_id' => $receiverCritiqueUser->id])->create();
 
-        // 2nd Reciever Critique User & Critique
+        // 2nd receiver Critique User & Critique
         $secReceiverCritiqueUser = User::factory()->role('CRITIQUE')->create();
         $secReceiverCritique = Critique::factory()->state(['user_id' => $secReceiverCritiqueUser->id])->create();
 
@@ -77,7 +77,7 @@ class MessageTest extends TestCase
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
-        // Reciever Critique User & Critique
+        // receiver Critique User & Critique
         $receiverCritiqueUser = User::factory()->role('CRITIQUE')->create();
         $receiverCritique = Critique::factory()->state(['user_id' => $receiverCritiqueUser->id])->create();
 
