@@ -77,4 +77,18 @@ class Critique extends Model
     public function followedTopics() {
         return $this->belongsToMany(Topic::class, 'critique_topic', 'critique_id', 'topic_id');
     }
+
+    /**
+     * Get owned messages (sender)
+     */
+    public function sentMessages() {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Get owned messages (receiver)
+     */
+    public function receivedMessages() {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
 }

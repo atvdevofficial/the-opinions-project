@@ -4,7 +4,7 @@
 php artisan make:model %1 -m
 
 :: Create Model Observer
-php artisan make:observer %1Observer -m
+php artisan make:observer %1Observer --model %1
 
 :: Create API Controller
 php artisan make:controller %1Controller --api --model=%1

@@ -24,7 +24,7 @@ class AuthenticationController extends Controller
                     'token' => $token->plainTextToken, 'role' => $user->role,
                     'ids' => [
                         'user' => $user->id,
-                        'critique' => $user->critique() ? $user->critique->id : null
+                        'critique' => $user->critique ? $user->critique->id : null
                     ]
                 ]);
             }

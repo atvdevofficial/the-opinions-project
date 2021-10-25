@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\OpinionController;
 use App\Http\Controllers\CritiqueController;
+use App\Http\Controllers\CritiqueMessageController;
 use App\Http\Controllers\CritiqueOpinionController;
 use App\Http\Controllers\CritiqueTopicController;
 use App\Http\Controllers\FeedController;
@@ -41,6 +42,9 @@ Route::group(['middleware' => 'throttle:120'], function () {
         Route::get('feed', FeedController::class)->name('feed');
 
         Route::apiResource('critiques', CritiqueController::class);
+
+        Route::apiResource('critiques.messages', CritiqueMessageController::class)
+            ->shallow()->only(['index', 'store']);
 
         Route::apiResource('critiques.opinions', CritiqueOpinionController::class)
             ->shallow()->only(['index', 'store']);
