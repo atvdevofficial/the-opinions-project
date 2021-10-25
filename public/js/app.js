@@ -41720,28 +41720,58 @@ var render = function() {
                       !_vm.isRetrievingOpinions && _vm.opinions.length > 0
                         ? _c(
                             "v-row",
-                            _vm._l(_vm.opinions, function(opinion, index) {
-                              return _c(
+                            [
+                              _vm._l(_vm.opinions, function(opinion, index) {
+                                return _c(
+                                  "v-col",
+                                  { key: index, attrs: { cols: "12" } },
+                                  [
+                                    _c("opinion-card", {
+                                      attrs: {
+                                        name: opinion.critique.name || "name",
+                                        username:
+                                          opinion.critique.username ||
+                                          "username",
+                                        text: opinion.text || "text",
+                                        topics: opinion.topics || [],
+                                        likes: opinion.likes || 0,
+                                        timestamp:
+                                          opinion.created_at || "timestamp"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              }),
+                              _vm._v(" "),
+                              _c(
                                 "v-col",
-                                { key: index, attrs: { cols: "12" } },
+                                { attrs: { cols: "12" } },
                                 [
-                                  _c("opinion-card", {
-                                    attrs: {
-                                      name: opinion.critique.name || "name",
-                                      username:
-                                        opinion.critique.username || "username",
-                                      text: opinion.text || "text",
-                                      topics: opinion.topics || [],
-                                      likes: opinion.likes || 0,
-                                      timestamp:
-                                        opinion.created_at || "timestamp"
-                                    }
-                                  })
+                                  _vm.paginationLinks.next
+                                    ? _c(
+                                        "v-btn",
+                                        {
+                                          attrs: {
+                                            block: "",
+                                            small: "",
+                                            text: "",
+                                            depressed: ""
+                                          },
+                                          on: { click: _vm.loadMoreOpinions }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                Load more opinions\n              "
+                                          )
+                                        ]
+                                      )
+                                    : _vm._e()
                                 ],
                                 1
                               )
-                            }),
-                            1
+                            ],
+                            2
                           )
                         : _vm._e()
                     ],

@@ -110,7 +110,7 @@
                   :timestamp="opinion.created_at || 'timestamp'"
                 ></opinion-card>
               </v-col>
-              <!-- <v-col cols="12">
+              <v-col cols="12">
                 <v-btn
                   block
                   small
@@ -121,7 +121,7 @@
                 >
                   Load more opinions
                 </v-btn>
-              </v-col> -->
+              </v-col>
             </v-row>
           </v-col>
           <!-- End of Feed -->
