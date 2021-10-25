@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Critique;
+use App\Models\Opinion;
 use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -237,5 +238,42 @@ class TopicTest extends TestCase
 
         // Check number of critiques
         $this->assertCount(1, Critique::get());
+    }
+
+    public function testTopTrendingTopics() {
+        // Critique User, Critique, and Opinion
+        $critiqueUser = User::factory()->role('CRITIQUE')->create();
+        $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
+        $opinion = Opinion::factory()->state(['critique_id' => $critique->id])->create();
+
+        // Topic
+        $topic = Topic::factory()->create();
+        $opinion->topics()->sync([$topic->id]);
+
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
+        // Response
+        $this->getJson(route('topics.topTrending'))
+            ->assertSuccessful()
+            ->assertJsonStructure([[
+                'text', 'total'
+            ]]);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(1, User::get());
+
+        // Check number of critiques
+        $this->assertCount(1, Critique::get());
+
+        // Check number of opinions
+        $this->assertCount(1, Opinion::get());
+
+        // Check number of topics
+        $this->assertCount(1, Topic::get());
     }
 }

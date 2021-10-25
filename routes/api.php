@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'throttle:120'], function () {
-    // Registration
     // Reset Password
     // Forgot / Change Password
     Route::post('/login', [AuthenticationController::class, 'login'])
@@ -49,6 +48,8 @@ Route::group(['middleware' => 'throttle:120'], function () {
         Route::apiResource('opinions', OpinionController::class)
             ->only(['show', 'update', 'destroy']);
 
+        Route::get('/topics/topTrending', [TopicController::class, 'topTrending'])
+            ->name('topics.topTrending');
         Route::apiResource('topics', TopicController::class);
 
         Route::get('critiques/follows/critiques', [FollowCritiqueController::class, 'index'])

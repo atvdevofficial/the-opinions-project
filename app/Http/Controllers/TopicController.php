@@ -10,6 +10,7 @@ use App\Http\Requests\Topic\TopicUpdateRequest;
 use App\Http\Resources\TopicResource;
 use App\Models\Topic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TopicController extends Controller
 {
@@ -74,5 +75,17 @@ class TopicController extends Controller
         $topic->delete();
 
         return null;
+    }
+
+    /**
+     * Retrieve top / trending topics
+     * by number of opinions
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function topTrending() {
+        $topics = Topic::select('text', DB::raw('COUNT(text) as total'))->join('opinion_topic', 'opinion_topic.topic_id', 'topics.id')->groupBy('text')->orderBy('total')->get();
+
+        return response()->json($topics);
     }
 }

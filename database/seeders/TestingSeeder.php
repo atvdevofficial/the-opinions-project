@@ -14,7 +14,7 @@ class TestingSeeder extends Seeder
     public function run()
     {
         // Topics
-        $topics = \App\Models\Topic::factory()->count(5)->create()->pluck('id');
+        $topics = \App\Models\Topic::factory()->count(5)->create();
 
         // Critique One
         $critiqueOne = \App\Models\Critique::factory()->state([
@@ -28,7 +28,7 @@ class TestingSeeder extends Seeder
         \App\Models\Opinion::factory()
             ->count(10)
             ->state(['critique_id' => $critiqueOne->id])
-            ->hasAttached(\App\Models\Topic::factory()->count(3))
+            ->hasAttached($topics)
             ->create();
         // $opinion->topics()->sync($topics);
 
@@ -44,7 +44,7 @@ class TestingSeeder extends Seeder
         \App\Models\Opinion::factory()
             ->count(10)
             ->state(['critique_id' => $critiqueTwo->id])
-            ->hasAttached(\App\Models\Topic::factory()->count(3))
+            ->hasAttached($topics)
             ->create();
 
         // Critiques Three
@@ -52,11 +52,11 @@ class TestingSeeder extends Seeder
             'user_id' => \App\Models\User::factory()->role('CRITIQUE')->state(['email' => 'critiqueThree@opinions.com'])->create()
         ])->create();
 
-        // Critique Two Opinions
+        // Critique Three Opinions
         \App\Models\Opinion::factory()
             ->count(10)
             ->state(['critique_id' => $critiqueThree->id])
-            ->hasAttached(\App\Models\Topic::factory()->count(3))
+            ->hasAttached($topics)
             ->create();
 
         // Critique One follows Critiqie Two

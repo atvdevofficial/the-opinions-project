@@ -37,7 +37,7 @@ class Topic extends Model
      * Opinions that belongs to opinion
      */
     public function opinions() {
-        return $this->belongsToMany(Opinion::class);
+        return $this->belongsToMany(Opinion::class)->withTimestamps();;
     }
 
     /**
