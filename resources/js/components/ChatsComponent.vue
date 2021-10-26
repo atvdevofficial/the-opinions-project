@@ -42,7 +42,7 @@
           <v-list-item
             v-for="(message, index) in messages"
             :key="index"
-            @click="$router.push({ name: 'chat', params: { id: message.critique_id } })"
+            @click="$router.push({ name: 'chat', params: { id: message.critique_id, name: message.critique_name } })"
           >
             <v-list-item-avatar color="#FFEAB1">
               <box-icon name="user" size="sm"></box-icon>

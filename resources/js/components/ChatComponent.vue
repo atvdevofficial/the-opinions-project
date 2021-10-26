@@ -13,8 +13,8 @@
 
           <v-list-item-content>
             <v-list-item-title>
-              <div>Elen Mac Doe</div>
-              <div class="caption font-italic">elenmacdoe</div>
+              <div>{{ critique.name }}</div>
+              <div class="caption font-italic">{{ critique.username }}</div>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -23,7 +23,7 @@
     <!-- End of App Bar -->
 
     <!-- Start of Body -->
-    <v-main class="pa-0">
+    <div id="chatlist">
       <v-container class="my-8" v-if="isRetrievingMessages">
         <div class="text-center">
           <v-progress-circular
@@ -68,7 +68,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-    </v-main>
+    </div>
 
     <v-footer app color="#ffeab1" min-height="100">
       <v-row>
@@ -112,16 +112,42 @@ export default {
 
       message: null,
       messages: [],
+      critique: {
+        name: null,
+        username: null,
+      },
     };
   },
   mounted() {
+    // Scroll to bottom
+    // Create an interval that scrolls to the bottom every 250 ms
+    var intervalPaused = false;
+    window.scrollToBottomInterval = setInterval(function () {
+      if (!intervalPaused) {
+        window.scrollTo(0, document.body.scrollHeight);
+      }
+    }, 250);
+
+    // Add an onscroll event to window that
+    // handels wether to pause or run interval above
+    window.onscroll = function (ev) {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        intervalPaused = false;
+      } else {
+        intervalPaused = true;
+      }
+    };
+
     this.retrieveMessages();
+  },
+  destroyed() {
+    // Clear interval
+    clearInterval(window.scrollToBottomInterval);
   },
   methods: {
     async pushMessageToMessages(message) {
       await this.messages.push(message);
       this.message = null;
-      window.scrollTo(0, document.body.scrollHeight);
     },
 
     retrieveMessages() {
@@ -140,7 +166,8 @@ export default {
           let data = response.data;
 
           // Set messages to data
-          this.messages = data;
+          this.messages = data.messages;
+          this.critique = data.critique;
         })
         .catch((error) => {
           // Pop Notification
@@ -193,15 +220,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-html {
-  overflow-y: auto;
-}
-.wrap-text {
-  -webkit-line-clamp: unset !important;
-}
-.reminder {
-  background-color: #ffeab1;
-}
-</style>

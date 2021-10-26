@@ -23,8 +23,12 @@ class CritiqueMessageController extends Controller
 
         if ($receiver) {
             $messages = Message::where([['sender_id', $critique->id], ['receiver_id', $receiver]])->orWhere([['receiver_id', $critique->id], ['sender_id', $receiver]])->get();
+            $critique = Critique::findOrFail($receiver);
 
-            return MessageResource::collection($messages);
+            return response()->json([
+                'critique' => $critique,
+                'messages' => $messages
+            ]);
         } else {
             $messages = DB::select("SELECT MAX(tblm1.created_at) as timestamp, sender_id, (SELECT name FROM critiques WHERE critiques.id = sender_id) as sender_name, receiver_id, (SELECT name FROM critiques WHERE critiques.id = receiver_id) as receiver_name FROM messages as tblm1, critiques WHERE sender_id = 1 OR receiver_id = 1 AND NOT EXISTS( SELECT sender_id, receiver_id FROM messages as tblm2 WHERE tblm2.sender_id = tblm1.receiver_id AND tblm2.receiver_id = tblm1.sender_id ) GROUP BY sender_id, receiver_id ORDER BY tblm1.created_at DESC");
 
