@@ -3674,20 +3674,29 @@ __webpack_require__.r(__webpack_exports__);
   name: "TopTrendingTopics",
   data: function data() {
     return {
-      topTrendingTopics: [{
-        text: "Election2040",
-        value: "2.1M"
-      }, {
-        text: "Pandemic",
-        value: "1.1M"
-      }, {
-        text: "Climate Change",
-        value: "500K"
-      }, {
-        text: "CryptoCurrency",
-        value: "250K"
-      }]
+      isRetrievingTopTrendingTopics: false,
+      topTrendingTopics: []
     };
+  },
+  mounted: function mounted() {
+    this.retrieveTopTrendingTopics();
+  },
+  methods: {
+    retrieveTopTrendingTopics: function retrieveTopTrendingTopics() {
+      var _this = this;
+
+      // Set isRetrievingTopTrendingTopics to true
+      this.isRetrievingTopTrendingTopics = true;
+      axios.get("/api/topics/topTrending").then(function (response) {
+        var data = response.data; // Set top trending topics
+
+        _this.topTrendingTopics = data;
+      })["catch"](function (error) {
+        console.log(error.response.data);
+      })["finally"](function (_) {
+        _this.isRetrievingTopTrendingTopics = false;
+      });
+    }
   }
 });
 
@@ -43225,9 +43234,11 @@ var render = function() {
                         _vm._v(_vm._s(topTrendingTopic.text))
                       ]),
                       _vm._v(" "),
-                      _c("v-list-item-subtitle", [
-                        _vm._v(_vm._s(topTrendingTopic.value) + " Opinions")
-                      ])
+                      _c(
+                        "v-list-item-subtitle",
+                        { staticClass: "font-italic" },
+                        [_vm._v(_vm._s(topTrendingTopic.total) + " opinions")]
+                      )
                     ],
                     1
                   )

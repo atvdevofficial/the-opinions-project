@@ -14,8 +14,8 @@
         >
           <v-list-item-content>
             <v-list-item-title>{{ topTrendingTopic.text }}</v-list-item-title>
-            <v-list-item-subtitle
-              >{{ topTrendingTopic.value }} Opinions</v-list-item-subtitle
+            <v-list-item-subtitle class="font-italic"
+              >{{ topTrendingTopic.total }} opinions</v-list-item-subtitle
             >
           </v-list-item-content>
         </v-list-item>
@@ -29,13 +29,33 @@ export default {
   name: "TopTrendingTopics",
   data() {
     return {
-      topTrendingTopics: [
-        { text: "Election2040", value: "2.1M" },
-        { text: "Pandemic", value: "1.1M" },
-        { text: "Climate Change", value: "500K" },
-        { text: "CryptoCurrency", value: "250K" },
-      ],
+      isRetrievingTopTrendingTopics: false,
+      topTrendingTopics: [],
     };
+  },
+  mounted() {
+    this.retrieveTopTrendingTopics();
+  },
+  methods: {
+    retrieveTopTrendingTopics() {
+      // Set isRetrievingTopTrendingTopics to true
+      this.isRetrievingTopTrendingTopics = true;
+
+      axios
+        .get("/api/topics/topTrending")
+        .then((response) => {
+          var data = response.data;
+
+          // Set top trending topics
+          this.topTrendingTopics = data;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        })
+        .finally((_) => {
+          this.isRetrievingTopTrendingTopics = false;
+        });
+    },
   },
 };
 </script>
