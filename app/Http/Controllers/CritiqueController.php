@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Critique\CritiqueDestroyRequest;
 use App\Http\Requests\Critique\CritiqueIndexRequest;
 use App\Http\Requests\Critique\CritiqueShowRequest;
+use App\Http\Requests\Critique\CritiqueStatisticRequest;
 use App\Http\Requests\Critique\CritiqueStoreRequest;
 use App\Http\Requests\Critique\CritiqueUpdateRequest;
 use App\Http\Resources\CritiqueResource;
@@ -78,5 +79,23 @@ class CritiqueController extends Controller
         $critique->delete();
 
         return null;
+    }
+
+    /**
+     * Retrieve the specified critique statistics
+     *
+     * @param  \App\Models\Critique  $critique
+     * @return \Illuminate\Http\Response
+     */
+    public function statistics(CritiqueStatisticRequest $request, Critique $critique) {
+        $topics = $critique->followedTopics()->count() ?? 0;
+        $followers = $critique->followers()->count() ?? 0;
+        $followings = $critique->followings()->count() ?? 0;
+
+        return response()->json([
+            'topics' => $topics,
+            'followers' => $followers,
+            'followings' => $followings,
+        ]);
     }
 }

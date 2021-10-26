@@ -268,4 +268,31 @@ class CritiqueTest extends TestCase
         $this->assertEquals($critiqueData['name'], $critique->name);
         Hash::check($critiqueData['password'], $critique->user->password); // Hash check password
     }
+
+    public function testCritiqueStatisticCritique()
+    {
+        // Critique User & Critique
+        $critiqueUser = User::factory()->role('CRITIQUE')->create();
+        $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
+
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
+        // Response
+        $this->getJson(route('critiques.statistics', ['critique' => $critique->id]))
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'topics', 'followers', 'followings'
+            ]);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(1, User::get());
+
+        // Check number of critiques
+        $this->assertCount(1, Critique::get());
+    }
 }

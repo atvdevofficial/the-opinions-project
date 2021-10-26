@@ -3480,6 +3480,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ProfileCardDialog",
@@ -3494,6 +3514,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
+      isRetrievingCritiqueStatistics: false,
       isUpdatingProfile: false,
       profileDialog: false,
       logoutDialog: false,
@@ -3502,6 +3523,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         username: "Profile Username",
         email: "Profile Email",
         password: null
+      },
+      profileStatisctics: {
+        topics: 0,
+        followers: 0,
+        followings: 0
       },
       // Used for profile editing purposes
       editedProfile: {
@@ -3516,17 +3542,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         username: null,
         email: null,
         password: null
-      },
-      profileMetrics: [{
-        name: "Likes",
-        value: 100
-      }, {
-        name: "Followers",
-        value: 100
-      }, {
-        name: "Following",
-        value: 100
-      }]
+      }
     };
   },
   watch: {
@@ -3536,6 +3552,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   mounted: function mounted() {
     this.retrieveCritiqueProfile();
+    this.retrieveCritiqueStatistics();
   },
   methods: {
     // Handler for profile dialog close
@@ -3551,23 +3568,42 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     logoutDialogClose: function logoutDialogClose(value) {
       this.logoutDialog = value;
     },
-    // Retrieve current authenticated critique profile
-    retrieveCritiqueProfile: function retrieveCritiqueProfile() {
+    // Rerieve top trending topics
+    retrieveCritiqueStatistics: function retrieveCritiqueStatistics() {
       var _sessionStorage$getIt,
           _this = this;
 
-      // Retrieve current authenticated crituque id from session storage
+      // Set isRetrievingCritiqueStatistics to true
+      this.isRetrievingCritiqueStatistics = true; // Retrieve current authenticated crituque id from session storage
+
       var critiqueId = (_sessionStorage$getIt = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt !== void 0 ? _sessionStorage$getIt : null;
+      axios.get("/api/critiques/".concat(critiqueId, "/statistics")).then(function (response) {
+        var data = response.data; // Set profile statistics
+
+        _this.profileStatisctics = data;
+      })["catch"](function (error) {
+        console.log(error.response.data);
+      })["finally"](function (_) {
+        _this.isRetrievingCritiqueStatistics = false;
+      });
+    },
+    // Retrieve current authenticated critique profile
+    retrieveCritiqueProfile: function retrieveCritiqueProfile() {
+      var _sessionStorage$getIt2,
+          _this2 = this;
+
+      // Retrieve current authenticated crituque id from session storage
+      var critiqueId = (_sessionStorage$getIt2 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt2 !== void 0 ? _sessionStorage$getIt2 : null;
       axios.get("/api/critiques/" + critiqueId).then(function (response) {
         var data = response.data; // Extract needed critique profile info from response
 
-        _this.profile = {
+        _this2.profile = {
           name: data.name,
           username: data.username,
           email: data.user.email
         }; // Set editedProfile equals to profile without link
 
-        _this.editedProfile = Object.assign({}, _this.profile);
+        _this2.editedProfile = Object.assign({}, _this2.profile);
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
@@ -3577,26 +3613,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     // Update current authenticated critique profile
     updateCritiqueProfile: function updateCritiqueProfile() {
-      var _this2 = this;
+      var _this3 = this;
 
       // Validate form
       if (this.$refs.profileForm.validate()) {
-        var _sessionStorage$getIt2;
+        var _sessionStorage$getIt3;
 
         // Retrieve current authenticated crituque id from session storage
-        var critiqueId = (_sessionStorage$getIt2 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt2 !== void 0 ? _sessionStorage$getIt2 : null; // set isUpdatingProfile to true
+        var critiqueId = (_sessionStorage$getIt3 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt3 !== void 0 ? _sessionStorage$getIt3 : null; // set isUpdatingProfile to true
 
         this.isUpdatingProfile = true;
         axios.put("/api/critiques/" + critiqueId, this.editedProfile).then(function (response) {
           var data = response.data; // Extract needed updated critique profile info from response
 
-          _this2.profile = {
+          _this3.profile = {
             name: data.name,
             username: data.username,
             email: data.user.email
           }; // Close profile dialog
 
-          _this2.profileDialogClose(); // Pop Notification
+          _this3.profileDialogClose(); // Pop Notification
 
 
           toastr.success("Your profile was updated successfuly", "Critique Profile Updated", {
@@ -3605,7 +3641,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         })["catch"](function (error) {
           // Server validations
           if (error.response.status == 422) {
-            _this2.profileFormServerValidations = _objectSpread({}, error.response.data.errors);
+            _this3.profileFormServerValidations = _objectSpread({}, error.response.data.errors);
           } else {
             // Default action
             // Pop Notification
@@ -3616,7 +3652,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         })["finally"](function (_) {
           // Set isUpdatingProfile to false
           // at the end of the request
-          _this2.isUpdatingProfile = false;
+          _this3.isUpdatingProfile = false;
         });
       }
     },
@@ -42776,23 +42812,35 @@ var render = function() {
             "v-row",
             { attrs: { dense: "", align: "center", justify: "center" } },
             [
-              _vm._l(_vm.profileMetrics, function(metric, index) {
-                return _c(
-                  "v-col",
-                  { key: index + "pm1", attrs: { cols: "4" } },
-                  [
-                    _c("div", { staticClass: "text-center" }, [
-                      _vm._v(_vm._s(metric.value))
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "caption text-center font-italic" },
-                      [_vm._v(_vm._s(metric.name))]
-                    )
-                  ]
-                )
-              }),
+              _c("v-col", { attrs: { cols: "4" } }, [
+                _c("div", { staticClass: "text-center" }, [
+                  _vm._v(_vm._s(_vm.profileStatisctics.topics))
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "caption text-center font-italic" }, [
+                  _vm._v("Topics")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("v-col", { attrs: { cols: "4" } }, [
+                _c("div", { staticClass: "text-center" }, [
+                  _vm._v(_vm._s(_vm.profileStatisctics.followers))
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "caption text-center font-italic" }, [
+                  _vm._v("Followers")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("v-col", { attrs: { cols: "4" } }, [
+                _c("div", { staticClass: "text-center" }, [
+                  _vm._v(_vm._s(_vm.profileStatisctics.followings))
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "caption text-center font-italic" }, [
+                  _vm._v("Followings")
+                ])
+              ]),
               _vm._v(" "),
               _c(
                 "v-col",
@@ -42925,41 +42973,112 @@ var render = function() {
                                         )
                                       ]),
                                       _vm._v(" "),
-                                      _vm._l(_vm.profileMetrics, function(
-                                        metric,
-                                        index
-                                      ) {
-                                        return _c(
-                                          "v-col",
-                                          {
-                                            key: index + "pm2",
-                                            staticClass: "mt-4 d-md-none",
-                                            attrs: { cols: "4" }
-                                          },
-                                          [
-                                            _c(
-                                              "div",
-                                              { staticClass: "text-center" },
-                                              [_vm._v(_vm._s(metric.value))]
-                                            ),
-                                            _vm._v(" "),
-                                            _c(
-                                              "div",
-                                              {
-                                                staticClass:
-                                                  "caption text-center font-italic"
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "\n                      " +
-                                                    _vm._s(metric.name) +
-                                                    "\n                    "
-                                                )
-                                              ]
-                                            )
-                                          ]
-                                        )
-                                      }),
+                                      _c(
+                                        "v-col",
+                                        {
+                                          staticClass: "mt-4 d-md-none",
+                                          attrs: { cols: "4" }
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            { staticClass: "text-center" },
+                                            [
+                                              _vm._v(
+                                                "\n                      " +
+                                                  _vm._s(
+                                                    _vm.profileStatisctics
+                                                      .topics
+                                                  ) +
+                                                  "\n                    "
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "caption text-center font-italic"
+                                            },
+                                            [_vm._v("Topics Followed")]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        {
+                                          staticClass: "mt-4 d-md-none",
+                                          attrs: { cols: "4" }
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            { staticClass: "text-center" },
+                                            [
+                                              _vm._v(
+                                                "\n                      " +
+                                                  _vm._s(
+                                                    _vm.profileStatisctics
+                                                      .followers
+                                                  ) +
+                                                  "\n                    "
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "caption text-center font-italic"
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                      Followers\n                    "
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        {
+                                          staticClass: "mt-4 d-md-none",
+                                          attrs: { cols: "4" }
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            { staticClass: "text-center" },
+                                            [
+                                              _vm._v(
+                                                "\n                      " +
+                                                  _vm._s(
+                                                    _vm.profileStatisctics
+                                                      .followings
+                                                  ) +
+                                                  "\n                    "
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "caption text-center font-italic"
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                      Followings\n                    "
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      ),
                                       _vm._v(" "),
                                       _c(
                                         "v-col",
@@ -43107,7 +43226,7 @@ var render = function() {
                                         1
                                       )
                                     ],
-                                    2
+                                    1
                                   )
                                 ],
                                 1
@@ -43177,7 +43296,7 @@ var render = function() {
                 1
               )
             ],
-            2
+            1
           )
         ],
         1

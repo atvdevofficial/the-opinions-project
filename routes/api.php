@@ -41,6 +41,8 @@ Route::group(['middleware' => 'throttle:120'], function () {
 
         Route::get('feed', FeedController::class)->name('feed');
 
+        Route::get('/critiques/{critique}/statistics', [CritiqueController::class, 'statistics'])
+            ->name('critiques.statistics');
         Route::apiResource('critiques', CritiqueController::class);
 
         Route::apiResource('critiques.messages', CritiqueMessageController::class)

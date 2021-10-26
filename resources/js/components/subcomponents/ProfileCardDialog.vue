@@ -19,13 +19,19 @@
     <v-card-text>
       <v-row dense align="center" justify="center">
         <!-- Profile Metrics (Likes, Followers, Followings) -->
-        <v-col
-          cols="4"
-          v-for="(metric, index) in profileMetrics"
-          :key="index + 'pm1'"
-        >
-          <div class="text-center">{{ metric.value }}</div>
-          <div class="caption text-center font-italic">{{ metric.name }}</div>
+        <v-col cols="4">
+          <div class="text-center">{{ profileStatisctics.topics }}</div>
+          <div class="caption text-center font-italic">Topics</div>
+        </v-col>
+
+        <v-col cols="4">
+          <div class="text-center">{{ profileStatisctics.followers }}</div>
+          <div class="caption text-center font-italic">Followers</div>
+        </v-col>
+
+        <v-col cols="4">
+          <div class="text-center">{{ profileStatisctics.followings }}</div>
+          <div class="caption text-center font-italic">Followings</div>
         </v-col>
 
         <!-- Profile Dialog -->
@@ -76,15 +82,29 @@
                     </v-col>
 
                     <!-- Profile Metrics (Likes, Followers, Followings) -->
-                    <v-col
-                      class="mt-4 d-md-none"
-                      cols="4"
-                      v-for="(metric, index) in profileMetrics"
-                      :key="index + 'pm2'"
-                    >
-                      <div class="text-center">{{ metric.value }}</div>
+
+                    <v-col class="mt-4 d-md-none" cols="4">
+                      <div class="text-center">
+                        {{ profileStatisctics.topics }}
+                      </div>
+                      <div class="caption text-center font-italic">Topics Followed</div>
+                    </v-col>
+
+                    <v-col class="mt-4 d-md-none" cols="4">
+                      <div class="text-center">
+                        {{ profileStatisctics.followers }}
+                      </div>
                       <div class="caption text-center font-italic">
-                        {{ metric.name }}
+                        Followers
+                      </div>
+                    </v-col>
+
+                    <v-col class="mt-4 d-md-none" cols="4">
+                      <div class="text-center">
+                        {{ profileStatisctics.followings }}
+                      </div>
+                      <div class="caption text-center font-italic">
+                        Followings
                       </div>
                     </v-col>
 
@@ -191,6 +211,7 @@ export default {
   },
   data() {
     return {
+      isRetrievingCritiqueStatistics: false,
       isUpdatingProfile: false,
       profileDialog: false,
       logoutDialog: false,
@@ -200,6 +221,12 @@ export default {
         username: "Profile Username",
         email: "Profile Email",
         password: null,
+      },
+
+      profileStatisctics: {
+        topics: 0,
+        followers: 0,
+        followings: 0,
       },
 
       // Used for profile editing purposes
@@ -217,12 +244,6 @@ export default {
         email: null,
         password: null,
       },
-
-      profileMetrics: [
-        { name: "Likes", value: 100 },
-        { name: "Followers", value: 100 },
-        { name: "Following", value: 100 },
-      ],
     };
   },
   watch: {
@@ -232,6 +253,7 @@ export default {
   },
   mounted() {
     this.retrieveCritiqueProfile();
+    this.retrieveCritiqueStatistics();
   },
   methods: {
     // Handler for profile dialog close
@@ -249,6 +271,30 @@ export default {
     // Handler for logout dialog close
     logoutDialogClose(value) {
       this.logoutDialog = value;
+    },
+
+    // Rerieve top trending topics
+    retrieveCritiqueStatistics() {
+      // Set isRetrievingCritiqueStatistics to true
+      this.isRetrievingCritiqueStatistics = true;
+
+      // Retrieve current authenticated crituque id from session storage
+      var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+      axios
+        .get(`/api/critiques/${critiqueId}/statistics`)
+        .then((response) => {
+          var data = response.data;
+
+          // Set profile statistics
+          this.profileStatisctics = data;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        })
+        .finally((_) => {
+          this.isRetrievingCritiqueStatistics = false;
+        });
     },
 
     // Retrieve current authenticated critique profile
