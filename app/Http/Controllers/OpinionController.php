@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Opinion\OpinionDestroyRequest;
+use App\Http\Requests\Opinion\OpinionLikeRequest;
 use App\Http\Requests\Opinion\OpinionShowRequest;
+use App\Http\Requests\Opinion\OpinionUnlikeRequest;
 use App\Http\Requests\Opinion\OpinionUpdateRequest;
 use App\Http\Resources\OpinionResource;
 use App\Models\Opinion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OpinionController extends Controller
 {
@@ -48,5 +51,35 @@ class OpinionController extends Controller
         $opinion->delete();
 
         return null;
+    }
+
+    /**
+     * Like specified opinion
+     *
+     * * @param  \App\Models\Opinion  $opinion
+     * @return \Illuminate\Http\Response
+     */
+    public function like(OpinionLikeRequest $request, Opinion $opinion) {
+        $authenticatedUser = Auth::user();
+        $authenticatedCritique = $authenticatedUser->critique;
+
+        $opinion->likers()->sync([$authenticatedCritique->id], false);
+
+        return response()->json(['message' => 'Opinion Liked']);
+    }
+
+    /**
+     * Unlike specified opinion
+     *
+     * * @param  \App\Models\Opinion  $opinion
+     * @return \Illuminate\Http\Response
+     */
+    public function unlike(OpinionUnlikeRequest $request, Opinion $opinion) {
+        $authenticatedUser = Auth::user();
+        $authenticatedCritique = $authenticatedUser->critique;
+
+        $opinion->likers()->detach([$authenticatedCritique->id]);
+
+        return response()->json(['message' => 'Opinion Unliked']);
     }
 }

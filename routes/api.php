@@ -51,6 +51,10 @@ Route::group(['middleware' => 'throttle:120'], function () {
         Route::apiResource('critiques.opinions', CritiqueOpinionController::class)
             ->shallow()->only(['index', 'store']);
 
+        Route::post('/opinions/{opinion}/like', [OpinionController::class, 'like'])
+            ->name('opinions.like');
+        Route::post('/opinions/{opinion}/unlike', [OpinionController::class, 'unlike'])
+            ->name('opinions.unlike');
         Route::apiResource('opinions', OpinionController::class)
             ->only(['show', 'update', 'destroy']);
 

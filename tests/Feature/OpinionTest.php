@@ -8,6 +8,7 @@ use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -33,6 +34,7 @@ class OpinionTest extends TestCase
             ->assertJsonStructure([[
                 'id', 'text', 'is_public',
                 'created_at', 'updated_at',
+                'like_count', 'liked_by_user'
             ]]);
 
         /**
@@ -76,6 +78,7 @@ class OpinionTest extends TestCase
             ->assertJsonStructure([
                 'id', 'text', 'is_public',
                 'created_at', 'updated_at',
+                'like_count', 'liked_by_user'
             ]);
 
         /**
@@ -111,6 +114,7 @@ class OpinionTest extends TestCase
             ->assertJsonStructure([
                 'id', 'text', 'is_public',
                 'created_at', 'updated_at',
+                'like_count', 'liked_by_user'
             ]);
 
         /**
@@ -155,6 +159,7 @@ class OpinionTest extends TestCase
             ->assertJsonStructure([
                 'id', 'text', 'is_public',
                 'created_at', 'updated_at',
+                'like_count', 'liked_by_user'
             ]);
 
         /**
@@ -200,5 +205,69 @@ class OpinionTest extends TestCase
 
         // Check number of opinions
         $this->assertCount(0, Opinion::get());
+    }
+
+    public function testCritiqueLikeOpinion()
+    {
+        // Critique User, Critique, and Opinion
+        $critiqueUser = User::factory()->role('CRITIQUE')->create();
+        $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
+        $opinion = Opinion::factory()->state(['critique_id' => $critique->id])->create();
+
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
+        // Response
+        $this->postJson(route('opinions.like', ['opinion' => $opinion->id]))
+            ->assertSuccessful()
+            ->assertJsonStructure(['message']);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(1, User::get());
+
+        // Check number of critiques
+        $this->assertCount(1, Critique::get());
+
+        // Check number of opinions
+        $this->assertCount(1, Opinion::get());
+
+        // Check number of likes
+        $this->assertCount(1, DB::select('SELECT * FROM critique_opinion'));
+    }
+
+    public function testCritiqueUnlikeOpinion()
+    {
+        // Critique User, Critique, and Opinion
+        $critiqueUser = User::factory()->role('CRITIQUE')->create();
+        $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
+        $opinion = Opinion::factory()->state(['critique_id' => $critique->id])->create();
+
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
+        // Response
+        $this->postJson(route('opinions.unlike', ['opinion' => $opinion->id]))
+            ->assertSuccessful()
+            ->assertJsonStructure(['message']);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(1, User::get());
+
+        // Check number of critiques
+        $this->assertCount(1, Critique::get());
+
+        // Check number of opinions
+        $this->assertCount(1, Opinion::get());
+
+        // Check number of likes
+        $this->assertCount(0, DB::select('SELECT * FROM critique_opinion'));
     }
 }

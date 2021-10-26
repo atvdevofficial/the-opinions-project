@@ -53,8 +53,7 @@ class MessageTest extends TestCase
         $this->getJson(route('critiques.messages.index', ['critique' => $critique->id]))
             ->assertSuccessful()
             ->assertJsonStructure([[
-                'critique_id', 'critique_name',
-                'text', 'timestamp'
+                'critique_id', 'critique_name', 'timestamp'
             ]]);
 
          /**

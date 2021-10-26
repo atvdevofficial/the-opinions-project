@@ -91,4 +91,11 @@ class Critique extends Model
     public function receivedMessages() {
         return $this->hasMany(Message::class, 'receiver_id');
     }
+
+    /**
+     * Get liked opinions
+     */
+    public function likes() {
+        return $this->belongsToMany(Opinion::class)->withTimestamps();
+    }
 }
