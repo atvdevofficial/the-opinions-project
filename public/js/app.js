@@ -2616,6 +2616,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -2649,9 +2653,6 @@ __webpack_require__.r(__webpack_exports__);
     this.retrieveOpinionsFeed();
   },
   methods: {
-    addSelectedItem: function addSelectedItem(e) {
-      console.log(e);
-    },
     profileDialogClose: function profileDialogClose(value) {
       this.profileDialog = value;
     },
@@ -2729,6 +2730,15 @@ __webpack_require__.r(__webpack_exports__);
     // Handles opinion dialog opinion-created event
     opinionCreated: function opinionCreated(data) {
       this.opinions.unshift(data);
+    },
+    opinionUpdated: function opinionUpdated(e) {
+      this.opinions[e.index]['liked_by_user'] = e.liked;
+
+      if (e.liked) {
+        this.opinions[e.index]['like_count'] += 1;
+      } else {
+        this.opinions[e.index]['like_count'] -= 1;
+      }
     }
   }
 });
@@ -3025,9 +3035,35 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "OpinionCard",
   props: {
+    index: {
+      type: Number,
+      required: true
+    },
+    id: {
+      type: Number,
+      required: true
+    },
     name: {
       type: String,
       required: true
@@ -3044,6 +3080,10 @@ __webpack_require__.r(__webpack_exports__);
       type: Array,
       required: true
     },
+    liked: {
+      type: Boolean,
+      required: true
+    },
     likes: {
       type: Number,
       required: true
@@ -3051,6 +3091,57 @@ __webpack_require__.r(__webpack_exports__);
     timestamp: {
       type: String,
       required: true
+    }
+  },
+  data: function data() {
+    return {
+      isProcessing: false
+    };
+  },
+  methods: {
+    likeOpinion: function likeOpinion() {
+      var _this$$props$id,
+          _this = this;
+
+      // Set isProcessing to true
+      this.isProcessing = true; // Retrieve opinion id
+
+      var opinionId = (_this$$props$id = this.$props.id) !== null && _this$$props$id !== void 0 ? _this$$props$id : null;
+      axios.post("/api/opinions/".concat(opinionId, "/like")).then(function (response) {
+        _this.$emit("change", {
+          index: _this.$props.index,
+          liked: true
+        });
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        _this.isProcessing = false;
+      });
+    },
+    unlikeOpinion: function unlikeOpinion() {
+      var _this$$props$id2,
+          _this2 = this;
+
+      // Set isProcessing to true
+      this.isProcessing = true; // Retrieve opinion id
+
+      var opinionId = (_this$$props$id2 = this.$props.id) !== null && _this$$props$id2 !== void 0 ? _this$$props$id2 : null;
+      axios.post("/api/opinions/".concat(opinionId, "/unlike")).then(function (response) {
+        _this2.$emit("change", {
+          index: _this2.$props.index,
+          liked: false
+        });
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        _this2.isProcessing = false;
+      });
     }
   }
 });
@@ -42029,16 +42120,20 @@ var render = function() {
                                   [
                                     _c("opinion-card", {
                                       attrs: {
+                                        index: index || 0,
+                                        id: opinion.id || 0,
                                         name: opinion.critique.name || "name",
                                         username:
                                           opinion.critique.username ||
                                           "username",
                                         text: opinion.text || "text",
                                         topics: opinion.topics || [],
-                                        likes: opinion.likes || 0,
+                                        liked: opinion.liked_by_user || false,
+                                        likes: opinion.like_count || 0,
                                         timestamp:
                                           opinion.created_at || "timestamp"
-                                      }
+                                      },
+                                      on: { change: _vm.opinionUpdated }
                                     })
                                   ],
                                   1
@@ -42503,17 +42598,44 @@ var render = function() {
               staticClass: "mr-2 font-weight-bold",
               attrs: { small: "", color: "#FFD561" }
             },
-            [_vm._v(" " + _vm._s(_vm.likes) + " ")]
+            [_vm._v("\n      " + _vm._s(_vm.likes) + "\n    ")]
           ),
           _vm._v(" "),
-          _c(
-            "v-btn",
-            {
-              staticClass: "px-8 font-weight-bold",
-              attrs: { small: "", rounded: "", depressed: "", color: "#EEEEEE" }
-            },
-            [_vm._v("\n      Like\n    ")]
-          )
+          !_vm.liked
+            ? _c(
+                "v-btn",
+                {
+                  staticClass: "px-8 font-weight-bold",
+                  attrs: {
+                    small: "",
+                    rounded: "",
+                    depressed: "",
+                    color: "#EEEEEE",
+                    loading: _vm.isProcessing
+                  },
+                  on: { click: _vm.likeOpinion }
+                },
+                [_vm._v("\n      Like\n    ")]
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.liked
+            ? _c(
+                "v-btn",
+                {
+                  staticClass: "px-8 font-weight-bold black--text",
+                  attrs: {
+                    small: "",
+                    rounded: "",
+                    depressed: "",
+                    color: "primary",
+                    loading: _vm.isProcessing
+                  },
+                  on: { click: _vm.unlikeOpinion }
+                },
+                [_vm._v("\n      Unlike\n    ")]
+              )
+            : _vm._e()
         ],
         1
       )

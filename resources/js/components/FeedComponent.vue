@@ -102,12 +102,16 @@
               >
                 <!-- Opinion Card Goes Here -->
                 <opinion-card
+                  :index="index || 0"
+                  :id="opinion.id || 0"
                   :name="opinion.critique.name || 'name'"
                   :username="opinion.critique.username || 'username'"
                   :text="opinion.text || 'text'"
                   :topics="opinion.topics || []"
-                  :likes="opinion.likes || 0"
+                  :liked="opinion.liked_by_user || false"
+                  :likes="opinion.like_count || 0"
                   :timestamp="opinion.created_at || 'timestamp'"
+                  @change="opinionUpdated"
                 ></opinion-card>
               </v-col>
               <v-col cols="12">
@@ -189,10 +193,6 @@ export default {
     this.retrieveOpinionsFeed();
   },
   methods: {
-    addSelectedItem(e) {
-      console.log(e);
-    },
-
     profileDialogClose(value) {
       this.profileDialog = value;
     },
@@ -296,6 +296,16 @@ export default {
     opinionCreated(data) {
       this.opinions.unshift(data);
     },
+
+    opinionUpdated(e) {
+        this.opinions[e.index]['liked_by_user'] = e.liked
+
+        if (e.liked) {
+            this.opinions[e.index]['like_count'] += 1;
+        } else {
+            this.opinions[e.index]['like_count'] -= 1;
+        }
+    }
   },
 };
 </script>

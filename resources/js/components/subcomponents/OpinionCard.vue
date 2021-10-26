@@ -42,15 +42,33 @@
       </div>
       <v-spacer></v-spacer>
       <!-- Like button -->
-      <v-chip small color="#FFD561" class="mr-2 font-weight-bold"> {{ likes }} </v-chip>
+      <v-chip small color="#FFD561" class="mr-2 font-weight-bold">
+        {{ likes }}
+      </v-chip>
       <v-btn
         small
         rounded
         depressed
         color="#EEEEEE"
         class="px-8 font-weight-bold"
+        v-if="!liked"
+        @click="likeOpinion"
+        :loading="isProcessing"
       >
         Like
+      </v-btn>
+
+      <v-btn
+        small
+        rounded
+        depressed
+        color="primary"
+        class="px-8 font-weight-bold black--text"
+        v-if="liked"
+        @click="unlikeOpinion"
+        :loading="isProcessing"
+      >
+        Unlike
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -60,6 +78,14 @@
 export default {
   name: "OpinionCard",
   props: {
+    index: {
+      type: Number,
+      required: true,
+    },
+    id: {
+      type: Number,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
@@ -76,6 +102,10 @@ export default {
       type: Array,
       required: true,
     },
+    liked: {
+      type: Boolean,
+      required: true,
+    },
     likes: {
       type: Number,
       required: true,
@@ -83,6 +113,68 @@ export default {
     timestamp: {
       type: String,
       required: true,
+    },
+  },
+  data() {
+    return {
+      isProcessing: false,
+    };
+  },
+  methods: {
+    likeOpinion() {
+      // Set isProcessing to true
+      this.isProcessing = true;
+
+      // Retrieve opinion id
+      var opinionId = this.$props.id ?? null;
+
+      axios
+        .post(`/api/opinions/${opinionId}/like`)
+        .then((response) => {
+          this.$emit("change", {
+            index: this.$props.index,
+            liked: true,
+          });
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          this.isProcessing = false;
+        });
+    },
+
+    unlikeOpinion() {
+      // Set isProcessing to true
+      this.isProcessing = true;
+
+      // Retrieve opinion id
+      var opinionId = this.$props.id ?? null;
+
+      axios
+        .post(`/api/opinions/${opinionId}/unlike`)
+        .then((response) => {
+          this.$emit("change", {
+            index: this.$props.index,
+            liked: false,
+          });
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          this.isProcessing = false;
+        });
     },
   },
 };
