@@ -2613,13 +2613,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -2732,12 +2725,12 @@ __webpack_require__.r(__webpack_exports__);
       this.opinions.unshift(data);
     },
     opinionUpdated: function opinionUpdated(e) {
-      this.opinions[e.index]['liked_by_user'] = e.liked;
+      this.opinions[e.index]["liked_by_user"] = e.liked;
 
       if (e.liked) {
-        this.opinions[e.index]['like_count'] += 1;
+        this.opinions[e.index]["like_count"] += 1;
       } else {
-        this.opinions[e.index]['like_count'] -= 1;
+        this.opinions[e.index]["like_count"] -= 1;
       }
     }
   }
@@ -2977,6 +2970,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
 //
 //
 //
@@ -3591,6 +3587,90 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ProfileCardDialog",
@@ -3605,10 +3685,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
+      isRetrievingProfile: false,
+      isRetrievingTopics: false,
       isRetrievingCritiqueStatistics: false,
       isUpdatingProfile: false,
+      isUpdatingFollowedTopics: false,
       profileDialog: false,
       logoutDialog: false,
+      followedTopicsDialog: false,
       profile: {
         name: "Profile Name",
         username: "Profile Username",
@@ -3620,6 +3704,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         followers: 0,
         followings: 0
       },
+      topics: [],
+      followedTopics: [],
       // Used for profile editing purposes
       editedProfile: {
         name: "Profile Name",
@@ -3644,6 +3730,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mounted: function mounted() {
     this.retrieveCritiqueProfile();
     this.retrieveCritiqueStatistics();
+    this.retrieveTopicsAndFollowedTopics();
   },
   methods: {
     // Handler for profile dialog close
@@ -3683,7 +3770,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _sessionStorage$getIt2,
           _this2 = this;
 
-      // Retrieve current authenticated crituque id from session storage
+      // Set isRetrievingProfile to true
+      this.isRetrievingProfile = true; // Retrieve current authenticated crituque id from session storage
+
       var critiqueId = (_sessionStorage$getIt2 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt2 !== void 0 ? _sessionStorage$getIt2 : null;
       axios.get("/api/critiques/" + critiqueId).then(function (response) {
         var data = response.data; // Extract needed critique profile info from response
@@ -3700,7 +3789,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
           timeOut: 2000
         });
-      })["finally"](function (_) {});
+      })["finally"](function (_) {
+        _this2.isRetrievingProfile = false;
+      });
     },
     // Update current authenticated critique profile
     updateCritiqueProfile: function updateCritiqueProfile() {
@@ -3744,6 +3835,77 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           // Set isUpdatingProfile to false
           // at the end of the request
           _this3.isUpdatingProfile = false;
+        });
+      }
+    },
+    // Retrieve followed topics by critique
+    retrieveTopicsAndFollowedTopics: function retrieveTopicsAndFollowedTopics() {
+      var _this4 = this;
+
+      // Set isRetrievingTopics to true
+      this.isRetrievingTopics = true; // Retrieve topics
+
+      axios.get("/api/topics").then(function (response) {
+        var _sessionStorage$getIt4;
+
+        var data = response.data;
+        _this4.topics = data; // Retrieve current authenticated crituque id from session storage
+
+        var critiqueId = (_sessionStorage$getIt4 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt4 !== void 0 ? _sessionStorage$getIt4 : null; // Retrieve followed topics
+
+        axios.get("/api/critiques/".concat(critiqueId, "/follows/topics")).then(function (response) {
+          var data = response.data;
+          _this4.followedTopics = data.map(function (a) {
+            return a.id;
+          });
+        })["catch"](function (error) {
+          // Pop Notification
+          toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+            timeOut: 2000
+          });
+        });
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        _this4.isRetrievingTopics = false;
+      });
+    },
+    // Update followed topics
+    updateFollowedTopics: function updateFollowedTopics() {
+      var _this5 = this;
+
+      if (this.$refs.followedTopicsForm.validate()) {
+        var _sessionStorage$getIt5;
+
+        // Set isUpdatingFollowedTopics to true
+        this.isUpdatingFollowedTopics = true; // Retrieve current authenticated crituque id from session storage
+
+        var critiqueId = (_sessionStorage$getIt5 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt5 !== void 0 ? _sessionStorage$getIt5 : null; // Retrieve followed topics
+
+        axios.put("/api/critiques/".concat(critiqueId, "/follows/topics"), {
+          topics: this.followedTopics
+        }).then(function (response) {
+          // Pop Notification
+          toastr.success("You have successfuly update your followed topics", "Followed Topics Updated", {
+            timeOut: 2000
+          }); // Close followed topics dialog
+
+          _this5.followedTopicsDialog = false; // Recall retrieveTopicsAndFollowedTopics
+
+          _this5.retrieveTopicsAndFollowedTopics(); // Recall retrieveCritiqueStatistics
+
+
+          _this5.retrieveCritiqueStatistics();
+        })["catch"](function (error) {
+          // Pop Notification
+          toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+            timeOut: 2000
+          });
+        })["finally"](function (_) {
+          _this5.isUpdatingFollowedTopics = false;
         });
       }
     },
@@ -42024,30 +42186,6 @@ var render = function() {
                                   })
                                 ],
                                 1
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                { staticClass: "mt-2 px-4" },
-                                [
-                                  _c(
-                                    "v-btn",
-                                    {
-                                      attrs: {
-                                        "x-small": "",
-                                        text: "",
-                                        block: "",
-                                        rounded: "",
-                                        depressed: ""
-                                      },
-                                      on: {
-                                        click: _vm.retrieveCritiqueOpinions
-                                      }
-                                    },
-                                    [_vm._v("See shared opinions")]
-                                  )
-                                ],
-                                1
                               )
                             ],
                             1
@@ -42579,63 +42717,90 @@ var render = function() {
         "v-card-actions",
         [
           _c(
-            "div",
-            _vm._l(_vm.topics, function(topic, index) {
-              return _c(
-                "v-chip",
-                { key: index, staticClass: "mr-2", attrs: { small: "" } },
-                [_vm._v("\n        #" + _vm._s(topic.text) + "\n      ")]
+            "v-row",
+            [
+              _c(
+                "v-col",
+                { attrs: { cols: "12" } },
+                _vm._l(_vm.topics, function(topic, index) {
+                  return _c(
+                    "v-chip",
+                    { key: index, staticClass: "mr-2", attrs: { small: "" } },
+                    [
+                      _vm._v(
+                        "\n          #" + _vm._s(topic.text) + "\n        "
+                      )
+                    ]
+                  )
+                }),
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-col",
+                {
+                  staticClass: "d-flex justify-end align-baseline",
+                  attrs: { cols: "12" }
+                },
+                [
+                  _vm.$props.likes > 0
+                    ? _c(
+                        "v-chip",
+                        {
+                          staticClass: "mr-2 font-weight-bold",
+                          attrs: { small: "", color: "#FFD561" }
+                        },
+                        [
+                          _vm._v(
+                            "\n          " + _vm._s(_vm.likes) + "\n        "
+                          )
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  !_vm.liked
+                    ? _c(
+                        "v-btn",
+                        {
+                          staticClass: "px-8 font-weight-bold",
+                          attrs: {
+                            small: "",
+                            rounded: "",
+                            depressed: "",
+                            color: "#EEEEEE",
+                            loading: _vm.isProcessing
+                          },
+                          on: { click: _vm.likeOpinion }
+                        },
+                        [_vm._v("\n          Like\n        ")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.liked
+                    ? _c(
+                        "v-btn",
+                        {
+                          class: _vm.liked
+                            ? "px-6 font-weight-bold black--text"
+                            : "px-4 font-weight-bold black--text",
+                          attrs: {
+                            small: "",
+                            rounded: "",
+                            depressed: "",
+                            color: "primary",
+                            loading: _vm.isProcessing
+                          },
+                          on: { click: _vm.unlikeOpinion }
+                        },
+                        [_vm._v("\n          Unlike\n        ")]
+                      )
+                    : _vm._e()
+                ],
+                1
               )
-            }),
+            ],
             1
-          ),
-          _vm._v(" "),
-          _c("v-spacer"),
-          _vm._v(" "),
-          _c(
-            "v-chip",
-            {
-              staticClass: "mr-2 font-weight-bold",
-              attrs: { small: "", color: "#FFD561" }
-            },
-            [_vm._v("\n      " + _vm._s(_vm.likes) + "\n    ")]
-          ),
-          _vm._v(" "),
-          !_vm.liked
-            ? _c(
-                "v-btn",
-                {
-                  staticClass: "px-8 font-weight-bold",
-                  attrs: {
-                    small: "",
-                    rounded: "",
-                    depressed: "",
-                    color: "#EEEEEE",
-                    loading: _vm.isProcessing
-                  },
-                  on: { click: _vm.likeOpinion }
-                },
-                [_vm._v("\n      Like\n    ")]
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.liked
-            ? _c(
-                "v-btn",
-                {
-                  staticClass: "px-8 font-weight-bold black--text",
-                  attrs: {
-                    small: "",
-                    rounded: "",
-                    depressed: "",
-                    color: "primary",
-                    loading: _vm.isProcessing
-                  },
-                  on: { click: _vm.unlikeOpinion }
-                },
-                [_vm._v("\n      Unlike\n    ")]
-              )
-            : _vm._e()
+          )
         ],
         1
       )
@@ -42988,7 +43153,6 @@ var render = function() {
                                         "x-small": "",
                                         text: "",
                                         block: "",
-                                        rounded: "",
                                         depressed: "",
                                         color: "default"
                                       }
@@ -43070,7 +43234,7 @@ var render = function() {
                                         1
                                       ),
                                       _vm._v(" "),
-                                      _c("v-col", { attrs: { cols: "12" } }, [
+                                      _c("v-col", { attrs: { cols: "6" } }, [
                                         _c(
                                           "div",
                                           { staticClass: "mt-2 px-4" },
@@ -43079,7 +43243,7 @@ var render = function() {
                                               "v-btn",
                                               {
                                                 attrs: {
-                                                  "x-small": "",
+                                                  small: "",
                                                   text: "",
                                                   block: "",
                                                   depressed: ""
@@ -43088,7 +43252,34 @@ var render = function() {
                                                   click: _vm.seeSharedOpinions
                                                 }
                                               },
-                                              [_vm._v("See shared opinions")]
+                                              [_vm._v("Shared opinions")]
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("v-col", { attrs: { cols: "6" } }, [
+                                        _c(
+                                          "div",
+                                          { staticClass: "mt-2 px-4" },
+                                          [
+                                            _c(
+                                              "v-btn",
+                                              {
+                                                attrs: {
+                                                  small: "",
+                                                  text: "",
+                                                  block: "",
+                                                  depressed: ""
+                                                },
+                                                on: {
+                                                  click: function($event) {
+                                                    _vm.followedTopicsDialog = true
+                                                  }
+                                                }
+                                              },
+                                              [_vm._v("Followed Topics")]
                                             )
                                           ],
                                           1
@@ -43123,7 +43314,11 @@ var render = function() {
                                               staticClass:
                                                 "caption text-center font-italic"
                                             },
-                                            [_vm._v("Topics Followed")]
+                                            [
+                                              _vm._v(
+                                                "\n                      Topics Followed\n                    "
+                                              )
+                                            ]
                                           )
                                         ]
                                       ),
@@ -43229,7 +43424,8 @@ var render = function() {
                                               ],
                                               "error-messages":
                                                 _vm.profileFormServerValidations
-                                                  .name
+                                                  .name,
+                                              disabled: _vm.isRetrievingProfile
                                             },
                                             model: {
                                               value: _vm.editedProfile.name,
@@ -43265,7 +43461,8 @@ var render = function() {
                                               ],
                                               "error-messages":
                                                 _vm.profileFormServerValidations
-                                                  .username
+                                                  .username,
+                                              disabled: _vm.isRetrievingProfile
                                             },
                                             model: {
                                               value: _vm.editedProfile.username,
@@ -43301,7 +43498,8 @@ var render = function() {
                                               ],
                                               "error-messages":
                                                 _vm.profileFormServerValidations
-                                                  .email
+                                                  .email,
+                                              disabled: _vm.isRetrievingProfile
                                             },
                                             model: {
                                               value: _vm.editedProfile.email,
@@ -43329,7 +43527,8 @@ var render = function() {
                                               type: "password",
                                               "error-messages":
                                                 _vm.profileFormServerValidations
-                                                  .password
+                                                  .password,
+                                              disabled: _vm.isRetrievingProfile
                                             },
                                             model: {
                                               value: _vm.editedProfile.password,
@@ -43398,6 +43597,219 @@ var render = function() {
                                     loading: _vm.isUpdatingProfile
                                   },
                                   on: { click: _vm.updateCritiqueProfile }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                Update\n              "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-col",
+                { attrs: { cols: "6" } },
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: {
+                        "x-small": "",
+                        text: "",
+                        block: "",
+                        depressed: ""
+                      },
+                      on: { click: _vm.seeSharedOpinions }
+                    },
+                    [_vm._v("Shared opinions")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-col",
+                { attrs: { cols: "6" } },
+                [
+                  _c(
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "400px" },
+                      scopedSlots: _vm._u([
+                        {
+                          key: "activator",
+                          fn: function(ref) {
+                            var on = ref.on
+                            var attrs = ref.attrs
+                            return [
+                              _c(
+                                "v-btn",
+                                _vm._g(
+                                  _vm._b(
+                                    {
+                                      attrs: {
+                                        "x-small": "",
+                                        text: "",
+                                        block: "",
+                                        depressed: ""
+                                      }
+                                    },
+                                    "v-btn",
+                                    attrs,
+                                    false
+                                  ),
+                                  on
+                                ),
+                                [_vm._v("\n              Followed Topics")]
+                              )
+                            ]
+                          }
+                        }
+                      ]),
+                      model: {
+                        value: _vm.followedTopicsDialog,
+                        callback: function($$v) {
+                          _vm.followedTopicsDialog = $$v
+                        },
+                        expression: "followedTopicsDialog"
+                      }
+                    },
+                    [
+                      _vm._v(" "),
+                      _c(
+                        "v-card",
+                        [
+                          _c("v-card-title", [_vm._v(" Followed Topics ")]),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-text",
+                            [
+                              _c(
+                                "v-form",
+                                { ref: "followedTopicsForm" },
+                                [
+                                  _c("v-autocomplete", {
+                                    attrs: {
+                                      multiple: "",
+                                      "item-text": "text",
+                                      "item-value": "id",
+                                      items: _vm.topics,
+                                      placeholder:
+                                        "Select topics you want to follow",
+                                      loading: _vm.isRetrievingTopics,
+                                      disabled:
+                                        _vm.isRetrievingTopics ||
+                                        _vm.isUpdatingFollowedTopics,
+                                      rules: [
+                                        function(v) {
+                                          return (
+                                            !!v.length ||
+                                            "Follow atleast one topic"
+                                          )
+                                        }
+                                      ]
+                                    },
+                                    scopedSlots: _vm._u([
+                                      {
+                                        key: "item",
+                                        fn: function(data) {
+                                          return [
+                                            _c(
+                                              "v-list-item-content",
+                                              [
+                                                _c("v-list-item-title", {
+                                                  staticClass: "black--text",
+                                                  domProps: {
+                                                    innerHTML: _vm._s(
+                                                      data.item.text
+                                                    )
+                                                  }
+                                                })
+                                              ],
+                                              1
+                                            )
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        key: "selection",
+                                        fn: function(ref) {
+                                          var item = ref.item
+                                          return [
+                                            _c(
+                                              "v-chip",
+                                              {
+                                                staticClass: "caption",
+                                                attrs: {
+                                                  small: "",
+                                                  color: "#FFD561"
+                                                }
+                                              },
+                                              [_vm._v(_vm._s(item.text))]
+                                            )
+                                          ]
+                                        }
+                                      }
+                                    ]),
+                                    model: {
+                                      value: _vm.followedTopics,
+                                      callback: function($$v) {
+                                        _vm.followedTopics = $$v
+                                      },
+                                      expression: "followedTopics"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-actions",
+                            [
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: { text: "", color: "default" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.followedTopicsDialog = false
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                Cancel\n              "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "font-weight-black px-8",
+                                  attrs: {
+                                    rounded: "",
+                                    depressed: "",
+                                    color: "#FFD561",
+                                    loading: _vm.isUpdatingFollowedTopics
+                                  },
+                                  on: { click: _vm.updateFollowedTopics }
                                 },
                                 [
                                   _vm._v(

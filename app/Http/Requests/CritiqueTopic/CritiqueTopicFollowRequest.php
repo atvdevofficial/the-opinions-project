@@ -17,8 +17,13 @@ class CritiqueTopicFollowRequest extends FormRequest
         $authenticatedUser = Auth::user();
         $authenticatedUserRole = $authenticatedUser->role;
 
-        if ($authenticatedUserRole == 'CRITIQUE')
-            return true;
+        if ($authenticatedUserRole == 'CRITIQUE') {
+            $authenticatedCritique = $authenticatedUser->critique;
+            $routeCritique = $this->route('critique');
+
+            if ($authenticatedCritique->id = $routeCritique->id)
+                return true;
+        }
 
         return false;
     }

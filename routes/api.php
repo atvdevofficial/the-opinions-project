@@ -26,9 +26,12 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'throttle:120'], function () {
     // Reset Password
     // Forgot / Change Password
+
+    // Login
     Route::post('/login', [AuthenticationController::class, 'login'])
         ->name('login');
 
+    // Register
     Route::post('/registration', RegistrationController::class)
         ->name('register');
 
@@ -36,48 +39,66 @@ Route::group(['middleware' => 'throttle:120'], function () {
      * Authenticated Routes
      */
     Route::group(['middleware' => ['auth:sanctum']], function () {
+
+        // Logout
         Route::post('/logout', [AuthenticationController::class, 'logout'])
             ->name('logout');
 
+        // Feed
         Route::get('feed', FeedController::class)->name('feed');
 
+        // Critique Statistics (Followers, Followings, etc.)
         Route::get('/critiques/{critique}/statistics', [CritiqueController::class, 'statistics'])
             ->name('critiques.statistics');
+
+        // Critiques
         Route::apiResource('critiques', CritiqueController::class);
 
+        // Critique Messages
         Route::apiResource('critiques.messages', CritiqueMessageController::class)
             ->shallow()->only(['index', 'store']);
 
+        // Critiques Opinions
         Route::apiResource('critiques.opinions', CritiqueOpinionController::class)
             ->shallow()->only(['index', 'store']);
-
+        // Critique Like Opinion
         Route::post('/opinions/{opinion}/like', [OpinionController::class, 'like'])
             ->name('opinions.like');
+        // Critique Unlike Opinion
         Route::post('/opinions/{opinion}/unlike', [OpinionController::class, 'unlike'])
             ->name('opinions.unlike');
+        // Opinions
         Route::apiResource('opinions', OpinionController::class)
             ->only(['show', 'update', 'destroy']);
 
+        // Top / Trending topics
         Route::get('/topics/topTrending', [TopicController::class, 'topTrending'])
             ->name('topics.topTrending');
+        // Topics
         Route::apiResource('topics', TopicController::class);
 
+        // Critique Followers and Followings
         Route::get('critiques/follows/critiques', [FollowCritiqueController::class, 'index'])
             ->name('follows.critiques.index');
-
+        // Follow Critique
         Route::put('critiques/follows/critiques/{critique}/follow', [FollowCritiqueController::class, 'follow'])
             ->name('follows.critiques.follow');
-
+        // Unfollow Critique
         Route::put('critiques/follows/critiques/{critique}/unfollow', [FollowCritiqueController::class, 'unfollow'])
             ->name('follows.critiques.unfollow');
 
-        Route::get('critiques/follows/topics', [CritiqueTopicController::class, 'index'])
+        // Critique Followed Topics
+        Route::get('critiques/{critique}/follows/topics', [CritiqueTopicController::class, 'index'])
             ->name('follows.topics.index');
-
-        Route::put('critiques/follows/topics/{topic}/follow', [CritiqueTopicController::class, 'follow'])
+        // Update Followed Topics
+        Route::put('critiques/{critique}/follows/topics', [CritiqueTopicController::class, 'update'])
+            ->name('follows.topics.update');
+        // Critique Follow Topic
+        Route::put('critiques/{critique}/follows/topics/{topic}/follow', [CritiqueTopicController::class, 'follow'])
             ->name('follows.topics.follow');
-
-        Route::put('critiques/follows/topics/{topic}/unfollow', [CritiqueTopicController::class, 'unfollow'])
+        // Critique Unfollow Topic
+        Route::put('critiques/{critique}/follows/topics/{topic}/unfollow', [CritiqueTopicController::class, 'unfollow'])
             ->name('follows.topics.unfollow');
+
     });
 });

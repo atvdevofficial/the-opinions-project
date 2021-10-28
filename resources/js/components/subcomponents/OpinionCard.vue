@@ -30,46 +30,49 @@
     <!-- Card Actions -->
     <v-card-actions>
       <!-- Topics -->
-      <div>
-        <v-chip
-          small
-          class="mr-2"
-          v-for="(topic, index) in topics"
-          :key="index"
-        >
-          #{{ topic.text }}
-        </v-chip>
-      </div>
-      <v-spacer></v-spacer>
-      <!-- Like button -->
-      <v-chip small color="#FFD561" class="mr-2 font-weight-bold">
-        {{ likes }}
-      </v-chip>
-      <v-btn
-        small
-        rounded
-        depressed
-        color="#EEEEEE"
-        class="px-8 font-weight-bold"
-        v-if="!liked"
-        @click="likeOpinion"
-        :loading="isProcessing"
-      >
-        Like
-      </v-btn>
-
-      <v-btn
-        small
-        rounded
-        depressed
-        color="primary"
-        class="px-8 font-weight-bold black--text"
-        v-if="liked"
-        @click="unlikeOpinion"
-        :loading="isProcessing"
-      >
-        Unlike
-      </v-btn>
+      <v-row>
+        <v-col cols="12">
+          <v-chip
+            small
+            class="mr-2"
+            v-for="(topic, index) in topics"
+            :key="index"
+          >
+            #{{ topic.text }}
+          </v-chip>
+        </v-col>
+        <v-col cols="12" class="d-flex justify-end align-baseline">
+          <v-chip small color="#FFD561" class="mr-2 font-weight-bold" v-if="$props.likes > 0">
+            {{ likes }}
+          </v-chip>
+          <v-btn
+            small
+            rounded
+            depressed
+            color="#EEEEEE"
+            class="px-8 font-weight-bold"
+            v-if="!liked"
+            @click="likeOpinion"
+            :loading="isProcessing"
+          >
+            Like
+          </v-btn>
+          <!-- Like button -->
+          <v-btn
+            small
+            rounded
+            depressed
+            color="primary"
+            :class="liked ? 'px-6 font-weight-bold black--text' : 'px-4 font-weight-bold black--text'"
+            v-if="liked"
+            @click="unlikeOpinion"
+            :loading="isProcessing"
+          >
+            Unlike
+          </v-btn>
+        </v-col>
+      </v-row>
+      <!-- <v-spacer></v-spacer> -->
     </v-card-actions>
   </v-card>
 </template>

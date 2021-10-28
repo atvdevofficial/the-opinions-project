@@ -43,7 +43,6 @@
                 x-small
                 text
                 block
-                rounded
                 depressed
                 color="default"
                 v-bind="attrs"
@@ -68,15 +67,24 @@
                       </v-avatar>
                     </v-col>
 
-                    <v-col cols="12">
+                    <v-col cols="6">
                       <div class="mt-2 px-4">
                         <v-btn
-                          x-small
+                          small
                           text
                           block
                           depressed
                           @click="seeSharedOpinions"
-                          >See shared opinions</v-btn
+                          >Shared opinions</v-btn
+                        >
+                      </div>
+                    </v-col>
+
+                    <v-col cols="6">
+                      <div class="mt-2 px-4">
+                        <v-btn small text block depressed
+                        @click="followedTopicsDialog = true"
+                          >Followed Topics</v-btn
                         >
                       </div>
                     </v-col>
@@ -87,7 +95,9 @@
                       <div class="text-center">
                         {{ profileStatisctics.topics }}
                       </div>
-                      <div class="caption text-center font-italic">Topics Followed</div>
+                      <div class="caption text-center font-italic">
+                        Topics Followed
+                      </div>
                     </v-col>
 
                     <v-col class="mt-4 d-md-none" cols="4">
@@ -121,6 +131,7 @@
                         v-model="editedProfile.name"
                         :rules="[(v) => !!v || 'Name is required']"
                         :error-messages="profileFormServerValidations.name"
+                        :disabled="isRetrievingProfile"
                       ></v-text-field>
                     </v-col>
 
@@ -132,6 +143,7 @@
                         v-model="editedProfile.username"
                         :rules="[(v) => !!v || 'Username is required']"
                         :error-messages="profileFormServerValidations.username"
+                        :disabled="isRetrievingProfile"
                       ></v-text-field>
                     </v-col>
 
@@ -143,6 +155,7 @@
                         v-model="editedProfile.email"
                         :rules="[(v) => !!v || 'Email is required']"
                         :error-messages="profileFormServerValidations.email"
+                        :disabled="isRetrievingProfile"
                       ></v-text-field>
                     </v-col>
 
@@ -153,6 +166,7 @@
                         type="password"
                         v-model="editedProfile.password"
                         :error-messages="profileFormServerValidations.password"
+                        :disabled="isRetrievingProfile"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -190,6 +204,76 @@
             </v-card>
           </v-dialog>
         </v-col>
+
+        <v-col cols="6">
+          <v-btn x-small text block depressed @click="seeSharedOpinions"
+            >Shared opinions</v-btn
+          >
+        </v-col>
+        <v-col cols="6">
+          <v-dialog v-model="followedTopicsDialog" max-width="400px">
+            <!-- Update Profile Button -->
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn x-small text block depressed v-bind="attrs" v-on="on">
+                Followed Topics</v-btn
+              >
+            </template>
+            <v-card>
+              <v-card-title> Followed Topics </v-card-title>
+
+              <!-- Dialog Body -->
+              <v-card-text>
+                <v-form ref="followedTopicsForm">
+                  <!-- Topics select field -->
+                  <v-autocomplete
+                    multiple
+                    item-text="text"
+                    item-value="id"
+                    :items="topics"
+                    placeholder="Select topics you want to follow"
+                    :loading="isRetrievingTopics"
+                    :disabled="isRetrievingTopics || isUpdatingFollowedTopics"
+                    :rules="[(v) => !!v.length || 'Follow atleast one topic']"
+                    v-model="followedTopics"
+                  >
+                    <template v-slot:item="data">
+                      <v-list-item-content>
+                        <v-list-item-title
+                          v-html="data.item.text"
+                          class="black--text"
+                        ></v-list-item-title>
+                      </v-list-item-content>
+                    </template>
+
+                    <template #selection="{ item }">
+                      <v-chip small color="#FFD561" class="caption">{{
+                        item.text
+                      }}</v-chip>
+                    </template>
+                  </v-autocomplete>
+                </v-form>
+              </v-card-text>
+
+              <!-- Dialog Actions -->
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text color="default" @click="followedTopicsDialog = false">
+                  Cancel
+                </v-btn>
+                <v-btn
+                  rounded
+                  depressed
+                  color="#FFD561"
+                  class="font-weight-black px-8"
+                  @click="updateFollowedTopics"
+                  :loading="isUpdatingFollowedTopics"
+                >
+                  Update
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-col>
       </v-row>
     </v-card-text>
   </v-card>
@@ -211,10 +295,15 @@ export default {
   },
   data() {
     return {
+      isRetrievingProfile: false,
+      isRetrievingTopics: false,
       isRetrievingCritiqueStatistics: false,
       isUpdatingProfile: false,
+      isUpdatingFollowedTopics: false,
+
       profileDialog: false,
       logoutDialog: false,
+      followedTopicsDialog: false,
 
       profile: {
         name: "Profile Name",
@@ -228,6 +317,9 @@ export default {
         followers: 0,
         followings: 0,
       },
+
+      topics: [],
+      followedTopics: [],
 
       // Used for profile editing purposes
       editedProfile: {
@@ -254,6 +346,7 @@ export default {
   mounted() {
     this.retrieveCritiqueProfile();
     this.retrieveCritiqueStatistics();
+    this.retrieveTopicsAndFollowedTopics();
   },
   methods: {
     // Handler for profile dialog close
@@ -299,6 +392,9 @@ export default {
 
     // Retrieve current authenticated critique profile
     retrieveCritiqueProfile() {
+      // Set isRetrievingProfile to true
+      this.isRetrievingProfile = true;
+
       // Retrieve current authenticated crituque id from session storage
       var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
 
@@ -325,7 +421,9 @@ export default {
             { timeOut: 2000 }
           );
         })
-        .finally((_) => {});
+        .finally((_) => {
+          this.isRetrievingProfile = false;
+        });
     },
 
     // Update current authenticated critique profile
@@ -380,6 +478,97 @@ export default {
             // Set isUpdatingProfile to false
             // at the end of the request
             this.isUpdatingProfile = false;
+          });
+      }
+    },
+
+    // Retrieve followed topics by critique
+    retrieveTopicsAndFollowedTopics() {
+      // Set isRetrievingTopics to true
+      this.isRetrievingTopics = true;
+
+      // Retrieve topics
+      axios
+        .get("/api/topics")
+        .then((response) => {
+          let data = response.data;
+
+          this.topics = data;
+
+          // Retrieve current authenticated crituque id from session storage
+          var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+          // Retrieve followed topics
+          axios
+            .get(`/api/critiques/${critiqueId}/follows/topics`)
+            .then((response) => {
+              let data = response.data;
+
+              this.followedTopics = data.map((a) => a.id);
+            })
+            .catch((error) => {
+              // Pop Notification
+              toastr.error(
+                "A problem occured while processing your request. Please try again.",
+                "Something Went Wrong",
+                { timeOut: 2000 }
+              );
+            });
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          this.isRetrievingTopics = false;
+        });
+    },
+
+    // Update followed topics
+    updateFollowedTopics() {
+      if (this.$refs.followedTopicsForm.validate()) {
+        // Set isUpdatingFollowedTopics to true
+        this.isUpdatingFollowedTopics = true;
+
+        // Retrieve current authenticated crituque id from session storage
+        var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+        // Retrieve followed topics
+        axios
+          .put(`/api/critiques/${critiqueId}/follows/topics`, {
+            topics: this.followedTopics,
+          })
+          .then((response) => {
+            // Pop Notification
+            toastr.success(
+              "You have successfuly update your followed topics",
+              "Followed Topics Updated",
+              { timeOut: 2000 }
+            );
+
+            // Close followed topics dialog
+            this.followedTopicsDialog = false;
+
+            // Recall retrieveTopicsAndFollowedTopics
+            this.retrieveTopicsAndFollowedTopics();
+
+            // Recall retrieveCritiqueStatistics
+            this.retrieveCritiqueStatistics();
+          })
+          .catch((error) => {
+            // Pop Notification
+            toastr.error(
+              "A problem occured while processing your request. Please try again.",
+              "Something Went Wrong",
+              { timeOut: 2000 }
+            );
+          })
+          .finally((_) => {
+            this.isUpdatingFollowedTopics = false;
           });
       }
     },

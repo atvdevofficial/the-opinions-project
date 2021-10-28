@@ -5,9 +5,9 @@ namespace App\Http\Requests\CritiqueTopic;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class CritiqueTopicUnfollowRequest extends FormRequest
+class CritiqueTopicUpdateRequest extends FormRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -18,11 +18,7 @@ class CritiqueTopicUnfollowRequest extends FormRequest
         $authenticatedUserRole = $authenticatedUser->role;
 
         if ($authenticatedUserRole == 'CRITIQUE') {
-            $authenticatedCritique = $authenticatedUser->critique;
-            $routeCritique = $this->route('critique');
-
-            if ($authenticatedCritique->id = $routeCritique->id)
-                return true;
+            return true;
         }
 
         return false;
@@ -36,7 +32,8 @@ class CritiqueTopicUnfollowRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'topics' => ['required', 'array', 'min:1'],
+            'topics.*' => ['required', 'exists:topics,id'],
         ];
     }
 }

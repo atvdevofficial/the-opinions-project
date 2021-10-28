@@ -128,4 +128,47 @@ class CritiqueTopicTest extends TestCase
         $hasFollowed = DB::table('critique_topic')->whereCritiqueId($critique->id)->whereTopicId($toFollowTopic->id)->exists();
         $this->assertFalse($hasFollowed);
     }
+
+    public function testCritiqueUpdateFollowedTopics()
+    {
+        // Critique User & Critique
+        $critiqueUser = User::factory()->role('CRITIQUE')->create();
+        $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
+
+        // Followed Topics
+        $critique->followedTopics()->attach(
+            Topic::factory()->count(5)->create()->pluck('id')
+        );
+
+        $updatedFollowedTopics = [
+            'critique' => $critique->id,
+            'topics' => [
+                Topic::factory()->create()->id
+            ]
+        ];
+
+        // Sanctum
+        Sanctum::actingAs($critiqueUser);
+
+        // Response
+        $this->putJson(route('follows.topics.update', $updatedFollowedTopics))
+            ->assertSuccessful()
+            ->assertJsonStructure(['message']);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(1, User::get());
+
+        // Check number of critiques
+        $this->assertCount(1, Critique::get());
+
+        // Check number of critiques
+        $this->assertCount(6, Topic::get());
+
+        // Check number of critique_topics
+        $this->assertCount(1, DB::table('critique_topic')->get());
+    }
 }

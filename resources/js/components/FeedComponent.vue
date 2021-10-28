@@ -54,18 +54,6 @@
                     @opinion-created="opinionCreated"
                   ></opinion-dialog>
                 </div>
-
-                <div class="mt-2 px-4">
-                  <v-btn
-                    x-small
-                    text
-                    block
-                    rounded
-                    depressed
-                    @click="retrieveCritiqueOpinions"
-                    >See shared opinions</v-btn
-                  >
-                </div>
               </v-card-text>
             </v-card>
           </v-col>
@@ -73,6 +61,7 @@
 
           <!-- Start of Feed -->
           <v-col cols="12" md="8" lg="9" xl="8">
+            <!-- Retrieving view -->
             <v-container class="my-8" v-if="isRetrievingOpinions">
               <div class="text-center">
                 <v-progress-circular
@@ -85,6 +74,8 @@
                 Retrieving opinions, please wait...
               </div>
             </v-container>
+
+            <!-- Opinons is empty -->
             <v-container
               class="my-8"
               v-if="!isRetrievingOpinions && opinions.length == 0"
@@ -94,6 +85,8 @@
                 now!
               </div>
             </v-container>
+
+            <!-- Load opinions -->
             <v-row v-if="!isRetrievingOpinions && opinions.length > 0">
               <v-col
                 cols="12"
@@ -148,7 +141,7 @@
         fab
         elevation="2"
         color="primary"
-        style="margin-bottom: 6rem; margin-right: 1rem;"
+        style="margin-bottom: 6rem; margin-right: 1rem"
         @click="opinionDialog = true"
       >
         <box-icon name="plus"></box-icon>
@@ -298,14 +291,14 @@ export default {
     },
 
     opinionUpdated(e) {
-        this.opinions[e.index]['liked_by_user'] = e.liked
+      this.opinions[e.index]["liked_by_user"] = e.liked;
 
-        if (e.liked) {
-            this.opinions[e.index]['like_count'] += 1;
-        } else {
-            this.opinions[e.index]['like_count'] -= 1;
-        }
-    }
+      if (e.liked) {
+        this.opinions[e.index]["like_count"] += 1;
+      } else {
+        this.opinions[e.index]["like_count"] -= 1;
+      }
+    },
   },
 };
 </script>
