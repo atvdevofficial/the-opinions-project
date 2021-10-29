@@ -82,8 +82,12 @@
 
                     <v-col cols="6">
                       <div class="mt-2 px-4">
-                        <v-btn small text block depressed
-                        @click="followedTopicsDialog = true"
+                        <v-btn
+                          small
+                          text
+                          block
+                          depressed
+                          @click="followedTopicsDialog = true"
                           >Followed Topics</v-btn
                         >
                       </div>
@@ -205,14 +209,17 @@
           </v-dialog>
         </v-col>
 
+        <!-- Shared opinions button -->
         <v-col cols="6">
           <v-btn x-small text block depressed @click="seeSharedOpinions"
             >Shared opinions</v-btn
           >
         </v-col>
+
+        <!-- Followed topics button -->
         <v-col cols="6">
           <v-dialog v-model="followedTopicsDialog" max-width="400px">
-            <!-- Update Profile Button -->
+            <!-- Followed topics Button -->
             <template v-slot:activator="{ on, attrs }">
               <v-btn x-small text block depressed v-bind="attrs" v-on="on">
                 Followed Topics</v-btn
@@ -257,7 +264,11 @@
               <!-- Dialog Actions -->
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text color="default" @click="followedTopicsDialog = false">
+                <v-btn
+                  text
+                  color="default"
+                  @click="followedTopicsDialog = false"
+                >
                   Cancel
                 </v-btn>
                 <v-btn

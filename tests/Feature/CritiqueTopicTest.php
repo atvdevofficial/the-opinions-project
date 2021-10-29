@@ -30,7 +30,7 @@ class CritiqueTopicTest extends TestCase
         Sanctum::actingAs($critiqueUser);
 
         // Response
-        $this->getJson(route('follows.topics.index'))
+        $this->getJson(route('follows.topics.index', ['critique' => $critique->id]))
             ->assertStatus(200)
             ->assertJsonStructure([[
                 'id', 'text',
@@ -67,7 +67,7 @@ class CritiqueTopicTest extends TestCase
         Sanctum::actingAs($critiqueUser);
 
         // Response
-        $this->putJson(route('follows.topics.follow', ['topic' => $toFollowTopic->id]))
+        $this->putJson(route('follows.topics.follow', ['critique' => $critique-> id, 'topic' => $toFollowTopic->id]))
             ->assertStatus(200);
 
         /**
@@ -105,7 +105,7 @@ class CritiqueTopicTest extends TestCase
         Sanctum::actingAs($critiqueUser);
 
         // Response
-        $this->putJson(route('follows.topics.unfollow', ['topic' => $toFollowTopic->id]))
+        $this->putJson(route('follows.topics.unfollow', ['critique' => $critique-> id, 'topic' => $toFollowTopic->id]))
             ->assertStatus(200);
 
         /**

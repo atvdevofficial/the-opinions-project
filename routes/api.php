@@ -9,6 +9,7 @@ use App\Http\Controllers\CritiqueTopicController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowCritiqueController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,7 +46,12 @@ Route::group(['middleware' => 'throttle:120'], function () {
             ->name('logout');
 
         // Feed
-        Route::get('feed', FeedController::class)->name('feed');
+        Route::get('feed', FeedController::class)
+            ->name('feed');
+
+        // Search
+        Route::get('search', SearchController::class)
+            ->name('search');
 
         // Critique Statistics (Followers, Followings, etc.)
         Route::get('/critiques/{critique}/statistics', [CritiqueController::class, 'statistics'])
@@ -99,6 +105,5 @@ Route::group(['middleware' => 'throttle:120'], function () {
         // Critique Unfollow Topic
         Route::put('critiques/{critique}/follows/topics/{topic}/unfollow', [CritiqueTopicController::class, 'unfollow'])
             ->name('follows.topics.unfollow');
-
     });
 });
