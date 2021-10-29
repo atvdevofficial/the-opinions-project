@@ -67,6 +67,18 @@ class TestingSeeder extends Seeder
         // Critique Two is one of the followers of Critique One
         $critiqueOne->followers()->attach($critiqueTwo->id);
 
+        // Critiques Three
+        $critiqueFour = \App\Models\Critique::factory()->state([
+            'user_id' => \App\Models\User::factory()->role('CRITIQUE')->state(['email' => 'critiqueFour@opinions.com'])->create()
+        ])->create();
+
+        // Critique Three Opinions
+        \App\Models\Opinion::factory()
+            ->count(10)
+            ->state(['critique_id' => $critiqueFour->id])
+            ->hasAttached($topics)
+            ->create();
+
         /**
          * Messages
          */
