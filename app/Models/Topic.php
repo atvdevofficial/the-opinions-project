@@ -10,6 +10,13 @@ class Topic extends Model
     use HasFactory;
 
     /**
+     * Mutators and accessors to append
+     */
+    protected $appends = [
+        'opinion_count',
+    ];
+
+    /**
      * Attributes that are mass assignable
      */
     protected $fillable = [
@@ -32,6 +39,13 @@ class Topic extends Model
     protected $hidden = [
         'pivot',
     ];
+
+    /**
+     * Model accessors and mutators
+     */
+    public function getOpinionCountAttribute() {
+        return $this->opinions()->count();
+    }
 
     /**
      * Opinions that belongs to opinion

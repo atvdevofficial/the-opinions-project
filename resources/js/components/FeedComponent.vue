@@ -10,6 +10,11 @@
       >
       <v-spacer></v-spacer>
 
+      <!-- Search button -->
+      <v-btn icon @click="isSearching = true">
+        <box-icon name="search"></box-icon>
+      </v-btn>
+
       <!-- Chat button -->
       <v-btn icon @click="$router.push({ name: 'chats' })">
         <box-icon name="chat"></box-icon>
@@ -32,8 +37,8 @@
 
     <!-- Start of Body -->
     <v-main>
-      <v-container min-width="1366px">
-        <v-row>
+      <v-container min-width="1366px" class="pa-0">
+        <v-row no-gutters>
           <!-- Start of Profile Card -->
           <v-col cols="12" md="4" lg="3" xl="2" class="d-none d-md-flex">
             <!-- Profile card -->
@@ -61,65 +66,223 @@
 
           <!-- Start of Feed -->
           <v-col cols="12" md="8" lg="9" xl="8">
-            <!-- Retrieving view -->
-            <v-container class="my-8" v-if="isRetrievingOpinions">
-              <div class="text-center">
-                <v-progress-circular
-                  :size="50"
-                  indeterminate
-                  color="primary"
-                ></v-progress-circular>
-              </div>
-              <div class="mt-4 text-center font-italic caption">
-                Retrieving opinions, please wait...
-              </div>
-            </v-container>
-
-            <!-- Opinons is empty -->
-            <v-container
-              class="my-8"
-              v-if="!isRetrievingOpinions && opinions.length == 0"
-            >
-              <div class="mt-4 text-center font-italic">
-                Oops, looks like there are no opinions out there, share yours
-                now!
-              </div>
-            </v-container>
-
-            <!-- Load opinions -->
-            <v-row v-if="!isRetrievingOpinions && opinions.length > 0">
-              <v-col
-                cols="12"
-                v-for="(opinion, index) in opinions"
-                :key="index"
+            <!-- Container for search results -->
+            <v-container v-if="isSearching">
+              <!-- Search text field -->
+              <v-text-field
+                solo
+                placeholder="Search something here"
+                v-model="search"
+                @input="debounceInput"
+                :loading="isRetrievingSearchResults"
+                hide-details
               >
-                <!-- Opinion Card Goes Here -->
-                <opinion-card
-                  :index="index || 0"
-                  :id="opinion.id || 0"
-                  :name="opinion.critique.name || 'name'"
-                  :username="opinion.critique.username || 'username'"
-                  :text="opinion.text || 'text'"
-                  :topics="opinion.topics || []"
-                  :liked="opinion.liked_by_user || false"
-                  :likes="opinion.like_count || 0"
-                  :timestamp="opinion.created_at || 'timestamp'"
-                  @change="opinionUpdated"
-                ></opinion-card>
-              </v-col>
-              <v-col cols="12">
-                <v-btn
-                  block
-                  small
-                  text
-                  depressed
-                  @click="loadMoreOpinions"
-                  v-if="paginationLinks.next"
+                <template v-slot:append>
+                  <v-btn text depressed @click="isSearching = false">
+                    Cancel
+                  </v-btn>
+                </template>
+              </v-text-field>
+
+              <v-container class="my-8" v-if="isRetrievingSearchResults">
+                <div class="text-center">
+                  <v-progress-circular
+                    :size="50"
+                    indeterminate
+                    color="primary"
+                  ></v-progress-circular>
+                </div>
+                <div class="mt-4 text-center font-italic caption">
+                  Retrieving search results, please wait...
+                </div>
+              </v-container>
+
+              <v-container
+                class="pa-0 mt-2"
+                v-if="
+                  (!!searchResult.critiques.data ||
+                    !!searchResult.topics.data ||
+                    !!searchResult.opinions.data) &&
+                  !isRetrievingSearchResults
+                "
+              >
+                <!-- Search result tabs -->
+                <v-tabs v-model="searchTab" grow>
+                  <v-tab v-for="item in searchTabItems" :key="item">
+                    {{ item }}
+                  </v-tab>
+                </v-tabs>
+
+                <v-tabs-items v-model="searchTab">
+                  <v-tab-item v-for="item in searchTabItems" :key="item">
+                    <!-- Critiques -->
+                    <v-container v-if="item == 'Critiques'">
+                      <div v-if="searchResult.critiques.data.length > 0">
+                        <v-card
+                          elevation="0"
+                          v-for="(critique, index) in searchResult.critiques
+                            .data"
+                          :key="index"
+                        >
+                          <v-card-title class="pa-0">
+                            <v-list-item class="grow px-0">
+                              <v-list-item-avatar color="#FFEAB1">
+                                <box-icon name="user" size="sm"></box-icon>
+                              </v-list-item-avatar>
+
+                              <v-list-item-content>
+                                <v-list-item-title>
+                                  <div>{{ critique.name }}</div>
+                                  <div class="caption font-italic">
+                                    {{ critique.username }}
+                                  </div>
+                                </v-list-item-title>
+                              </v-list-item-content>
+                            </v-list-item>
+                          </v-card-title>
+                        </v-card>
+                      </div>
+
+                      <v-container
+                        v-else
+                        class="subtitle text-center font-italic"
+                      >
+                        No Critique Profile Found
+                      </v-container>
+                    </v-container>
+
+                    <!-- Topics -->
+                    <v-container v-if="item == 'Topics'">
+                      <div v-if="searchResult.topics.data.length > 0">
+                        <v-card
+                          elevation="0"
+                          v-for="(topic, index) in searchResult.topics.data"
+                          :key="index"
+                        >
+                          <v-card-title class="pa-0">
+                            <v-list-item class="grow px-0">
+                              <v-list-item-content>
+                                <v-list-item-title>
+                                  <div>{{ topic.text }}</div>
+                                </v-list-item-title>
+                              </v-list-item-content>
+                              <v-list-item-action>
+                                <div class="caption font-italic">
+                                  {{ topic.opinion_count }}
+                                  opinions
+                                </div>
+                              </v-list-item-action>
+                            </v-list-item>
+                          </v-card-title>
+                        </v-card>
+                      </div>
+
+                      <v-container
+                        v-else
+                        class="subtitle text-center font-italic"
+                      >
+                        No Topics Found
+                      </v-container>
+                    </v-container>
+
+                    <!-- Opinions -->
+                    <v-container v-if="item == 'Opinions'">
+                      <v-row v-if="searchResult.opinions.data.length > 0">
+                        <v-col
+                          cols="12"
+                          v-for="(opinion, index) in searchResult.opinions.data"
+                          :key="index"
+                        >
+                          <!-- Opinion Card Goes Here -->
+                          <opinion-card
+                            :index="index || 0"
+                            :id="opinion.id || 0"
+                            :name="opinion.critique.name || 'name'"
+                            :username="opinion.critique.username || 'username'"
+                            :text="opinion.text || 'text'"
+                            :topics="opinion.topics || []"
+                            :liked="opinion.liked_by_user || false"
+                            :likes="opinion.like_count || 0"
+                            :timestamp="opinion.created_at || 'timestamp'"
+                            @change="resultOpinionUpdated"
+                          ></opinion-card>
+                        </v-col>
+                      </v-row>
+
+                      <v-container
+                        v-else
+                        class="subtitle text-center font-italic"
+                      >
+                        No Opinions Found
+                      </v-container>
+                    </v-container>
+                  </v-tab-item>
+                </v-tabs-items>
+              </v-container>
+            </v-container>
+
+            <!-- v-if="isSearching" -->
+            <v-container v-else>
+              <!-- Retrieving view -->
+              <v-container class="my-8" v-if="isRetrievingOpinions">
+                <div class="text-center">
+                  <v-progress-circular
+                    :size="50"
+                    indeterminate
+                    color="primary"
+                  ></v-progress-circular>
+                </div>
+                <div class="mt-4 text-center font-italic caption">
+                  Retrieving opinions, please wait...
+                </div>
+              </v-container>
+
+              <!-- Opinons is empty -->
+              <v-container
+                class="my-8"
+                v-if="!isRetrievingOpinions && opinions.length == 0"
+              >
+                <div class="mt-4 text-center font-italic">
+                  Oops, looks like there are no opinions out there, share yours
+                  now!
+                </div>
+              </v-container>
+
+              <!-- Load opinions -->
+              <v-row v-if="!isRetrievingOpinions && opinions.length > 0">
+                <v-col
+                  cols="12"
+                  v-for="(opinion, index) in opinions"
+                  :key="index"
                 >
-                  Load more opinions
-                </v-btn>
-              </v-col>
-            </v-row>
+                  <!-- Opinion Card Goes Here -->
+                  <opinion-card
+                    :index="index || 0"
+                    :id="opinion.id || 0"
+                    :name="opinion.critique.name || 'name'"
+                    :username="opinion.critique.username || 'username'"
+                    :text="opinion.text || 'text'"
+                    :topics="opinion.topics || []"
+                    :liked="opinion.liked_by_user || false"
+                    :likes="opinion.like_count || 0"
+                    :timestamp="opinion.created_at || 'timestamp'"
+                    @change="feedOpinionUpdated"
+                  ></opinion-card>
+                </v-col>
+                <v-col cols="12">
+                  <v-btn
+                    block
+                    small
+                    text
+                    depressed
+                    @click="loadMoreOpinions"
+                    v-if="paginationLinks.next"
+                  >
+                    Load more opinions
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-col>
           <!-- End of Feed -->
 
@@ -168,7 +331,9 @@ export default {
   },
   data() {
     return {
+      isSearching: false,
       isRetrievingOpinions: false,
+      isRetrievingSearchResults: false,
       profileDialog: false,
       opinionDialog: false,
       logoutDialog: false,
@@ -179,6 +344,15 @@ export default {
         last: null,
         prev: null,
         next: null,
+      },
+
+      search: null,
+      searchTab: "Critiques",
+      searchTabItems: ["Critiques", "Topics", "Opinions"],
+      searchResult: {
+        critiques: { data: null },
+        topics: { data: null },
+        opinions: { data: null },
       },
     };
   },
@@ -260,7 +434,7 @@ export default {
       // Set isRetrievingOpinions to true
       this.isRetrievingOpinions = true;
 
-      // Retrieve current authenticated crituque id from session storage
+      // Retrieve current authenticated critque id from session storage
       var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
 
       axios
@@ -290,15 +464,52 @@ export default {
       this.opinions.unshift(data);
     },
 
-    opinionUpdated(e) {
-      this.opinions[e.index]["liked_by_user"] = e.liked;
+    feedOpinionUpdated(e) {
+      this.opinionUpdated(e, this.opinions);
+    },
+
+    resultOpinionUpdated(e) {
+      this.opinionUpdated(e, this.searchResult.opinions.data);
+    },
+
+    opinionUpdated(e, opinionArray) {
+      opinionArray[e.index]["liked_by_user"] = e.liked;
 
       if (e.liked) {
-        this.opinions[e.index]["like_count"] += 1;
+        opinionArray[e.index]["like_count"] += 1;
       } else {
-        this.opinions[e.index]["like_count"] -= 1;
+        opinionArray[e.index]["like_count"] -= 1;
       }
     },
+
+    retrieveSearchResult() {
+      if (!!this.search) {
+        this.isRetrievingSearchResults = true;
+
+        axios
+          .get(`/api/search?search=${this.search}`)
+          .then((response) => {
+            let data = response.data;
+
+            this.searchResult = data;
+          })
+          .catch((error) => {
+            // Pop Notification
+            toastr.error(
+              "A problem occured while processing your request. Please try again.",
+              "Something Went Wrong",
+              { timeOut: 2000 }
+            );
+          })
+          .finally((_) => {
+            this.isRetrievingSearchResults = false;
+          });
+      }
+    },
+
+    debounceInput: _.debounce(function () {
+      this.retrieveSearchResult();
+    }, 500),
   },
 };
 </script>

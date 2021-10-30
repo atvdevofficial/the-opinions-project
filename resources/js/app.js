@@ -6,6 +6,8 @@
 
 require('./bootstrap');
 
+import _ from "lodash";
+
 window.Vue = require('vue').default;
 
 Vue.component('app', require('./components/App.vue').default);

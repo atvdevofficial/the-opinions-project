@@ -33,6 +33,7 @@ class SearchController extends Controller
                 ->paginate(10);
 
             $opinions = Opinion::where('text', 'LIKE', "%$search%")
+                ->with('critique', 'topics')
                 ->paginate(10);
         }
 
