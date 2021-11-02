@@ -115,6 +115,99 @@
                 </v-tabs>
 
                 <v-tabs-items v-model="searchTab">
+                  <!-- Profile Dialog -->
+                  <v-dialog v-model="otherProfileDialog" max-width="400px">
+                    <v-card rounded="lg" elevation="0">
+                      <!-- Image and Name -->
+                      <v-card-title>
+                        <v-row align="center" justify="center">
+                          <v-col cols="12" class="text-center">
+                            <v-avatar color="#FFEAB1" size="75">
+                              <box-icon name="user" size="md"></box-icon>
+                            </v-avatar>
+                          </v-col>
+                          <v-col cols="12">
+                            <div class="text-center">
+                              {{ viewingCritiqueProfile.name }}
+                            </div>
+                            <div class="caption text-center">
+                              {{ viewingCritiqueProfile.username }}
+                            </div>
+                          </v-col>
+                        </v-row>
+                      </v-card-title>
+
+                      <v-card-text>
+                        <v-btn
+                          block
+                          small
+                          depressed
+                          color="#FFD561"
+                          class="font-weight-bold px-4 mb-4"
+                          v-if="!viewingCritiqueProfile.is_following"
+                          :loading="isFollowingUnfollowingCritique"
+                          @click="
+                            followUnfollowCritique(
+                              'follow',
+                              viewingCritiqueProfile.id,
+                              viewingCritiqueProfile.index
+                            )
+                          "
+                        >
+                          Follow
+                        </v-btn>
+
+                        <v-btn
+                          block
+                          small
+                          depressed
+                          color="default"
+                          class="font-weight-bold mb-4"
+                          v-if="viewingCritiqueProfile.is_following"
+                          :loading="isFollowingUnfollowingCritique"
+                          @click="
+                            followUnfollowCritique(
+                              'unfollow',
+                              viewingCritiqueProfile.id,
+                              viewingCritiqueProfile.index
+                            )
+                          "
+                        >
+                          Unfollow
+                        </v-btn>
+                        <v-row dense align="center" justify="center">
+                          <!-- Profile Metrics (Likes, Followers, Followings) -->
+                          <v-col cols="4">
+                            <div class="text-center">
+                              {{ viewingCritiqueProfile.statistics.topics }}
+                            </div>
+                            <div class="caption text-center font-italic">
+                              Topics
+                            </div>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <div class="text-center">
+                              {{ viewingCritiqueProfile.statistics.followers }}
+                            </div>
+                            <div class="caption text-center font-italic">
+                              Followers
+                            </div>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <div class="text-center">
+                              {{ viewingCritiqueProfile.statistics.followings }}
+                            </div>
+                            <div class="caption text-center font-italic">
+                              Followings
+                            </div>
+                          </v-col>
+                        </v-row>
+                      </v-card-text>
+                    </v-card>
+                  </v-dialog>
+
                   <v-tab-item v-for="item in searchTabItems" :key="item">
                     <!-- Critiques -->
                     <v-container v-if="item == 'Critiques'">
@@ -124,8 +217,9 @@
                           v-for="(critique, index) in searchResult.critiques
                             .data"
                           :key="index"
+                          @click="showCritiqueProfile(critique, index)"
                         >
-                          <v-card-title class="pa-0">
+                          <v-card-title class="px-2 py-0">
                             <v-list-item class="grow px-0">
                               <v-list-item-avatar color="#FFEAB1">
                                 <box-icon name="user" size="sm"></box-icon>
@@ -139,6 +233,15 @@
                                   </div>
                                 </v-list-item-title>
                               </v-list-item-content>
+
+                              <v-list-item-action>
+                                <div
+                                  class="caption font-italic"
+                                  v-if="critique.is_following"
+                                >
+                                  Following
+                                </div>
+                              </v-list-item-action>
                             </v-list-item>
                           </v-card-title>
                         </v-card>
@@ -178,13 +281,48 @@
                               <v-list-item-content>
                                 <v-list-item-title>
                                   <div>{{ topic.text }}</div>
+                                  <div class="caption font-italic">
+                                    {{ topic.opinion_count }}
+                                    opinions
+                                  </div>
                                 </v-list-item-title>
                               </v-list-item-content>
                               <v-list-item-action>
-                                <div class="caption font-italic">
-                                  {{ topic.opinion_count }}
-                                  opinions
-                                </div>
+                                <v-btn
+                                  small
+                                  depressed
+                                  color="#FFD561"
+                                  class="font-weight-bold px-4"
+                                  v-if="!topic.is_following"
+                                  :loading="isFollowingUnfollowingTopic"
+                                  @click="
+                                    followUnfollowTopic(
+                                      'follow',
+                                      topic.id,
+                                      index
+                                    )
+                                  "
+                                >
+                                  Follow
+                                </v-btn>
+
+                                <v-btn
+                                  small
+                                  depressed
+                                  color="default"
+                                  class="font-weight-bold"
+                                  v-if="topic.is_following"
+                                  :loading="isFollowingUnfollowingTopic"
+                                  @click="
+                                    followUnfollowTopic(
+                                      'unfollow',
+                                      topic.id,
+                                      index
+                                    )
+                                  "
+                                >
+                                  Unfollow
+                                </v-btn>
                               </v-list-item-action>
                             </v-list-item>
                           </v-card-title>
@@ -374,9 +512,13 @@ export default {
   data() {
     return {
       isSearching: false,
-      isRetrievingOpinions: false,
       isLoadingMore: false,
+      isFollowingUnfollowingTopic: false,
+      isFollowingUnfollowingCritique: false,
+      isRetrievingOpinions: false,
       isRetrievingSearchResults: false,
+
+      otherProfileDialog: false,
       profileDialog: false,
       opinionDialog: false,
       logoutDialog: false,
@@ -407,6 +549,18 @@ export default {
           data: null,
           next_page_url: null,
         },
+      },
+
+      viewingCritiqueProfile: {
+        id: null,
+        name: null,
+        username: null,
+        statistics: {
+          topics: 0,
+          followers: 0,
+          followings: 0,
+        },
+        is_following: false,
       },
     };
   },
@@ -494,7 +648,9 @@ export default {
           let data = response.data;
 
           // Concat opinions
-          this.searchResult[result].data = this.searchResult[result].data.concat(data[result].data);
+          this.searchResult[result].data = this.searchResult[
+            result
+          ].data.concat(data[result].data);
           this.searchResult[result].next_page_url = data[result].next_page_url;
         })
         .catch((error) => {
@@ -586,7 +742,77 @@ export default {
           .finally((_) => {
             this.isRetrievingSearchResults = false;
           });
+      } else {
+        this.searchResult = {
+          critiques: {
+            data: null,
+            next_page_url: null,
+          },
+          topics: {
+            data: null,
+            next_page_url: null,
+          },
+          opinions: {
+            data: null,
+            next_page_url: null,
+          },
+        };
       }
+    },
+
+    followUnfollowTopic(type, topicId, index) {
+      // Set isFollowingUnfollowingTopic to true
+      this.isFollowingUnfollowingTopic = true;
+
+      // Retrieve current authenticated critque id from session storage
+      var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
+
+      axios
+        .put(`/api/critiques/${critiqueId}/follows/topics/${topicId}/${type}`)
+        .then((response) => {
+          this.searchResult.topics.data[index].is_following =
+            type == "follow" ? true : false;
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          this.isFollowingUnfollowingTopic = false;
+        });
+    },
+
+    followUnfollowCritique(type, critiqueId, index) {
+      // Set isFollowingUnfollowingCritique to true
+      this.isFollowingUnfollowingCritique = true;
+
+      axios
+        .put(`/api/critiques/follows/critiques/${critiqueId}/${type}`)
+        .then((response) => {
+          this.searchResult.critiques.data[index].is_following =
+            type == "follow" ? true : false;
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          this.isFollowingUnfollowingCritique = false;
+        });
+    },
+
+    showCritiqueProfile(critique, index) {
+      this.otherProfileDialog = true;
+      this.viewingCritiqueProfile = critique;
+      this.viewingCritiqueProfile.index = index;
     },
 
     debounceInput: _.debounce(function () {

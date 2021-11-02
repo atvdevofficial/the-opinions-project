@@ -356,7 +356,6 @@ export default {
   },
   mounted() {
     this.retrieveCritiqueProfile();
-    this.retrieveCritiqueStatistics();
     this.retrieveTopicsAndFollowedTopics();
   },
   methods: {
@@ -375,30 +374,6 @@ export default {
     // Handler for logout dialog close
     logoutDialogClose(value) {
       this.logoutDialog = value;
-    },
-
-    // Rerieve top trending topics
-    retrieveCritiqueStatistics() {
-      // Set isRetrievingCritiqueStatistics to true
-      this.isRetrievingCritiqueStatistics = true;
-
-      // Retrieve current authenticated crituque id from session storage
-      var critiqueId = sessionStorage.getItem("critiqueId") ?? null;
-
-      axios
-        .get(`/api/critiques/${critiqueId}/statistics`)
-        .then((response) => {
-          var data = response.data;
-
-          // Set profile statistics
-          this.profileStatisctics = data;
-        })
-        .catch((error) => {
-          console.log(error.response.data);
-        })
-        .finally((_) => {
-          this.isRetrievingCritiqueStatistics = false;
-        });
     },
 
     // Retrieve current authenticated critique profile
@@ -420,6 +395,8 @@ export default {
             username: data.username,
             email: data.user.email,
           };
+
+          this.profileStatisctics = data.statistics;
 
           // Set editedProfile equals to profile without link
           this.editedProfile = Object.assign({}, this.profile);
@@ -567,8 +544,8 @@ export default {
             // Recall retrieveTopicsAndFollowedTopics
             this.retrieveTopicsAndFollowedTopics();
 
-            // Recall retrieveCritiqueStatistics
-            this.retrieveCritiqueStatistics();
+            // Recall retrieveCritiqueProfile
+            this.retrieveCritiqueProfile();
           })
           .catch((error) => {
             // Pop Notification

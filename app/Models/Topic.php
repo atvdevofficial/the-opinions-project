@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Topic extends Model
 {
@@ -14,6 +15,7 @@ class Topic extends Model
      */
     protected $appends = [
         'opinion_count',
+        'is_following'
     ];
 
     /**
@@ -43,8 +45,31 @@ class Topic extends Model
     /**
      * Model accessors and mutators
      */
+
+    /**
+     * Get opinion count of topic
+     */
     public function getOpinionCountAttribute() {
         return $this->opinions()->count();
+    }
+
+    /**
+     * If current user (critique) is following
+     * this critique model
+     */
+    public function getIsFollowingAttribute()
+    {
+        if (Auth::check()) {
+            $authenticatedUser = Auth::user();
+            $authenticatedUserRole = $authenticatedUser->role;
+
+            if ($authenticatedUserRole == 'CRITIQUE') {
+                $authenticatedCritique = $authenticatedUser->critique;
+                return $authenticatedCritique->followedTopics()->whereTopicId($this->id)->exists();
+            }
+        }
+
+        return false;
     }
 
     /**

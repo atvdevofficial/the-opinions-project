@@ -6,6 +6,7 @@ use App\Http\Requests\CritiqueTopic\CritiqueTopicIndexRequest;
 use App\Http\Requests\CritiqueTopic\CritiqueTopicUnfollowRequest;
 use App\Http\Requests\CritiqueTopic\CritiqueTopicUpdateRequest;
 use App\Http\Resources\CritiqueResource;
+use App\Http\Resources\TopicResource;
 use App\Models\Critique;
 use App\Models\Topic;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class CritiqueTopicController extends Controller
      */
     public function index(CritiqueTopicIndexRequest $request, Critique $critique)
     {
-        return CritiqueResource::collection($critique->followedTopics);
+        return TopicResource::collection($critique->followedTopics);
     }
 
     /**
@@ -46,7 +47,7 @@ class CritiqueTopicController extends Controller
     {
         $critique->followedTopics()->syncWithoutDetaching([$topic->id]);
 
-        return response()->json(['message' => 'Critique Followed']);
+        return response()->json(['message' => 'Topic Followed']);
     }
 
     /**
@@ -59,6 +60,6 @@ class CritiqueTopicController extends Controller
     {
         $critique->followedTopics()->detach([$topic->id]);
 
-        return response()->json(['message' => 'Critique Unfollowed']);
+        return response()->json(['message' => 'Topic Unfollowed']);
     }
 }

@@ -14,19 +14,22 @@ class CritiqueShowRequest extends FormRequest
      */
     public function authorize()
     {
-        $authenticatedUser = Auth::user();
-        $authenticatedUserRole = $authenticatedUser->role;
-
-        if ($authenticatedUserRole == 'ADMINISTRATOR')
+        if (Auth::check())
             return true;
 
-        if ($authenticatedUserRole == 'CRITIQUE') {
-            $authenticatedCritique = $authenticatedUser->critique;
-            $routeCritique = $this->route('critique');
+        // $authenticatedUser = Auth::user();
+        // $authenticatedUserRole = $authenticatedUser->role;
 
-            if ($routeCritique->id == $authenticatedCritique->id)
-                return true;
-        }
+        // if ($authenticatedUserRole == 'ADMINISTRATOR')
+        //     return true;
+
+        // if ($authenticatedUserRole == 'CRITIQUE') {
+        //     $authenticatedCritique = $authenticatedUser->critique;
+        //     $routeCritique = $this->route('critique');
+
+        //     if ($routeCritique->id == $authenticatedCritique->id)
+        //         return true;
+        // }
 
         return false;
     }
