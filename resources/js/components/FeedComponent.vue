@@ -66,6 +66,7 @@
 
           <!-- Start of Feed -->
           <v-col cols="12" md="8" lg="9" xl="8">
+            <!-- Search Component -->
             <!-- Container for search results -->
             <v-container v-if="isSearching">
               <!-- Search text field -->
@@ -141,6 +142,19 @@
                             </v-list-item>
                           </v-card-title>
                         </v-card>
+                        <v-col cols="12">
+                          <v-btn
+                            block
+                            small
+                            text
+                            depressed
+                            @click="loadMoreSearchResults('critiques')"
+                            v-if="searchResult.critiques.next_page_url"
+                            :loading="isLoadingMore"
+                          >
+                            Load more critiques
+                          </v-btn>
+                        </v-col>
                       </div>
 
                       <v-container
@@ -175,6 +189,19 @@
                             </v-list-item>
                           </v-card-title>
                         </v-card>
+                        <v-col cols="12">
+                          <v-btn
+                            block
+                            small
+                            text
+                            depressed
+                            @click="loadMoreSearchResults('topics')"
+                            v-if="searchResult.topics.next_page_url"
+                            :loading="isLoadingMore"
+                          >
+                            Load more topics
+                          </v-btn>
+                        </v-col>
                       </div>
 
                       <v-container
@@ -207,6 +234,19 @@
                             @change="resultOpinionUpdated"
                           ></opinion-card>
                         </v-col>
+                        <v-col cols="12">
+                          <v-btn
+                            block
+                            small
+                            text
+                            depressed
+                            @click="loadMoreSearchResults('opinions')"
+                            v-if="searchResult.opinions.next_page_url"
+                            :loading="isLoadingMore"
+                          >
+                            Load more opinions
+                          </v-btn>
+                        </v-col>
                       </v-row>
 
                       <v-container
@@ -221,6 +261,7 @@
               </v-container>
             </v-container>
 
+            <!-- Main Feed -->
             <!-- v-if="isSearching" -->
             <v-container v-else>
               <!-- Retrieving view -->
@@ -240,7 +281,7 @@
               <!-- Opinons is empty -->
               <v-container
                 class="my-8"
-                v-if="!isRetrievingOpinions && opinions.length == 0"
+                v-if="!isRetrievingOpinions && opinions.data.length == 0"
               >
                 <div class="mt-4 text-center font-italic">
                   Oops, looks like there are no opinions out there, share yours
@@ -249,10 +290,10 @@
               </v-container>
 
               <!-- Load opinions -->
-              <v-row v-if="!isRetrievingOpinions && opinions.length > 0">
+              <v-row v-if="!isRetrievingOpinions && opinions.data.length > 0">
                 <v-col
                   cols="12"
-                  v-for="(opinion, index) in opinions"
+                  v-for="(opinion, index) in opinions.data"
                   :key="index"
                 >
                   <!-- Opinion Card Goes Here -->
@@ -276,7 +317,8 @@
                     text
                     depressed
                     @click="loadMoreOpinions"
-                    v-if="paginationLinks.next"
+                    v-if="opinions.links.next"
+                    :loading="isLoadingMore"
                   >
                     Load more opinions
                   </v-btn>
@@ -333,26 +375,38 @@ export default {
     return {
       isSearching: false,
       isRetrievingOpinions: false,
+      isLoadingMore: false,
       isRetrievingSearchResults: false,
       profileDialog: false,
       opinionDialog: false,
       logoutDialog: false,
 
-      opinions: [],
-      paginationLinks: {
-        first: null,
-        last: null,
-        prev: null,
-        next: null,
+      opinions: {
+        data: [],
+        links: {
+          first: null,
+          last: null,
+          prev: null,
+          next: null,
+        },
       },
 
       search: null,
       searchTab: "Critiques",
       searchTabItems: ["Critiques", "Topics", "Opinions"],
       searchResult: {
-        critiques: { data: null },
-        topics: { data: null },
-        opinions: { data: null },
+        critiques: {
+          data: null,
+          next_page_url: null,
+        },
+        topics: {
+          data: null,
+          next_page_url: null,
+        },
+        opinions: {
+          data: null,
+          next_page_url: null,
+        },
       },
     };
   },
@@ -383,10 +437,7 @@ export default {
           let data = response.data;
 
           // Set opinions to data
-          this.opinions = data.data;
-
-          // Set pagination links
-          this.paginationLinks = data.links;
+          this.opinions = data;
         })
         .catch((error) => {
           // Pop Notification
@@ -404,16 +455,17 @@ export default {
 
     // Load more opinions
     loadMoreOpinions() {
+      // Set isLoadingMore to true
+      this.isLoadingMore = true;
+
       axios
-        .get(this.paginationLinks.next)
+        .get(this.opinions.links.next)
         .then((response) => {
           let data = response.data;
 
           // Concat opinions
-          this.opinions = this.opinions.concat(data.data);
-
-          // Set pagination links
-          this.paginationLinks = data.links;
+          this.opinions.data = this.opinions.data.concat(data.data);
+          this.opinions.links = data.links;
         })
         .catch((error) => {
           // Pop Notification
@@ -426,6 +478,36 @@ export default {
         .finally((_) => {
           // Set isRetrievingOpinions to false after request
           this.isRetrievingOpinions = false;
+          this.isLoadingMore = false;
+        });
+    },
+
+    // Load more opinions
+    loadMoreSearchResults(result) {
+      // Set isLoadingMore to true
+      this.isLoadingMore = true;
+
+      axios
+        .get(this.searchResult[result].next_page_url)
+        .then((response) => {
+          console.log(response.data);
+          let data = response.data;
+
+          // Concat opinions
+          this.searchResult[result].data = this.searchResult[result].data.concat(data[result].data);
+          this.searchResult[result].next_page_url = data[result].next_page_url;
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          // Set isRetrievingOpinions to false after request
+          this.isLoadingMore = false;
         });
     },
 
@@ -461,11 +543,11 @@ export default {
 
     // Handles opinion dialog opinion-created event
     opinionCreated(data) {
-      this.opinions.unshift(data);
+      this.opinions.data.unshift(data);
     },
 
     feedOpinionUpdated(e) {
-      this.opinionUpdated(e, this.opinions);
+      this.opinionUpdated(e, this.opinions.data);
     },
 
     resultOpinionUpdated(e) {

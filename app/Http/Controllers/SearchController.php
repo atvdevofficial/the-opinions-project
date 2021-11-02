@@ -27,14 +27,17 @@ class SearchController extends Controller
             $critiques = Critique::where('id', '<>', $authenticatedCritiqueId)
                 ->where('name', 'LIKE', "%$search%")
                 ->orWhere('username', 'LIKE', "%$search%")
-                ->paginate(10);
+                ->paginate(10, ['*'], 'critiques')
+                ->appends(request()->except(['topics', 'opinions']));
 
             $topics = Topic::where('text', 'LIKE', "%$search%")
-                ->paginate(10);
+                ->paginate(10, ['*'], 'topics')
+                ->appends(request()->except(['critiques', 'opinions']));
 
             $opinions = Opinion::where('text', 'LIKE', "%$search%")
                 ->with('critique', 'topics')
-                ->paginate(10);
+                ->paginate(10, ['*'], 'opinions')
+                ->appends(request()->except(['critiques', 'topics']));
         }
 
         return response()->json([

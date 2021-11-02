@@ -2776,6 +2776,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2794,29 +2836,35 @@ __webpack_require__.r(__webpack_exports__);
     return {
       isSearching: false,
       isRetrievingOpinions: false,
+      isLoadingMore: false,
       isRetrievingSearchResults: false,
       profileDialog: false,
       opinionDialog: false,
       logoutDialog: false,
-      opinions: [],
-      paginationLinks: {
-        first: null,
-        last: null,
-        prev: null,
-        next: null
+      opinions: {
+        data: [],
+        links: {
+          first: null,
+          last: null,
+          prev: null,
+          next: null
+        }
       },
       search: null,
       searchTab: "Critiques",
       searchTabItems: ["Critiques", "Topics", "Opinions"],
       searchResult: {
         critiques: {
-          data: null
+          data: null,
+          next_page_url: null
         },
         topics: {
-          data: null
+          data: null,
+          next_page_url: null
         },
         opinions: {
-          data: null
+          data: null,
+          next_page_url: null
         }
       }
     };
@@ -2843,9 +2891,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("/api/feed").then(function (response) {
         var data = response.data; // Set opinions to data
 
-        _this.opinions = data.data; // Set pagination links
-
-        _this.paginationLinks = data.links;
+        _this.opinions = data;
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
@@ -2860,12 +2906,13 @@ __webpack_require__.r(__webpack_exports__);
     loadMoreOpinions: function loadMoreOpinions() {
       var _this2 = this;
 
-      axios.get(this.paginationLinks.next).then(function (response) {
+      // Set isLoadingMore to true
+      this.isLoadingMore = true;
+      axios.get(this.opinions.links.next).then(function (response) {
         var data = response.data; // Concat opinions
 
-        _this2.opinions = _this2.opinions.concat(data.data); // Set pagination links
-
-        _this2.paginationLinks = data.links;
+        _this2.opinions.data = _this2.opinions.data.concat(data.data);
+        _this2.opinions.links = data.links;
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
@@ -2874,12 +2921,35 @@ __webpack_require__.r(__webpack_exports__);
       })["finally"](function (_) {
         // Set isRetrievingOpinions to false after request
         _this2.isRetrievingOpinions = false;
+        _this2.isLoadingMore = false;
+      });
+    },
+    // Load more opinions
+    loadMoreSearchResults: function loadMoreSearchResults(result) {
+      var _this3 = this;
+
+      // Set isLoadingMore to true
+      this.isLoadingMore = true;
+      axios.get(this.searchResult[result].next_page_url).then(function (response) {
+        console.log(response.data);
+        var data = response.data; // Concat opinions
+
+        _this3.searchResult[result].data = _this3.searchResult[result].data.concat(data[result].data);
+        _this3.searchResult[result].next_page_url = data[result].next_page_url;
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        // Set isRetrievingOpinions to false after request
+        _this3.isLoadingMore = false;
       });
     },
     // Retrieve critique opinions
     retrieveCritiqueOpinions: function retrieveCritiqueOpinions() {
       var _sessionStorage$getIt,
-          _this3 = this;
+          _this4 = this;
 
       // Set isRetrievingOpinions to true
       this.isRetrievingOpinions = true; // Retrieve current authenticated critque id from session storage
@@ -2888,7 +2958,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("/api/critiques/".concat(critiqueId, "/opinions")).then(function (response) {
         var data = response.data; // Set opinions to data
 
-        _this3.opinions = data;
+        _this4.opinions = data;
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
@@ -2896,15 +2966,15 @@ __webpack_require__.r(__webpack_exports__);
         });
       })["finally"](function (_) {
         // Set isRetrievingOpinions to false after request
-        _this3.isRetrievingOpinions = false;
+        _this4.isRetrievingOpinions = false;
       });
     },
     // Handles opinion dialog opinion-created event
     opinionCreated: function opinionCreated(data) {
-      this.opinions.unshift(data);
+      this.opinions.data.unshift(data);
     },
     feedOpinionUpdated: function feedOpinionUpdated(e) {
-      this.opinionUpdated(e, this.opinions);
+      this.opinionUpdated(e, this.opinions.data);
     },
     resultOpinionUpdated: function resultOpinionUpdated(e) {
       this.opinionUpdated(e, this.searchResult.opinions.data);
@@ -2919,20 +2989,20 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     retrieveSearchResult: function retrieveSearchResult() {
-      var _this4 = this;
+      var _this5 = this;
 
       if (!!this.search) {
         this.isRetrievingSearchResults = true;
         axios.get("/api/search?search=".concat(this.search)).then(function (response) {
           var data = response.data;
-          _this4.searchResult = data;
+          _this5.searchResult = data;
         })["catch"](function (error) {
           // Pop Notification
           toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
             timeOut: 2000
           });
         })["finally"](function (_) {
-          _this4.isRetrievingSearchResults = false;
+          _this5.isRetrievingSearchResults = false;
         });
       }
     },
@@ -42583,115 +42653,166 @@ var render = function() {
                                                         .data.length > 0
                                                         ? _c(
                                                             "div",
-                                                            _vm._l(
-                                                              _vm.searchResult
-                                                                .critiques.data,
-                                                              function(
-                                                                critique,
-                                                                index
-                                                              ) {
-                                                                return _c(
-                                                                  "v-card",
-                                                                  {
-                                                                    key: index,
-                                                                    attrs: {
-                                                                      elevation:
-                                                                        "0"
-                                                                    }
-                                                                  },
-                                                                  [
-                                                                    _c(
-                                                                      "v-card-title",
-                                                                      {
-                                                                        staticClass:
-                                                                          "pa-0"
-                                                                      },
-                                                                      [
-                                                                        _c(
-                                                                          "v-list-item",
-                                                                          {
-                                                                            staticClass:
-                                                                              "grow px-0"
-                                                                          },
-                                                                          [
-                                                                            _c(
-                                                                              "v-list-item-avatar",
-                                                                              {
-                                                                                attrs: {
-                                                                                  color:
-                                                                                    "#FFEAB1"
-                                                                                }
-                                                                              },
-                                                                              [
-                                                                                _c(
-                                                                                  "box-icon",
-                                                                                  {
-                                                                                    attrs: {
-                                                                                      name:
-                                                                                        "user",
-                                                                                      size:
-                                                                                        "sm"
-                                                                                    }
+                                                            [
+                                                              _vm._l(
+                                                                _vm.searchResult
+                                                                  .critiques
+                                                                  .data,
+                                                                function(
+                                                                  critique,
+                                                                  index
+                                                                ) {
+                                                                  return _c(
+                                                                    "v-card",
+                                                                    {
+                                                                      key: index,
+                                                                      attrs: {
+                                                                        elevation:
+                                                                          "0"
+                                                                      }
+                                                                    },
+                                                                    [
+                                                                      _c(
+                                                                        "v-card-title",
+                                                                        {
+                                                                          staticClass:
+                                                                            "pa-0"
+                                                                        },
+                                                                        [
+                                                                          _c(
+                                                                            "v-list-item",
+                                                                            {
+                                                                              staticClass:
+                                                                                "grow px-0"
+                                                                            },
+                                                                            [
+                                                                              _c(
+                                                                                "v-list-item-avatar",
+                                                                                {
+                                                                                  attrs: {
+                                                                                    color:
+                                                                                      "#FFEAB1"
                                                                                   }
-                                                                                )
-                                                                              ],
-                                                                              1
-                                                                            ),
-                                                                            _vm._v(
-                                                                              " "
-                                                                            ),
-                                                                            _c(
-                                                                              "v-list-item-content",
-                                                                              [
-                                                                                _c(
-                                                                                  "v-list-item-title",
-                                                                                  [
-                                                                                    _c(
-                                                                                      "div",
-                                                                                      [
-                                                                                        _vm._v(
-                                                                                          _vm._s(
-                                                                                            critique.name
-                                                                                          )
-                                                                                        )
-                                                                                      ]
-                                                                                    ),
-                                                                                    _vm._v(
-                                                                                      " "
-                                                                                    ),
-                                                                                    _c(
-                                                                                      "div",
-                                                                                      {
-                                                                                        staticClass:
-                                                                                          "caption font-italic"
-                                                                                      },
-                                                                                      [
-                                                                                        _vm._v(
-                                                                                          "\n                                  " +
+                                                                                },
+                                                                                [
+                                                                                  _c(
+                                                                                    "box-icon",
+                                                                                    {
+                                                                                      attrs: {
+                                                                                        name:
+                                                                                          "user",
+                                                                                        size:
+                                                                                          "sm"
+                                                                                      }
+                                                                                    }
+                                                                                  )
+                                                                                ],
+                                                                                1
+                                                                              ),
+                                                                              _vm._v(
+                                                                                " "
+                                                                              ),
+                                                                              _c(
+                                                                                "v-list-item-content",
+                                                                                [
+                                                                                  _c(
+                                                                                    "v-list-item-title",
+                                                                                    [
+                                                                                      _c(
+                                                                                        "div",
+                                                                                        [
+                                                                                          _vm._v(
                                                                                             _vm._s(
-                                                                                              critique.username
-                                                                                            ) +
-                                                                                            "\n                                "
-                                                                                        )
-                                                                                      ]
-                                                                                    )
-                                                                                  ]
-                                                                                )
-                                                                              ],
-                                                                              1
-                                                                            )
-                                                                          ],
-                                                                          1
-                                                                        )
-                                                                      ],
-                                                                      1
-                                                                    )
-                                                                  ],
-                                                                  1
-                                                                )
-                                                              }
-                                                            ),
-                                                            1
+                                                                                              critique.name
+                                                                                            )
+                                                                                          )
+                                                                                        ]
+                                                                                      ),
+                                                                                      _vm._v(
+                                                                                        " "
+                                                                                      ),
+                                                                                      _c(
+                                                                                        "div",
+                                                                                        {
+                                                                                          staticClass:
+                                                                                            "caption font-italic"
+                                                                                        },
+                                                                                        [
+                                                                                          _vm._v(
+                                                                                            "\n                                  " +
+                                                                                              _vm._s(
+                                                                                                critique.username
+                                                                                              ) +
+                                                                                              "\n                                "
+                                                                                          )
+                                                                                        ]
+                                                                                      )
+                                                                                    ]
+                                                                                  )
+                                                                                ],
+                                                                                1
+                                                                              )
+                                                                            ],
+                                                                            1
+                                                                          )
+                                                                        ],
+                                                                        1
+                                                                      )
+                                                                    ],
+                                                                    1
+                                                                  )
+                                                                }
+                                                              ),
+                                                              _vm._v(" "),
+                                                              _c(
+                                                                "v-col",
+                                                                {
+                                                                  attrs: {
+                                                                    cols: "12"
+                                                                  }
+                                                                },
+                                                                [
+                                                                  _vm
+                                                                    .searchResult
+                                                                    .critiques
+                                                                    .next_page_url
+                                                                    ? _c(
+                                                                        "v-btn",
+                                                                        {
+                                                                          attrs: {
+                                                                            block:
+                                                                              "",
+                                                                            small:
+                                                                              "",
+                                                                            text:
+                                                                              "",
+                                                                            depressed:
+                                                                              "",
+                                                                            loading:
+                                                                              _vm.isLoadingMore
+                                                                          },
+                                                                          on: {
+                                                                            click: function(
+                                                                              $event
+                                                                            ) {
+                                                                              return _vm.loadMoreSearchResults(
+                                                                                "critiques"
+                                                                              )
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        [
+                                                                          _vm._v(
+                                                                            "\n                          Load more critiques\n                        "
+                                                                          )
+                                                                        ]
+                                                                      )
+                                                                    : _vm._e()
+                                                                ],
+                                                                1
+                                                              )
+                                                            ],
+                                                            2
                                                           )
                                                         : _c(
                                                             "v-container",
@@ -42718,94 +42839,144 @@ var render = function() {
                                                         .data.length > 0
                                                         ? _c(
                                                             "div",
-                                                            _vm._l(
-                                                              _vm.searchResult
-                                                                .topics.data,
-                                                              function(
-                                                                topic,
-                                                                index
-                                                              ) {
-                                                                return _c(
-                                                                  "v-card",
-                                                                  {
-                                                                    key: index,
-                                                                    attrs: {
-                                                                      elevation:
-                                                                        "0"
-                                                                    }
-                                                                  },
-                                                                  [
-                                                                    _c(
-                                                                      "v-card-title",
-                                                                      {
-                                                                        staticClass:
-                                                                          "pa-0"
-                                                                      },
-                                                                      [
-                                                                        _c(
-                                                                          "v-list-item",
-                                                                          {
-                                                                            staticClass:
-                                                                              "grow px-0"
-                                                                          },
-                                                                          [
-                                                                            _c(
-                                                                              "v-list-item-content",
-                                                                              [
-                                                                                _c(
-                                                                                  "v-list-item-title",
-                                                                                  [
-                                                                                    _c(
-                                                                                      "div",
-                                                                                      [
-                                                                                        _vm._v(
-                                                                                          _vm._s(
-                                                                                            topic.text
+                                                            [
+                                                              _vm._l(
+                                                                _vm.searchResult
+                                                                  .topics.data,
+                                                                function(
+                                                                  topic,
+                                                                  index
+                                                                ) {
+                                                                  return _c(
+                                                                    "v-card",
+                                                                    {
+                                                                      key: index,
+                                                                      attrs: {
+                                                                        elevation:
+                                                                          "0"
+                                                                      }
+                                                                    },
+                                                                    [
+                                                                      _c(
+                                                                        "v-card-title",
+                                                                        {
+                                                                          staticClass:
+                                                                            "pa-0"
+                                                                        },
+                                                                        [
+                                                                          _c(
+                                                                            "v-list-item",
+                                                                            {
+                                                                              staticClass:
+                                                                                "grow px-0"
+                                                                            },
+                                                                            [
+                                                                              _c(
+                                                                                "v-list-item-content",
+                                                                                [
+                                                                                  _c(
+                                                                                    "v-list-item-title",
+                                                                                    [
+                                                                                      _c(
+                                                                                        "div",
+                                                                                        [
+                                                                                          _vm._v(
+                                                                                            _vm._s(
+                                                                                              topic.text
+                                                                                            )
                                                                                           )
-                                                                                        )
-                                                                                      ]
-                                                                                    )
-                                                                                  ]
-                                                                                )
-                                                                              ],
-                                                                              1
-                                                                            ),
-                                                                            _vm._v(
-                                                                              " "
-                                                                            ),
-                                                                            _c(
-                                                                              "v-list-item-action",
-                                                                              [
-                                                                                _c(
-                                                                                  "div",
-                                                                                  {
-                                                                                    staticClass:
-                                                                                      "caption font-italic"
-                                                                                  },
-                                                                                  [
-                                                                                    _vm._v(
-                                                                                      "\n                                " +
-                                                                                        _vm._s(
-                                                                                          topic.opinion_count
-                                                                                        ) +
-                                                                                        "\n                                opinions\n                              "
-                                                                                    )
-                                                                                  ]
-                                                                                )
-                                                                              ]
-                                                                            )
-                                                                          ],
-                                                                          1
-                                                                        )
-                                                                      ],
-                                                                      1
-                                                                    )
-                                                                  ],
-                                                                  1
-                                                                )
-                                                              }
-                                                            ),
-                                                            1
+                                                                                        ]
+                                                                                      )
+                                                                                    ]
+                                                                                  )
+                                                                                ],
+                                                                                1
+                                                                              ),
+                                                                              _vm._v(
+                                                                                " "
+                                                                              ),
+                                                                              _c(
+                                                                                "v-list-item-action",
+                                                                                [
+                                                                                  _c(
+                                                                                    "div",
+                                                                                    {
+                                                                                      staticClass:
+                                                                                        "caption font-italic"
+                                                                                    },
+                                                                                    [
+                                                                                      _vm._v(
+                                                                                        "\n                                " +
+                                                                                          _vm._s(
+                                                                                            topic.opinion_count
+                                                                                          ) +
+                                                                                          "\n                                opinions\n                              "
+                                                                                      )
+                                                                                    ]
+                                                                                  )
+                                                                                ]
+                                                                              )
+                                                                            ],
+                                                                            1
+                                                                          )
+                                                                        ],
+                                                                        1
+                                                                      )
+                                                                    ],
+                                                                    1
+                                                                  )
+                                                                }
+                                                              ),
+                                                              _vm._v(" "),
+                                                              _c(
+                                                                "v-col",
+                                                                {
+                                                                  attrs: {
+                                                                    cols: "12"
+                                                                  }
+                                                                },
+                                                                [
+                                                                  _vm
+                                                                    .searchResult
+                                                                    .topics
+                                                                    .next_page_url
+                                                                    ? _c(
+                                                                        "v-btn",
+                                                                        {
+                                                                          attrs: {
+                                                                            block:
+                                                                              "",
+                                                                            small:
+                                                                              "",
+                                                                            text:
+                                                                              "",
+                                                                            depressed:
+                                                                              "",
+                                                                            loading:
+                                                                              _vm.isLoadingMore
+                                                                          },
+                                                                          on: {
+                                                                            click: function(
+                                                                              $event
+                                                                            ) {
+                                                                              return _vm.loadMoreSearchResults(
+                                                                                "topics"
+                                                                              )
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        [
+                                                                          _vm._v(
+                                                                            "\n                          Load more topics\n                        "
+                                                                          )
+                                                                        ]
+                                                                      )
+                                                                    : _vm._e()
+                                                                ],
+                                                                1
+                                                              )
+                                                            ],
+                                                            2
                                                           )
                                                         : _c(
                                                             "v-container",
@@ -42832,70 +43003,122 @@ var render = function() {
                                                         .data.length > 0
                                                         ? _c(
                                                             "v-row",
-                                                            _vm._l(
-                                                              _vm.searchResult
-                                                                .opinions.data,
-                                                              function(
-                                                                opinion,
-                                                                index
-                                                              ) {
-                                                                return _c(
-                                                                  "v-col",
-                                                                  {
-                                                                    key: index,
-                                                                    attrs: {
-                                                                      cols: "12"
-                                                                    }
-                                                                  },
-                                                                  [
-                                                                    _c(
-                                                                      "opinion-card",
-                                                                      {
-                                                                        attrs: {
-                                                                          index:
-                                                                            index ||
-                                                                            0,
-                                                                          id:
-                                                                            opinion.id ||
-                                                                            0,
-                                                                          name:
-                                                                            opinion
-                                                                              .critique
-                                                                              .name ||
-                                                                            "name",
-                                                                          username:
-                                                                            opinion
-                                                                              .critique
-                                                                              .username ||
-                                                                            "username",
-                                                                          text:
-                                                                            opinion.text ||
-                                                                            "text",
-                                                                          topics:
-                                                                            opinion.topics ||
-                                                                            [],
-                                                                          liked:
-                                                                            opinion.liked_by_user ||
-                                                                            false,
-                                                                          likes:
-                                                                            opinion.like_count ||
-                                                                            0,
-                                                                          timestamp:
-                                                                            opinion.created_at ||
-                                                                            "timestamp"
-                                                                        },
-                                                                        on: {
-                                                                          change:
-                                                                            _vm.resultOpinionUpdated
-                                                                        }
+                                                            [
+                                                              _vm._l(
+                                                                _vm.searchResult
+                                                                  .opinions
+                                                                  .data,
+                                                                function(
+                                                                  opinion,
+                                                                  index
+                                                                ) {
+                                                                  return _c(
+                                                                    "v-col",
+                                                                    {
+                                                                      key: index,
+                                                                      attrs: {
+                                                                        cols:
+                                                                          "12"
                                                                       }
-                                                                    )
-                                                                  ],
-                                                                  1
-                                                                )
-                                                              }
-                                                            ),
-                                                            1
+                                                                    },
+                                                                    [
+                                                                      _c(
+                                                                        "opinion-card",
+                                                                        {
+                                                                          attrs: {
+                                                                            index:
+                                                                              index ||
+                                                                              0,
+                                                                            id:
+                                                                              opinion.id ||
+                                                                              0,
+                                                                            name:
+                                                                              opinion
+                                                                                .critique
+                                                                                .name ||
+                                                                              "name",
+                                                                            username:
+                                                                              opinion
+                                                                                .critique
+                                                                                .username ||
+                                                                              "username",
+                                                                            text:
+                                                                              opinion.text ||
+                                                                              "text",
+                                                                            topics:
+                                                                              opinion.topics ||
+                                                                              [],
+                                                                            liked:
+                                                                              opinion.liked_by_user ||
+                                                                              false,
+                                                                            likes:
+                                                                              opinion.like_count ||
+                                                                              0,
+                                                                            timestamp:
+                                                                              opinion.created_at ||
+                                                                              "timestamp"
+                                                                          },
+                                                                          on: {
+                                                                            change:
+                                                                              _vm.resultOpinionUpdated
+                                                                          }
+                                                                        }
+                                                                      )
+                                                                    ],
+                                                                    1
+                                                                  )
+                                                                }
+                                                              ),
+                                                              _vm._v(" "),
+                                                              _c(
+                                                                "v-col",
+                                                                {
+                                                                  attrs: {
+                                                                    cols: "12"
+                                                                  }
+                                                                },
+                                                                [
+                                                                  _vm
+                                                                    .searchResult
+                                                                    .opinions
+                                                                    .next_page_url
+                                                                    ? _c(
+                                                                        "v-btn",
+                                                                        {
+                                                                          attrs: {
+                                                                            block:
+                                                                              "",
+                                                                            small:
+                                                                              "",
+                                                                            text:
+                                                                              "",
+                                                                            depressed:
+                                                                              "",
+                                                                            loading:
+                                                                              _vm.isLoadingMore
+                                                                          },
+                                                                          on: {
+                                                                            click: function(
+                                                                              $event
+                                                                            ) {
+                                                                              return _vm.loadMoreSearchResults(
+                                                                                "opinions"
+                                                                              )
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        [
+                                                                          _vm._v(
+                                                                            "\n                          Load more opinions\n                        "
+                                                                          )
+                                                                        ]
+                                                                      )
+                                                                    : _vm._e()
+                                                                ],
+                                                                1
+                                                              )
+                                                            ],
+                                                            2
                                                           )
                                                         : _c(
                                                             "v-container",
@@ -42962,7 +43185,7 @@ var render = function() {
                                 : _vm._e(),
                               _vm._v(" "),
                               !_vm.isRetrievingOpinions &&
-                              _vm.opinions.length == 0
+                              _vm.opinions.data.length == 0
                                 ? _c("v-container", { staticClass: "my-8" }, [
                                     _c(
                                       "div",
@@ -42980,11 +43203,11 @@ var render = function() {
                                 : _vm._e(),
                               _vm._v(" "),
                               !_vm.isRetrievingOpinions &&
-                              _vm.opinions.length > 0
+                              _vm.opinions.data.length > 0
                                 ? _c(
                                     "v-row",
                                     [
-                                      _vm._l(_vm.opinions, function(
+                                      _vm._l(_vm.opinions.data, function(
                                         opinion,
                                         index
                                       ) {
@@ -43025,7 +43248,7 @@ var render = function() {
                                         "v-col",
                                         { attrs: { cols: "12" } },
                                         [
-                                          _vm.paginationLinks.next
+                                          _vm.opinions.links.next
                                             ? _c(
                                                 "v-btn",
                                                 {
@@ -43033,7 +43256,8 @@ var render = function() {
                                                     block: "",
                                                     small: "",
                                                     text: "",
-                                                    depressed: ""
+                                                    depressed: "",
+                                                    loading: _vm.isLoadingMore
                                                   },
                                                   on: {
                                                     click: _vm.loadMoreOpinions
