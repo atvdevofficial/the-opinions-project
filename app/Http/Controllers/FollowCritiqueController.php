@@ -21,9 +21,17 @@ class FollowCritiqueController extends Controller
         $authenticatedUser = Auth::user();
         $authenticatedCritique = $authenticatedUser->critique;
 
+        $followers = $authenticatedCritique->followers()
+                ->paginate(10, ['*'], 'followers')
+                ->appends(request()->except(['followers']));
+
+        $followings = $authenticatedCritique->followings()
+                ->paginate(10, ['*'], 'followings')
+                ->appends(request()->except(['followers']));
+
         return response([
-            'followers' => $authenticatedCritique->followers,
-            'followings' => $authenticatedCritique->followings,
+            'followers' => $followers,
+            'followings' => $followings,
         ]);
     }
 

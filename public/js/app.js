@@ -4165,6 +4165,136 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ProfileCardDialog",
@@ -4182,8 +4312,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       isRetrievingProfile: false,
       isRetrievingTopics: false,
       isRetrievingCritiqueStatistics: false,
+      isRetrievingFollowersAndFollowings: false,
+      isLoadingMoreFollowersAndFollowings: false,
+      isUnfollowingCritique: false,
       isUpdatingProfile: false,
       isUpdatingFollowedTopics: false,
+      followersDialog: false,
+      followingsDialog: false,
       profileDialog: false,
       logoutDialog: false,
       followedTopicsDialog: false,
@@ -4192,6 +4327,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         username: "Profile Username",
         email: "Profile Email",
         password: null
+      },
+      profileFollowersAndFollowings: {
+        followers: {
+          data: [],
+          next_page_url: null
+        },
+        followings: {
+          data: [],
+          next_page_url: null
+        }
       },
       profileStatisctics: {
         topics: 0,
@@ -4224,6 +4369,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mounted: function mounted() {
     this.retrieveCritiqueProfile();
     this.retrieveTopicsAndFollowedTopics();
+    this.retrieveCritiqueFollowersAndFollowings();
   },
   methods: {
     // Handler for profile dialog close
@@ -4383,6 +4529,62 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _this4.isUpdatingFollowedTopics = false;
         });
       }
+    },
+    retrieveCritiqueFollowersAndFollowings: function retrieveCritiqueFollowersAndFollowings() {
+      var _this5 = this;
+
+      this.isRetrievingFollowersAndFollowings = true;
+      axios.get("/api/critiques/follows/critiques").then(function (response) {
+        var data = response.data;
+        _this5.profileFollowersAndFollowings = data;
+      })["catch"](function (error) {
+        // Pop Notificatio    n
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        _this5.isRetrievingFollowersAndFollowings = false;
+      });
+    },
+    unfollowCritique: function unfollowCritique(critiqueId, index) {
+      var _this6 = this;
+
+      // Set isFollowingUnfollowingCritique to true
+      this.isUnfollowingCritique = true;
+      axios.put("/api/critiques/follows/critiques/".concat(critiqueId, "/unfollow")).then(function (response) {
+        //  this.profileFollowersAndFollowings.followings.data.slice(index, 1);
+        _this6.$delete(_this6.profileFollowersAndFollowings.followings.data, index);
+
+        _this6.profileStatisctics.followings--;
+      })["catch"](function (error) {
+        console.log(error); // Pop Notification
+
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        _this6.isUnfollowingCritique = false;
+      });
+    },
+    loadMoreFollowersAndFollowings: function loadMoreFollowersAndFollowings(type) {
+      var _this7 = this;
+
+      // Set isLoadingMoreFollowersAndFollowings to true
+      this.isLoadingMoreFollowersAndFollowings = true;
+      axios.get(this.profileFollowersAndFollowings[type].next_page_url).then(function (response) {
+        var data = response.data; // Concat opinions
+
+        _this7.profileFollowersAndFollowings[type].data = _this7.profileFollowersAndFollowings[type].data.concat(data[type].data);
+        _this7.profileFollowersAndFollowings[type].next_page_url = data[type].next_page_url;
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        // Set isRetrievingOpinions to false after request
+        _this7.isLoadingMoreFollowersAndFollowings = false;
+      });
     },
     // Emit an event
     seeSharedOpinions: function seeSharedOpinions() {
@@ -44747,25 +44949,401 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _c("v-col", { attrs: { cols: "4" } }, [
-                _c("div", { staticClass: "text-center" }, [
-                  _vm._v(_vm._s(_vm.profileStatisctics.followers))
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "caption text-center font-italic" }, [
-                  _vm._v("Followers")
-                ])
-              ]),
+              _c(
+                "v-col",
+                {
+                  staticStyle: { cursor: "pointer !important" },
+                  attrs: { cols: "4" },
+                  on: {
+                    click: function($event) {
+                      _vm.followersDialog = true
+                    }
+                  }
+                },
+                [
+                  _c("div", { staticClass: "text-center" }, [
+                    _vm._v(_vm._s(_vm.profileStatisctics.followers))
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "caption text-center font-italic" },
+                    [_vm._v("Followers")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "400px" },
+                      model: {
+                        value: _vm.followersDialog,
+                        callback: function($$v) {
+                          _vm.followersDialog = $$v
+                        },
+                        expression: "followersDialog"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-card",
+                        [
+                          _c("v-card-title", [_vm._v("Followers")]),
+                          _vm._v(" "),
+                          _c("v-card-text", [
+                            _vm.profileFollowersAndFollowings.followers.data
+                              .length > 0
+                              ? _c(
+                                  "div",
+                                  [
+                                    _vm._l(
+                                      _vm.profileFollowersAndFollowings
+                                        .followers.data,
+                                      function(follower, index) {
+                                        return _c(
+                                          "v-card",
+                                          {
+                                            key: index,
+                                            attrs: { elevation: "0" }
+                                          },
+                                          [
+                                            _c(
+                                              "v-card-title",
+                                              { staticClass: "px-2 py-0" },
+                                              [
+                                                _c(
+                                                  "v-list-item",
+                                                  { staticClass: "grow px-0" },
+                                                  [
+                                                    _c(
+                                                      "v-list-item-avatar",
+                                                      {
+                                                        attrs: {
+                                                          color: "#FFEAB1"
+                                                        }
+                                                      },
+                                                      [
+                                                        _c("box-icon", {
+                                                          attrs: {
+                                                            name: "user",
+                                                            size: "sm"
+                                                          }
+                                                        })
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "v-list-item-content",
+                                                      [
+                                                        _c(
+                                                          "v-list-item-title",
+                                                          [
+                                                            _c("div", [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  follower.name
+                                                                )
+                                                              )
+                                                            ]),
+                                                            _vm._v(" "),
+                                                            _c(
+                                                              "div",
+                                                              {
+                                                                staticClass:
+                                                                  "caption font-italic"
+                                                              },
+                                                              [
+                                                                _vm._v(
+                                                                  "\n                            " +
+                                                                    _vm._s(
+                                                                      follower.username
+                                                                    ) +
+                                                                    "\n                          "
+                                                                )
+                                                              ]
+                                                            )
+                                                          ]
+                                                        )
+                                                      ],
+                                                      1
+                                                    )
+                                                  ],
+                                                  1
+                                                )
+                                              ],
+                                              1
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      }
+                                    ),
+                                    _vm._v(" "),
+                                    _vm.profileFollowersAndFollowings.followers
+                                      .next_page_url
+                                      ? _c(
+                                          "v-btn",
+                                          {
+                                            attrs: {
+                                              block: "",
+                                              small: "",
+                                              text: "",
+                                              depressed: "",
+                                              loading:
+                                                _vm.isLoadingMoreFollowersAndFollowings
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.loadMoreFollowersAndFollowings(
+                                                  "followers"
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                  Load more followers\n                "
+                                            )
+                                          ]
+                                        )
+                                      : _vm._e()
+                                  ],
+                                  2
+                                )
+                              : _c(
+                                  "div",
+                                  { staticClass: "text-center font-italic" },
+                                  [
+                                    _vm._v(
+                                      "\n                You do not have any followers\n              "
+                                    )
+                                  ]
+                                )
+                          ])
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
               _vm._v(" "),
-              _c("v-col", { attrs: { cols: "4" } }, [
-                _c("div", { staticClass: "text-center" }, [
-                  _vm._v(_vm._s(_vm.profileStatisctics.followings))
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "caption text-center font-italic" }, [
-                  _vm._v("Followings")
-                ])
-              ]),
+              _c(
+                "v-col",
+                {
+                  staticStyle: { cursor: "pointer !important" },
+                  attrs: { cols: "4" },
+                  on: {
+                    click: function($event) {
+                      _vm.followingsDialog = true
+                    }
+                  }
+                },
+                [
+                  _c("div", { staticClass: "text-center" }, [
+                    _vm._v(_vm._s(_vm.profileStatisctics.followings))
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "caption text-center font-italic" },
+                    [_vm._v("Followings")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "400px" },
+                      model: {
+                        value: _vm.followingsDialog,
+                        callback: function($$v) {
+                          _vm.followingsDialog = $$v
+                        },
+                        expression: "followingsDialog"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-card",
+                        [
+                          _c("v-card-title", [_vm._v("Followings")]),
+                          _vm._v(" "),
+                          _c("v-card-text", [
+                            _vm.profileFollowersAndFollowings.followings.data
+                              .length > 0
+                              ? _c(
+                                  "div",
+                                  [
+                                    _vm._l(
+                                      _vm.profileFollowersAndFollowings
+                                        .followings.data,
+                                      function(following, index) {
+                                        return _c(
+                                          "v-card",
+                                          {
+                                            key: index,
+                                            attrs: { elevation: "0" }
+                                          },
+                                          [
+                                            _c(
+                                              "v-card-title",
+                                              { staticClass: "px-2 py-0" },
+                                              [
+                                                _c(
+                                                  "v-list-item",
+                                                  { staticClass: "grow px-0" },
+                                                  [
+                                                    _c(
+                                                      "v-list-item-avatar",
+                                                      {
+                                                        attrs: {
+                                                          color: "#FFEAB1"
+                                                        }
+                                                      },
+                                                      [
+                                                        _c("box-icon", {
+                                                          attrs: {
+                                                            name: "user",
+                                                            size: "sm"
+                                                          }
+                                                        })
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "v-list-item-content",
+                                                      [
+                                                        _c(
+                                                          "v-list-item-title",
+                                                          [
+                                                            _c("div", [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  following.name
+                                                                )
+                                                              )
+                                                            ]),
+                                                            _vm._v(" "),
+                                                            _c(
+                                                              "div",
+                                                              {
+                                                                staticClass:
+                                                                  "caption font-italic"
+                                                              },
+                                                              [
+                                                                _vm._v(
+                                                                  "\n                            " +
+                                                                    _vm._s(
+                                                                      following.username
+                                                                    ) +
+                                                                    "\n                          "
+                                                                )
+                                                              ]
+                                                            )
+                                                          ]
+                                                        )
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "v-list-item-action",
+                                                      [
+                                                        _c(
+                                                          "v-btn",
+                                                          {
+                                                            staticClass:
+                                                              "font-weight-bold",
+                                                            attrs: {
+                                                              small: "",
+                                                              depressed: "",
+                                                              color: "default"
+                                                            },
+                                                            on: {
+                                                              click: function(
+                                                                $event
+                                                              ) {
+                                                                return _vm.unfollowCritique(
+                                                                  following.id,
+                                                                  index
+                                                                )
+                                                              }
+                                                            }
+                                                          },
+                                                          [
+                                                            _vm._v(
+                                                              "\n                          Unfollow\n                        "
+                                                            )
+                                                          ]
+                                                        )
+                                                      ],
+                                                      1
+                                                    )
+                                                  ],
+                                                  1
+                                                )
+                                              ],
+                                              1
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      }
+                                    ),
+                                    _vm._v(" "),
+                                    _vm.profileFollowersAndFollowings.followings
+                                      .next_page_url
+                                      ? _c(
+                                          "v-btn",
+                                          {
+                                            attrs: {
+                                              block: "",
+                                              small: "",
+                                              text: "",
+                                              depressed: "",
+                                              loading:
+                                                _vm.isLoadingMoreFollowersAndFollowings
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.loadMoreFollowersAndFollowings(
+                                                  "followings"
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                  Load more followings\n                "
+                                            )
+                                          ]
+                                        )
+                                      : _vm._e()
+                                  ],
+                                  2
+                                )
+                              : _c(
+                                  "div",
+                                  { staticClass: "text-center font-italic" },
+                                  [
+                                    _vm._v(
+                                      "\n                You do not follow anybody\n              "
+                                    )
+                                  ]
+                                )
+                          ])
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
               _vm._v(" "),
               _c(
                 "v-col",
@@ -44965,7 +45543,15 @@ var render = function() {
                                         "v-col",
                                         {
                                           staticClass: "mt-4 d-md-none",
-                                          attrs: { cols: "4" }
+                                          staticStyle: {
+                                            cursor: "pointer !important"
+                                          },
+                                          attrs: { cols: "4" },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.followersDialog = true
+                                            }
+                                          }
                                         },
                                         [
                                           _c(
@@ -45002,7 +45588,15 @@ var render = function() {
                                         "v-col",
                                         {
                                           staticClass: "mt-4 d-md-none",
-                                          attrs: { cols: "4" }
+                                          staticStyle: {
+                                            cursor: "pointer !important"
+                                          },
+                                          attrs: { cols: "4" },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.followingsDialog = true
+                                            }
+                                          }
                                         },
                                         [
                                           _c(

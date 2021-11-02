@@ -24,14 +24,134 @@
           <div class="caption text-center font-italic">Topics</div>
         </v-col>
 
-        <v-col cols="4">
+        <v-col
+          cols="4"
+          @click="followersDialog = true"
+          style="cursor: pointer !important"
+        >
           <div class="text-center">{{ profileStatisctics.followers }}</div>
           <div class="caption text-center font-italic">Followers</div>
+          <v-dialog v-model="followersDialog" max-width="400px">
+            <v-card>
+              <v-card-title>Followers</v-card-title>
+              <v-card-text>
+                <div
+                  v-if="profileFollowersAndFollowings.followers.data.length > 0"
+                >
+                  <v-card
+                    elevation="0"
+                    v-for="(follower, index) in profileFollowersAndFollowings
+                      .followers.data"
+                    :key="index"
+                  >
+                    <v-card-title class="px-2 py-0">
+                      <v-list-item class="grow px-0">
+                        <v-list-item-avatar color="#FFEAB1">
+                          <box-icon name="user" size="sm"></box-icon>
+                        </v-list-item-avatar>
+
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            <div>{{ follower.name }}</div>
+                            <div class="caption font-italic">
+                              {{ follower.username }}
+                            </div>
+                          </v-list-item-title>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-card-title>
+                  </v-card>
+                  <v-btn
+                    block
+                    small
+                    text
+                    depressed
+                    @click="loadMoreFollowersAndFollowings('followers')"
+                    v-if="profileFollowersAndFollowings.followers.next_page_url"
+                    :loading="isLoadingMoreFollowersAndFollowings"
+                  >
+                    Load more followers
+                  </v-btn>
+                </div>
+                <div v-else class="text-center font-italic">
+                  You do not have any followers
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
         </v-col>
 
-        <v-col cols="4">
+        <v-col
+          cols="4"
+          @click="followingsDialog = true"
+          style="cursor: pointer !important"
+        >
           <div class="text-center">{{ profileStatisctics.followings }}</div>
           <div class="caption text-center font-italic">Followings</div>
+          <v-dialog v-model="followingsDialog" max-width="400px">
+            <v-card>
+              <v-card-title>Followings</v-card-title>
+              <v-card-text>
+                <div
+                  v-if="
+                    profileFollowersAndFollowings.followings.data.length > 0
+                  "
+                >
+                  <v-card
+                    elevation="0"
+                    v-for="(following, index) in profileFollowersAndFollowings
+                      .followings.data"
+                    :key="index"
+                  >
+                    <v-card-title class="px-2 py-0">
+                      <v-list-item class="grow px-0">
+                        <v-list-item-avatar color="#FFEAB1">
+                          <box-icon name="user" size="sm"></box-icon>
+                        </v-list-item-avatar>
+
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            <div>{{ following.name }}</div>
+                            <div class="caption font-italic">
+                              {{ following.username }}
+                            </div>
+                          </v-list-item-title>
+                        </v-list-item-content>
+
+                        <v-list-item-action>
+                          <v-btn
+                            small
+                            depressed
+                            color="default"
+                            class="font-weight-bold"
+                            @click="unfollowCritique(following.id, index)"
+                          >
+                            Unfollow
+                          </v-btn>
+                        </v-list-item-action>
+                      </v-list-item>
+                    </v-card-title>
+                  </v-card>
+                  <v-btn
+                    block
+                    small
+                    text
+                    depressed
+                    @click="loadMoreFollowersAndFollowings('followings')"
+                    v-if="
+                      profileFollowersAndFollowings.followings.next_page_url
+                    "
+                    :loading="isLoadingMoreFollowersAndFollowings"
+                  >
+                    Load more followings
+                  </v-btn>
+                </div>
+                <div v-else class="text-center font-italic">
+                  You do not follow anybody
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
         </v-col>
 
         <!-- Profile Dialog -->
@@ -104,7 +224,12 @@
                       </div>
                     </v-col>
 
-                    <v-col class="mt-4 d-md-none" cols="4">
+                    <v-col
+                      class="mt-4 d-md-none"
+                      cols="4"
+                      @click="followersDialog = true"
+                      style="cursor: pointer !important"
+                    >
                       <div class="text-center">
                         {{ profileStatisctics.followers }}
                       </div>
@@ -113,7 +238,12 @@
                       </div>
                     </v-col>
 
-                    <v-col class="mt-4 d-md-none" cols="4">
+                    <v-col
+                      class="mt-4 d-md-none"
+                      cols="4"
+                      @click="followingsDialog = true"
+                      style="cursor: pointer !important"
+                    >
                       <div class="text-center">
                         {{ profileStatisctics.followings }}
                       </div>
@@ -309,9 +439,14 @@ export default {
       isRetrievingProfile: false,
       isRetrievingTopics: false,
       isRetrievingCritiqueStatistics: false,
+      isRetrievingFollowersAndFollowings: false,
+      isLoadingMoreFollowersAndFollowings: false,
+      isUnfollowingCritique: false,
       isUpdatingProfile: false,
       isUpdatingFollowedTopics: false,
 
+      followersDialog: false,
+      followingsDialog: false,
       profileDialog: false,
       logoutDialog: false,
       followedTopicsDialog: false,
@@ -321,6 +456,11 @@ export default {
         username: "Profile Username",
         email: "Profile Email",
         password: null,
+      },
+
+      profileFollowersAndFollowings: {
+        followers: { data: [], next_page_url: null },
+        followings: { data: [], next_page_url: null },
       },
 
       profileStatisctics: {
@@ -357,6 +497,7 @@ export default {
   mounted() {
     this.retrieveCritiqueProfile();
     this.retrieveTopicsAndFollowedTopics();
+    this.retrieveCritiqueFollowersAndFollowings();
   },
   methods: {
     // Handler for profile dialog close
@@ -559,6 +700,88 @@ export default {
             this.isUpdatingFollowedTopics = false;
           });
       }
+    },
+
+    retrieveCritiqueFollowersAndFollowings() {
+      this.isRetrievingFollowersAndFollowings = true;
+
+      axios
+        .get("/api/critiques/follows/critiques")
+        .then((response) => {
+          const data = response.data;
+
+          this.profileFollowersAndFollowings = data;
+        })
+        .catch((error) => {
+          // Pop Notificatio    n
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          this.isRetrievingFollowersAndFollowings = false;
+        });
+    },
+
+    unfollowCritique(critiqueId, index) {
+      // Set isFollowingUnfollowingCritique to true
+      this.isUnfollowingCritique = true;
+
+      axios
+        .put(`/api/critiques/follows/critiques/${critiqueId}/unfollow`)
+        .then((response) => {
+          //  this.profileFollowersAndFollowings.followings.data.slice(index, 1);
+          this.$delete(
+            this.profileFollowersAndFollowings.followings.data,
+            index
+          );
+          this.profileStatisctics.followings--;
+        })
+        .catch((error) => {
+          console.log(error);
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          this.isUnfollowingCritique = false;
+        });
+    },
+
+    loadMoreFollowersAndFollowings(type) {
+      // Set isLoadingMoreFollowersAndFollowings to true
+      this.isLoadingMoreFollowersAndFollowings = true;
+
+      axios
+        .get(this.profileFollowersAndFollowings[type].next_page_url)
+        .then((response) => {
+          let data = response.data;
+
+          // Concat opinions
+          this.profileFollowersAndFollowings[type].data =
+            this.profileFollowersAndFollowings[type].data.concat(
+              data[type].data
+            );
+          this.profileFollowersAndFollowings[type].next_page_url =
+            data[type].next_page_url;
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          // Set isRetrievingOpinions to false after request
+          this.isLoadingMoreFollowersAndFollowings = false;
+        });
     },
 
     // Emit an event
