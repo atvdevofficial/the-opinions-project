@@ -31,11 +31,13 @@ class OpinionTest extends TestCase
         // Response
         $this->getJson(route('critiques.opinions.index', ['critique' => $critique->id]))
             ->assertStatus(200)
-            ->assertJsonStructure([[
-                'id', 'text', 'is_public',
-                'created_at', 'updated_at',
-                'like_count', 'liked_by_user'
-            ]]);
+            ->assertJsonStructure([
+                'data' => [[
+                    'id', 'text', 'is_public',
+                    'created_at', 'updated_at',
+                    'like_count', 'liked_by_user'
+                ]]
+            ]);
 
         /**
          * Database checks

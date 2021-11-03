@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Authentication\ChangePasswordRequest;
 use App\Http\Requests\Authentication\LoginRequest;
 use App\Http\Requests\Authentication\LogoutRequest;
 use App\Models\User;
@@ -39,5 +40,19 @@ class AuthenticationController extends Controller
         $authenticatedUser->tokens()->delete();
 
         return response()->json(['message' => 'User logged out'], 200);
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $validatedData = $request->validated();
+        $authenticatedUser = Auth::user();
+
+        if (Hash::check($validatedData['old_password'], $authenticatedUser->password)) {
+            $authenticatedUser->update(['password' => $validatedData['new_password']]);
+
+            return response()->json(['message' => 'Password Changed Successfuly'], 200);
+        }
+
+        return response()->json(['message' => 'Old Password Incorrect'], 401);
     }
 }

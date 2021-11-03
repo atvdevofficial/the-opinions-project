@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Authentication;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class RegistrationRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +14,10 @@ class RegistrationRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if (Auth::check())
+            return true;
+
+        return false;
     }
 
     /**
@@ -24,11 +28,8 @@ class RegistrationRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
-
-            'name' => ['required', 'string'],
-            'username' => ['required', 'string', 'unique:critiques,username'],
+            'old_password' => ['required', 'string'],
+            'new_password' => ['required', 'confirmed', 'string', 'min:8'],
         ];
     }
 }

@@ -41,8 +41,8 @@ class FollowCritiqueTest extends TestCase
         $this->getJson(route('follows.critiques.index'))
             ->assertStatus(200)
             ->assertJsonStructure([
-                'followers' => [['id', 'name']],
-                'followings' => [['id', 'name']],
+                'followers' => ['data' => [['id', 'name']],],
+                'followings' => ['data' => [['id', 'name']],],
             ]);
 
         /**

@@ -45,6 +45,10 @@ Route::group(['middleware' => 'throttle:120'], function () {
         Route::post('/logout', [AuthenticationController::class, 'logout'])
             ->name('logout');
 
+        // Change Password
+        Route::put('/changePassword', [AuthenticationController::class, 'changePassword'])
+            ->name('changePassword');
+
         // Feed
         Route::get('feed', FeedController::class)
             ->name('feed');

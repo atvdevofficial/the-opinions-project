@@ -53,4 +53,30 @@ class AuthenticationTest extends TestCase
         // Check number of users
         $this->assertCount(1, User::get());
     }
+
+    public function testChangePassword()
+    {
+        // Administrator Account
+        $administrator = User::factory()->role('ADMINISTRATOR')->create();
+
+        $changePasswordData = [
+            'old_password' => 'password',
+            'new_password' => '12345678',
+            'new_password_confirmation' => '12345678',
+        ];
+
+        // Sanctum
+        Sanctum::actingAs($administrator);
+
+        // Response
+        $this->putJson(route('changePassword', $changePasswordData))
+            ->assertStatus(200);
+
+        /**
+         * Database checks
+         */
+
+        // Check number of users
+        $this->assertCount(1, User::get());
+    }
 }
