@@ -9,6 +9,7 @@ use App\Http\Controllers\CritiqueTopicController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowCritiqueController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,14 @@ Route::group(['middleware' => 'throttle:120'], function () {
     // Register
     Route::post('/registration', RegistrationController::class)
         ->name('register');
+
+    // Reset Password
+    Route::post('/resetPassword', ResetPasswordController::class)
+        ->name('resetPassword');
+
+    // Reset Password
+    Route::put('/resetPassword', ResetPasswordController::class)
+        ->name('resetPassword.reset');
 
     /**
      * Authenticated Routes
