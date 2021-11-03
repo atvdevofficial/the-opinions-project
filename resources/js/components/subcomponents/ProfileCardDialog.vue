@@ -31,9 +31,15 @@
         >
           <div class="text-center">{{ profileStatisctics.followers }}</div>
           <div class="caption text-center font-italic">Followers</div>
-          <v-dialog v-model="followersDialog" max-width="400px">
+          <v-dialog fullscreen v-model="followersDialog" max-width="400px">
             <v-card>
-              <v-card-title>Followers</v-card-title>
+              <v-card-title>
+                Followers
+                <v-spacer></v-spacer>
+                <v-btn small default text @click="followersDialog = false">
+                  Close
+                </v-btn>
+              </v-card-title>
               <v-card-text>
                 <div
                   v-if="profileFollowersAndFollowings.followers.data.length > 0"
@@ -88,9 +94,15 @@
         >
           <div class="text-center">{{ profileStatisctics.followings }}</div>
           <div class="caption text-center font-italic">Followings</div>
-          <v-dialog v-model="followingsDialog" max-width="400px">
+          <v-dialog fullscreen v-model="followingsDialog" max-width="400px">
             <v-card>
-              <v-card-title>Followings</v-card-title>
+              <v-card-title>
+                Followings
+                <v-spacer></v-spacer>
+                <v-btn small default text @click="followingsDialog = false">
+                  Close
+                </v-btn>
+              </v-card-title>
               <v-card-text>
                 <div
                   v-if="
@@ -156,7 +168,7 @@
 
         <!-- Profile Dialog -->
         <v-col cols="12" class="mt-2">
-          <v-dialog persistent v-model="profileDialog" max-width="400px">
+          <v-dialog fullscreen v-model="profileDialog" max-width="400px">
             <!-- Update Profile Button -->
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -348,7 +360,7 @@
 
         <!-- Followed topics button -->
         <v-col cols="6">
-          <v-dialog v-model="followedTopicsDialog" max-width="400px">
+          <v-dialog fullscreen v-model="followedTopicsDialog" max-width="400px">
             <!-- Followed topics Button -->
             <template v-slot:activator="{ on, attrs }">
               <v-btn x-small text block depressed v-bind="attrs" v-on="on">

@@ -4295,6 +4295,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ProfileCardDialog",
@@ -44674,7 +44686,7 @@ var render = function() {
   return _c(
     "v-dialog",
     {
-      attrs: { persistent: "", "max-width": "600px" },
+      attrs: { fullscreen: "", "max-width": "600px" },
       scopedSlots: _vm._u([
         {
           key: "activator",
@@ -44974,7 +44986,7 @@ var render = function() {
                   _c(
                     "v-dialog",
                     {
-                      attrs: { "max-width": "400px" },
+                      attrs: { fullscreen: "", "max-width": "400px" },
                       model: {
                         value: _vm.followersDialog,
                         callback: function($$v) {
@@ -44987,7 +44999,33 @@ var render = function() {
                       _c(
                         "v-card",
                         [
-                          _c("v-card-title", [_vm._v("Followers")]),
+                          _c(
+                            "v-card-title",
+                            [
+                              _vm._v(
+                                "\n              Followers\n              "
+                              ),
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: { small: "", default: "", text: "" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.followersDialog = false
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                Close\n              "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          ),
                           _vm._v(" "),
                           _c("v-card-text", [
                             _vm.profileFollowersAndFollowings.followers.data
@@ -45155,7 +45193,7 @@ var render = function() {
                   _c(
                     "v-dialog",
                     {
-                      attrs: { "max-width": "400px" },
+                      attrs: { fullscreen: "", "max-width": "400px" },
                       model: {
                         value: _vm.followingsDialog,
                         callback: function($$v) {
@@ -45168,7 +45206,33 @@ var render = function() {
                       _c(
                         "v-card",
                         [
-                          _c("v-card-title", [_vm._v("Followings")]),
+                          _c(
+                            "v-card-title",
+                            [
+                              _vm._v(
+                                "\n              Followings\n              "
+                              ),
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: { small: "", default: "", text: "" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.followingsDialog = false
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                Close\n              "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          ),
                           _vm._v(" "),
                           _c("v-card-text", [
                             _vm.profileFollowersAndFollowings.followings.data
@@ -45352,7 +45416,7 @@ var render = function() {
                   _c(
                     "v-dialog",
                     {
-                      attrs: { persistent: "", "max-width": "400px" },
+                      attrs: { fullscreen: "", "max-width": "400px" },
                       scopedSlots: _vm._u([
                         {
                           key: "activator",
@@ -45877,7 +45941,7 @@ var render = function() {
                   _c(
                     "v-dialog",
                     {
-                      attrs: { "max-width": "400px" },
+                      attrs: { fullscreen: "", "max-width": "400px" },
                       scopedSlots: _vm._u([
                         {
                           key: "activator",

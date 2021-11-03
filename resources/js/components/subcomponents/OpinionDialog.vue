@@ -1,5 +1,5 @@
 <template>
-  <v-dialog persistent v-model="opinionDialog" max-width="600px">
+  <v-dialog fullscreen v-model="opinionDialog" max-width="600px">
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         block
