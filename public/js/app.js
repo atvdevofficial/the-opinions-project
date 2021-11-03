@@ -2956,6 +2956,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2990,6 +3007,10 @@ __webpack_require__.r(__webpack_exports__);
           prev: null,
           next: null
         }
+      },
+      filter: {
+        text: null,
+        type: null
       },
       search: null,
       searchTab: "Critiques",
@@ -3034,13 +3055,28 @@ __webpack_require__.r(__webpack_exports__);
     logoutDialogClose: function logoutDialogClose(value) {
       this.logoutDialog = value;
     },
-    // Retrieve opinions feed
-    retrieveOpinionsFeed: function retrieveOpinionsFeed() {
+    // Retrieve opinions feed with filter
+    retrieveOpinionsFeedWithFilter: function retrieveOpinionsFeedWithFilter(e) {
       var _this = this;
 
-      // Set isRetrievingOpinions to true
-      this.isRetrievingOpinions = true;
-      axios.get("/api/feed").then(function (response) {
+      // Format url for request
+      var url = "/api/feed";
+
+      if (e.filter == "topic") {
+        url += "?topic=".concat(e.text);
+        this.filter.type = e.filter;
+        this.filter.text = e.text;
+      } else if (e.filter == "critique") {
+        url += "?critique=".concat(e.username);
+        this.filter.type = e.filter;
+        this.filter.text = e.username;
+      } // Set isRetrievingOpinions to true
+
+
+      this.isRetrievingOpinions = true; // Set isSearching to false
+
+      this.isSearching = false;
+      axios.get(url).then(function (response) {
         var data = response.data; // Set opinions to data
 
         _this.opinions = data;
@@ -3054,17 +3090,20 @@ __webpack_require__.r(__webpack_exports__);
         _this.isRetrievingOpinions = false;
       });
     },
-    // Load more opinions
-    loadMoreOpinions: function loadMoreOpinions() {
+    // Retrieve opinions feed
+    retrieveOpinionsFeed: function retrieveOpinionsFeed() {
       var _this2 = this;
 
-      // Set isLoadingMore to true
-      this.isLoadingMore = true;
-      axios.get(this.opinions.links.next).then(function (response) {
-        var data = response.data; // Concat opinions
+      // Set isRetrievingOpinions to true
+      this.isRetrievingOpinions = true;
+      this.filter = {
+        text: null,
+        type: null
+      };
+      axios.get("/api/feed").then(function (response) {
+        var data = response.data; // Set opinions to data
 
-        _this2.opinions.data = _this2.opinions.data.concat(data.data);
-        _this2.opinions.links = data.links;
+        _this2.opinions = data;
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
@@ -3073,21 +3112,19 @@ __webpack_require__.r(__webpack_exports__);
       })["finally"](function (_) {
         // Set isRetrievingOpinions to false after request
         _this2.isRetrievingOpinions = false;
-        _this2.isLoadingMore = false;
       });
     },
     // Load more opinions
-    loadMoreSearchResults: function loadMoreSearchResults(result) {
+    loadMoreOpinions: function loadMoreOpinions() {
       var _this3 = this;
 
       // Set isLoadingMore to true
       this.isLoadingMore = true;
-      axios.get(this.searchResult[result].next_page_url).then(function (response) {
-        console.log(response.data);
+      axios.get(this.opinions.links.next).then(function (response) {
         var data = response.data; // Concat opinions
 
-        _this3.searchResult[result].data = _this3.searchResult[result].data.concat(data[result].data);
-        _this3.searchResult[result].next_page_url = data[result].next_page_url;
+        _this3.opinions.data = _this3.opinions.data.concat(data.data);
+        _this3.opinions.links = data.links;
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
@@ -3095,13 +3132,36 @@ __webpack_require__.r(__webpack_exports__);
         });
       })["finally"](function (_) {
         // Set isRetrievingOpinions to false after request
+        _this3.isRetrievingOpinions = false;
         _this3.isLoadingMore = false;
+      });
+    },
+    // Load more opinions
+    loadMoreSearchResults: function loadMoreSearchResults(result) {
+      var _this4 = this;
+
+      // Set isLoadingMore to true
+      this.isLoadingMore = true;
+      axios.get(this.searchResult[result].next_page_url).then(function (response) {
+        console.log(response.data);
+        var data = response.data; // Concat opinions
+
+        _this4.searchResult[result].data = _this4.searchResult[result].data.concat(data[result].data);
+        _this4.searchResult[result].next_page_url = data[result].next_page_url;
+      })["catch"](function (error) {
+        // Pop Notification
+        toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
+          timeOut: 2000
+        });
+      })["finally"](function (_) {
+        // Set isRetrievingOpinions to false after request
+        _this4.isLoadingMore = false;
       });
     },
     // Retrieve critique opinions
     retrieveCritiqueOpinions: function retrieveCritiqueOpinions() {
       var _sessionStorage$getIt,
-          _this4 = this;
+          _this5 = this;
 
       // Set isRetrievingOpinions to true
       this.isRetrievingOpinions = true; // Retrieve current authenticated critque id from session storage
@@ -3110,7 +3170,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("/api/critiques/".concat(critiqueId, "/opinions")).then(function (response) {
         var data = response.data; // Set opinions to data
 
-        _this4.opinions = data;
+        _this5.opinions = data;
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
@@ -3118,7 +3178,7 @@ __webpack_require__.r(__webpack_exports__);
         });
       })["finally"](function (_) {
         // Set isRetrievingOpinions to false after request
-        _this4.isRetrievingOpinions = false;
+        _this5.isRetrievingOpinions = false;
       });
     },
     // Handles opinion dialog opinion-created event
@@ -3141,20 +3201,20 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     retrieveSearchResult: function retrieveSearchResult() {
-      var _this5 = this;
+      var _this6 = this;
 
       if (!!this.search) {
         this.isRetrievingSearchResults = true;
         axios.get("/api/search?search=".concat(this.search)).then(function (response) {
           var data = response.data;
-          _this5.searchResult = data;
+          _this6.searchResult = data;
         })["catch"](function (error) {
           // Pop Notification
           toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
             timeOut: 2000
           });
         })["finally"](function (_) {
-          _this5.isRetrievingSearchResults = false;
+          _this6.isRetrievingSearchResults = false;
         });
       } else {
         this.searchResult = {
@@ -3175,43 +3235,48 @@ __webpack_require__.r(__webpack_exports__);
     },
     followUnfollowTopic: function followUnfollowTopic(type, topicId, index) {
       var _sessionStorage$getIt2,
-          _this6 = this;
+          _this7 = this;
 
       // Set isFollowingUnfollowingTopic to true
       this.isFollowingUnfollowingTopic = true; // Retrieve current authenticated critque id from session storage
 
       var critiqueId = (_sessionStorage$getIt2 = sessionStorage.getItem("critiqueId")) !== null && _sessionStorage$getIt2 !== void 0 ? _sessionStorage$getIt2 : null;
       axios.put("/api/critiques/".concat(critiqueId, "/follows/topics/").concat(topicId, "/").concat(type)).then(function (response) {
-        _this6.searchResult.topics.data[index].is_following = type == "follow" ? true : false;
+        _this7.searchResult.topics.data[index].is_following = type == "follow" ? true : false;
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
           timeOut: 2000
         });
       })["finally"](function (_) {
-        _this6.isFollowingUnfollowingTopic = false;
+        _this7.isFollowingUnfollowingTopic = false;
       });
     },
     followUnfollowCritique: function followUnfollowCritique(type, critiqueId, index) {
-      var _this7 = this;
+      var _this8 = this;
 
       // Set isFollowingUnfollowingCritique to true
       this.isFollowingUnfollowingCritique = true;
       axios.put("/api/critiques/follows/critiques/".concat(critiqueId, "/").concat(type)).then(function (response) {
-        _this7.searchResult.critiques.data[index].is_following = type == "follow" ? true : false;
+        _this8.searchResult.critiques.data[index].is_following = type == "follow" ? true : false;
       })["catch"](function (error) {
         // Pop Notification
         toastr.error("A problem occured while processing your request. Please try again.", "Something Went Wrong", {
           timeOut: 2000
         });
       })["finally"](function (_) {
-        _this7.isFollowingUnfollowingCritique = false;
+        _this8.isFollowingUnfollowingCritique = false;
       });
     },
     showCritiqueProfile: function showCritiqueProfile(critique, index) {
       this.otherProfileDialog = true;
       this.viewingCritiqueProfile = critique;
       this.viewingCritiqueProfile.index = index;
+    },
+    searchCanceled: function searchCanceled() {
+      this.isSearching = false;
+      this.search = null;
+      this.retrieveSearchResult();
     },
     debounceInput: _.debounce(function () {
       this.retrieveSearchResult();
@@ -3453,6 +3518,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -42933,17 +43019,9 @@ var render = function() {
                                                 text: "",
                                                 depressed: ""
                                               },
-                                              on: {
-                                                click: function($event) {
-                                                  _vm.isSearching = false
-                                                }
-                                              }
+                                              on: { click: _vm.searchCanceled }
                                             },
-                                            [
-                                              _vm._v(
-                                                "\n                  Cancel\n                "
-                                              )
-                                            ]
+                                            [_vm._v(" Cancel ")]
                                           )
                                         ]
                                       },
@@ -42952,7 +43030,7 @@ var render = function() {
                                   ],
                                   null,
                                   false,
-                                  2169240157
+                                  3980549229
                                 ),
                                 model: {
                                   value: _vm.search,
@@ -43654,6 +43732,22 @@ var render = function() {
                                                                         attrs: {
                                                                           elevation:
                                                                             "0"
+                                                                        },
+                                                                        on: {
+                                                                          click: function(
+                                                                            $event
+                                                                          ) {
+                                                                            return _vm.retrieveOpinionsFeedWithFilter(
+                                                                              Object.assign(
+                                                                                {},
+                                                                                {
+                                                                                  filter:
+                                                                                    "topic"
+                                                                                },
+                                                                                topic
+                                                                              )
+                                                                            )
+                                                                          }
                                                                         }
                                                                       },
                                                                       [
@@ -43737,6 +43831,8 @@ var render = function() {
                                                                                               click: function(
                                                                                                 $event
                                                                                               ) {
+                                                                                                $event.stopPropagation()
+                                                                                                $event.preventDefault()
                                                                                                 return _vm.followUnfollowTopic(
                                                                                                   "follow",
                                                                                                   topic.id,
@@ -43775,6 +43871,8 @@ var render = function() {
                                                                                               click: function(
                                                                                                 $event
                                                                                               ) {
+                                                                                                $event.stopPropagation()
+                                                                                                $event.preventDefault()
                                                                                                 return _vm.followUnfollowTopic(
                                                                                                   "unfollow",
                                                                                                   topic.id,
@@ -43939,7 +44037,11 @@ var render = function() {
                                                                             },
                                                                             on: {
                                                                               change:
-                                                                                _vm.resultOpinionUpdated
+                                                                                _vm.resultOpinionUpdated,
+                                                                              "topic-clicked":
+                                                                                _vm.retrieveOpinionsFeedWithFilter,
+                                                                              "username-clicked":
+                                                                                _vm.retrieveOpinionsFeedWithFilter
                                                                             }
                                                                           }
                                                                         )
@@ -44087,6 +44189,45 @@ var render = function() {
                                 ? _c(
                                     "v-row",
                                     [
+                                      _vm.filter.text && _vm.filter.type
+                                        ? _c(
+                                            "v-col",
+                                            { attrs: { cols: "12" } },
+                                            [
+                                              _c(
+                                                "v-container",
+                                                { attrs: { color: "primary" } },
+                                                [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "font-weight-black text-center font-italic"
+                                                    },
+                                                    [
+                                                      _vm.filter.type == "topic"
+                                                        ? _c("span", [
+                                                            _vm._v("#")
+                                                          ])
+                                                        : _c("span", [
+                                                            _vm._v("@")
+                                                          ]),
+                                                      _vm._v(
+                                                        "\n                    " +
+                                                          _vm._s(
+                                                            _vm.filter.text
+                                                          ) +
+                                                          "\n                  "
+                                                      )
+                                                    ]
+                                                  )
+                                                ]
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
                                       _vm._l(_vm.opinions.data, function(
                                         opinion,
                                         index
@@ -44116,7 +44257,11 @@ var render = function() {
                                                   "timestamp"
                                               },
                                               on: {
-                                                change: _vm.feedOpinionUpdated
+                                                change: _vm.feedOpinionUpdated,
+                                                "topic-clicked":
+                                                  _vm.retrieveOpinionsFeedWithFilter,
+                                                "username-clicked":
+                                                  _vm.retrieveOpinionsFeedWithFilter
                                               }
                                             })
                                           ],
@@ -44539,9 +44684,31 @@ var render = function() {
                   _c("v-list-item-title", [
                     _c("div", [_vm._v(_vm._s(_vm.name))]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "caption font-italic" }, [
-                      _vm._v(_vm._s(_vm.username))
-                    ])
+                    _c(
+                      "div",
+                      {
+                        staticClass: "caption font-italic",
+                        staticStyle: {
+                          cursor: "pointer !important",
+                          display: "inline-block !important"
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.$emit("username-clicked", {
+                              filter: "critique",
+                              username: _vm.username
+                            })
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n            @" +
+                            _vm._s(_vm.username) +
+                            "\n          "
+                        )
+                      ]
+                    )
                   ])
                 ],
                 1
@@ -44577,7 +44744,19 @@ var render = function() {
                 _vm._l(_vm.topics, function(topic, index) {
                   return _c(
                     "v-chip",
-                    { key: index, staticClass: "mr-2", attrs: { small: "" } },
+                    {
+                      key: index,
+                      staticClass: "mr-2",
+                      attrs: { small: "" },
+                      on: {
+                        click: function($event) {
+                          return _vm.$emit(
+                            "topic-clicked",
+                            Object.assign({}, { filter: "topic" }, topic)
+                          )
+                        }
+                      }
+                    },
                     [
                       _vm._v(
                         "\n          #" + _vm._s(topic.text) + "\n        "

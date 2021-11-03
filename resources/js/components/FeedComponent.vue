@@ -79,9 +79,7 @@
                 hide-details
               >
                 <template v-slot:append>
-                  <v-btn text depressed @click="isSearching = false">
-                    Cancel
-                  </v-btn>
+                  <v-btn text depressed @click="searchCanceled"> Cancel </v-btn>
                 </template>
               </v-text-field>
 
@@ -275,6 +273,12 @@
                           elevation="0"
                           v-for="(topic, index) in searchResult.topics.data"
                           :key="index"
+                          @click="
+                            retrieveOpinionsFeedWithFilter({
+                              filter: 'topic',
+                              ...topic,
+                            })
+                          "
                         >
                           <v-card-title class="pa-0">
                             <v-list-item class="grow px-0">
@@ -295,7 +299,7 @@
                                   class="font-weight-bold px-4"
                                   v-if="!topic.is_following"
                                   :loading="isFollowingUnfollowingTopic"
-                                  @click="
+                                  @click.stop.prevent="
                                     followUnfollowTopic(
                                       'follow',
                                       topic.id,
@@ -313,7 +317,7 @@
                                   class="font-weight-bold"
                                   v-if="topic.is_following"
                                   :loading="isFollowingUnfollowingTopic"
-                                  @click="
+                                  @click.stop.prevent="
                                     followUnfollowTopic(
                                       'unfollow',
                                       topic.id,
@@ -370,6 +374,8 @@
                             :likes="opinion.like_count || 0"
                             :timestamp="opinion.created_at || 'timestamp'"
                             @change="resultOpinionUpdated"
+                            @topic-clicked="retrieveOpinionsFeedWithFilter"
+                            @username-clicked="retrieveOpinionsFeedWithFilter"
                           ></opinion-card>
                         </v-col>
                         <v-col cols="12">
@@ -429,6 +435,15 @@
 
               <!-- Load opinions -->
               <v-row v-if="!isRetrievingOpinions && opinions.data.length > 0">
+                <v-col cols="12" v-if="filter.text && filter.type">
+                  <v-container color="primary">
+                    <div class="font-weight-black text-center font-italic">
+                      <span v-if="filter.type == 'topic'">#</span>
+                      <span v-else>@</span>
+                      {{ filter.text }}
+                    </div>
+                  </v-container>
+                </v-col>
                 <v-col
                   cols="12"
                   v-for="(opinion, index) in opinions.data"
@@ -446,6 +461,8 @@
                     :likes="opinion.like_count || 0"
                     :timestamp="opinion.created_at || 'timestamp'"
                     @change="feedOpinionUpdated"
+                    @topic-clicked="retrieveOpinionsFeedWithFilter"
+                    @username-clicked="retrieveOpinionsFeedWithFilter"
                   ></opinion-card>
                 </v-col>
                 <v-col cols="12">
@@ -533,6 +550,10 @@ export default {
         },
       },
 
+      filter: {
+        text: null,
+        type: null,
+      },
       search: null,
       searchTab: "Critiques",
       searchTabItems: ["Critiques", "Topics", "Opinions"],
@@ -580,10 +601,52 @@ export default {
       this.logoutDialog = value;
     },
 
+    // Retrieve opinions feed with filter
+    retrieveOpinionsFeedWithFilter(e) {
+      // Format url for request
+      let url = "/api/feed";
+      if (e.filter == "topic") {
+        url += `?topic=${e.text}`;
+        this.filter.type = e.filter;
+        this.filter.text = e.text;
+      } else if (e.filter == "critique") {
+        url += `?critique=${e.username}`;
+        this.filter.type = e.filter;
+        this.filter.text = e.username;
+      }
+
+      // Set isRetrievingOpinions to true
+      this.isRetrievingOpinions = true;
+      // Set isSearching to false
+      this.isSearching = false;
+
+      axios
+        .get(url)
+        .then((response) => {
+          let data = response.data;
+
+          // Set opinions to data
+          this.opinions = data;
+        })
+        .catch((error) => {
+          // Pop Notification
+          toastr.error(
+            "A problem occured while processing your request. Please try again.",
+            "Something Went Wrong",
+            { timeOut: 2000 }
+          );
+        })
+        .finally((_) => {
+          // Set isRetrievingOpinions to false after request
+          this.isRetrievingOpinions = false;
+        });
+    },
+
     // Retrieve opinions feed
     retrieveOpinionsFeed() {
       // Set isRetrievingOpinions to true
       this.isRetrievingOpinions = true;
+      this.filter = { text: null, type: null };
 
       axios
         .get("/api/feed")
@@ -813,6 +876,12 @@ export default {
       this.otherProfileDialog = true;
       this.viewingCritiqueProfile = critique;
       this.viewingCritiqueProfile.index = index;
+    },
+
+    searchCanceled() {
+      this.isSearching = false;
+      this.search = null;
+      this.retrieveSearchResult()
     },
 
     debounceInput: _.debounce(function () {

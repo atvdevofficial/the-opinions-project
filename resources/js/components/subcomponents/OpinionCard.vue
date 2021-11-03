@@ -10,7 +10,18 @@
         <v-list-item-content>
           <v-list-item-title>
             <div>{{ name }}</div>
-            <div class="caption font-italic">{{ username }}</div>
+            <div
+              @click="
+                $emit('username-clicked', {
+                  filter: 'critique',
+                  username: username,
+                })
+              "
+              class="caption font-italic"
+              style="cursor: pointer !important; display: inline-block !important"
+            >
+              @{{ username }}
+            </div>
           </v-list-item-title>
         </v-list-item-content>
 
@@ -37,12 +48,18 @@
             class="mr-2"
             v-for="(topic, index) in topics"
             :key="index"
+            @click="$emit('topic-clicked', { filter: 'topic', ...topic })"
           >
             #{{ topic.text }}
           </v-chip>
         </v-col>
         <v-col cols="12" class="d-flex justify-end align-baseline">
-          <v-chip small color="#FFD561" class="mr-2 font-weight-bold" v-if="$props.likes > 0">
+          <v-chip
+            small
+            color="#FFD561"
+            class="mr-2 font-weight-bold"
+            v-if="$props.likes > 0"
+          >
             {{ likes }}
           </v-chip>
           <v-btn
@@ -63,7 +80,11 @@
             rounded
             depressed
             color="primary"
-            :class="liked ? 'px-6 font-weight-bold black--text' : 'px-4 font-weight-bold black--text'"
+            :class="
+              liked
+                ? 'px-6 font-weight-bold black--text'
+                : 'px-4 font-weight-bold black--text'
+            "
             v-if="liked"
             @click="unlikeOpinion"
             :loading="isProcessing"
