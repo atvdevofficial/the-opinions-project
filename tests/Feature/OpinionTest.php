@@ -6,9 +6,11 @@ use App\Models\Critique;
 use App\Models\Opinion;
 use App\Models\Topic;
 use App\Models\User;
+use App\Notifications\OpinionNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -55,12 +57,22 @@ class OpinionTest extends TestCase
 
     public function testCritiqueCreateOpinion()
     {
+        Notification::fake();
+
         // Critique User & Critique
         $critiqueUser = User::factory()->role('CRITIQUE')->create();
         $critique = Critique::factory()->state(['user_id' => $critiqueUser->id])->create();
 
+        $critiqueFollowerUser = User::factory()->role('CRITIQUE')->create();
+        $critiqueFollower = Critique::factory()->state(['user_id' => $critiqueFollowerUser->id])->create();
+        $critique->followers()->attach($critiqueFollower->id);
+
         // Topic
         $topic = Topic::factory()->create();
+
+        $topicFollowerUser = User::factory()->role('CRITIQUE')->create();
+        $topicFollower = Critique::factory()->state(['user_id' => $topicFollowerUser->id])->create();
+        $topic->followers()->sync([$topicFollower->id, $critiqueFollower->id]);
 
         // Opinion data
         $opinionData = [
@@ -84,14 +96,19 @@ class OpinionTest extends TestCase
             ]);
 
         /**
+         * Notification assertion
+         */
+        Notification::assertSentTo([$critiqueFollowerUser, $topicFollowerUser], OpinionNotification::class);
+
+        /**
          * Database checks
          */
 
         // Check number of users
-        $this->assertCount(1, User::get());
+        $this->assertCount(3, User::get());
 
         // Check number of critiques
-        $this->assertCount(1, Critique::get());
+        $this->assertCount(3, Critique::get());
 
         // Check number of opinions
         $this->assertCount(1, Opinion::get());

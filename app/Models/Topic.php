@@ -82,7 +82,7 @@ class Topic extends Model
     /**
      * Get crituques that follow topic
      */
-    public function followedTopics() {
+    public function followers() {
         return $this->belongsToMany(Critique::class, 'critique_topic', 'topic_id', 'critique_id');
     }
 }
