@@ -12,6 +12,7 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TopicController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 Route::group(['middleware' => 'throttle:120'], function () {
     // Reset Password

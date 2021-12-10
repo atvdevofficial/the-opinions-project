@@ -587,6 +587,12 @@ export default {
   },
   mounted() {
     this.retrieveOpinionsFeed();
+
+    let userId = sessionStorage.getItem("userId");
+    Echo.private('test.' + userId)
+        .listen('TestEvent', (e) => {
+            console.log(e);
+        })
   },
   methods: {
     profileDialogClose(value) {
