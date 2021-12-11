@@ -166,8 +166,17 @@ export default {
           let data = response.data;
 
           // Set messages to data
+          let chatId = data.chat_id;
           this.messages = data.messages;
           this.critique = data.critique;
+
+          let userId = sessionStorage.getItem("userId");
+          Echo.private("chat." + chatId).listen(
+            "MessageBroadcastEvent",
+            (e) => {
+              console.log(e);
+            }
+          );
         })
         .catch((error) => {
           // Pop Notification

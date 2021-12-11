@@ -21,3 +21,20 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('test.{userId}', function($user, $userId) {
     return (int) $user->id === (int) $userId;
 });
+
+Broadcast::channel('chat.{chatId}', function($user, $chatId) {
+
+    /**
+     * Split string in to an array
+     */
+    $chatIds = explode('-', $chatId);
+
+    /**
+     * Verify if user owns the chat
+     */
+    if (in_array($user->id, $chatIds)) {
+        return true;
+    }
+
+    return false;
+});

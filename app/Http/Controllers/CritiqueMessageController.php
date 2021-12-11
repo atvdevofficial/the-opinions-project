@@ -7,6 +7,7 @@ use App\Http\Requests\CritiqueMessage\CritiqueMessageStoreRequest;
 use App\Http\Resources\MessageResource;
 use App\Models\Critique;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,10 +24,18 @@ class CritiqueMessageController extends Controller
 
         if ($receiver) {
             $messages = Message::where([['sender_id', $critique->id], ['receiver_id', $receiver]])->orWhere([['receiver_id', $critique->id], ['sender_id', $receiver]])->get();
-            $critique = Critique::findOrFail($receiver);
+            $receiver = Critique::findOrFail($receiver);
+
+            /**
+             * chatId is the combination of recipient and sender id
+             * ordered by id
+             */
+            $users = User::find([$critique->user->id, $receiver->user->id]);
+            $chatId = $users->pluck('id')->sort()->implode('-');
 
             return response()->json([
-                'critique' => $critique,
+                'chat_id' => $chatId,
+                'critique' => $receiver,
                 'messages' => $messages
             ]);
         } else {
@@ -62,6 +71,13 @@ class CritiqueMessageController extends Controller
     public function store(CritiqueMessageStoreRequest $request, Critique $critique)
     {
         $message = $critique->sentMessages()->create($request->validated());
+
+        /**
+         * Broadcast event
+         */
+        $receiver = Critique::findOrFail($request->input('receiver_id'));
+        // broadcast(new \App\Events\MessageBroadcastEvent($critique->user, $receiver->user, $message))->toOthers();
+        event(new \App\Events\MessageBroadcastEvent($critique->user, $receiver->user, $message));
 
         return new MessageResource($message);
     }
