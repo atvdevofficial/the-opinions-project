@@ -53,5 +53,14 @@
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+        {{-- <!-- Scripts -->
+        <script>
+            window.Laravel = {!! json_encode([
+            'csrfToken' => csrf_token(),
+            'user' => Auth::user(),
+            'pusherKey' => config('broadcasting.connections.pusher.key'),
+            ]) !!};
+        </script> --}}
     </body>
 </html>

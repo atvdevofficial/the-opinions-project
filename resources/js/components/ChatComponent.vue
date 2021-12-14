@@ -83,6 +83,7 @@
               v-model="message"
               placeholder="Your message goes here"
               :rules="[(v) => !!v || 'Required']"
+              @keypress="isTypingEvent"
             ></v-textarea>
           </v-form>
         </v-col>
@@ -97,6 +98,10 @@
             Send
           </v-btn>
         </v-col>
+        <v-col cols="12" class="font-italic caption text-center">
+          <div v-if="isTyping">The other side is typing a reply...</div>
+          <div v-else>Send the critique a message now</div>
+        </v-col>
       </v-row>
     </v-footer>
   </div>
@@ -110,12 +115,15 @@ export default {
       isRetrievingMessages: false,
       isSendingMessages: false,
 
+      chatId: null,
       message: null,
       messages: [],
       critique: {
         name: null,
         username: null,
       },
+
+      isTyping: false,
     };
   },
   mounted() {
@@ -150,6 +158,18 @@ export default {
       this.message = null;
     },
 
+    isTypingEvent() {
+      console.log("Typing...");
+
+      let channel = Echo.private("chat." + this.chatId);
+
+      setTimeout(function () {
+        channel.whisper("typing", {
+          typing: true,
+        });
+      }, 300);
+    },
+
     retrieveMessages() {
       // Set isRetievingMessages to true
       this.isRetrievingMessages = true;
@@ -166,17 +186,24 @@ export default {
           let data = response.data;
 
           // Set messages to data
-          let chatId = data.chat_id;
+          this.chatId = data.chat_id;
           this.messages = data.messages;
           this.critique = data.critique;
 
-          let userId = sessionStorage.getItem("userId");
-          Echo.private("chat." + chatId).listen(
-            "MessageBroadcastEvent",
-            (e) => {
-              console.log(e);
-            }
-          );
+          // Connect to websocket server of conversation
+          Echo.private("chat." + this.chatId)
+            .listen("MessageBroadcastEvent", (e) => {
+              this.messages.push(e.message);
+            })
+            .listenForWhisper("typing", (e) => {
+              this.isTyping = e.typing;
+
+              // Remove isTyping indicator after 0.9s
+              var self = this;
+              setTimeout(function () {
+                self.isTyping = false;
+              }, 1000);
+            });
         })
         .catch((error) => {
           // Pop Notification

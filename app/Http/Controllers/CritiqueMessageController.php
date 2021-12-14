@@ -76,8 +76,8 @@ class CritiqueMessageController extends Controller
          * Broadcast event
          */
         $receiver = Critique::findOrFail($request->input('receiver_id'));
-        // broadcast(new \App\Events\MessageBroadcastEvent($critique->user, $receiver->user, $message))->toOthers();
-        event(new \App\Events\MessageBroadcastEvent($critique->user, $receiver->user, $message));
+        broadcast(new \App\Events\MessageBroadcastEvent($critique->user, $receiver->user, $message))->toOthers();
+        // event(new \App\Events\MessageBroadcastEvent($critique->user, $receiver->user, $message));
 
         return new MessageResource($message);
     }
