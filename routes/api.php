@@ -29,9 +29,6 @@ use Illuminate\Support\Facades\Route;
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 Route::group(['middleware' => 'throttle:120'], function () {
-    // Reset Password
-    // Forgot / Change Password
-
     // Login
     Route::post('/login', [AuthenticationController::class, 'login'])
         ->name('login');
